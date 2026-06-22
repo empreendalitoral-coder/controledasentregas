@@ -128,8 +128,8 @@ CONTROLE COMPLETO
 PREVISÃO DE RECEBIMENTOS
 
 Horas trabalhad" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/m19tubHIbHSiTv5dSzYRAfZMFLy1/social-images/social-1782148388724-1000658137.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/m19tubHIbHSiTv5dSzYRAfZMFLy1/social-images/social-1782148388724-1000658137.webp" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83db04eb-3a6a-4d89-92b9-6762c6f5e41c/id-preview-a0c6498c--6ff90475-dd6b-431a-a7e7-ee3120586b89.lovable.app-1782146964165.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83db04eb-3a6a-4d89-92b9-6762c6f5e41c/id-preview-a0c6498c--6ff90475-dd6b-431a-a7e7-ee3120586b89.lovable.app-1782146964165.png" },
     ],
     links: [
       {
