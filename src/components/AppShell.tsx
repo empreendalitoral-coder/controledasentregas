@@ -6,6 +6,8 @@ import {
   Wallet,
   BarChart3,
   Menu as MenuIcon,
+  Bell,
+  ArrowLeft,
 } from "lucide-react";
 
 type Props = {
