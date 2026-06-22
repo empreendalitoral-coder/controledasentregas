@@ -38,7 +38,7 @@ function Dashboard() {
     <AppShell title="Entrega Pro">
       {/* Perfil */}
       <Link to="/perfil" className="ep-card flex items-center gap-3 hover:border-primary/40 transition">
-        <div className="size-12 rounded-full bg-secondary grid place-items-center overflow-hidden border border-border">
+        <div className="size-14 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60">
           {state.motorista.foto ? (
             <img src={state.motorista.foto} alt={nome} className="size-full object-cover" />
           ) : (
@@ -48,12 +48,12 @@ function Dashboard() {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate">{nome}</div>
+          <div className="font-semibold text-base truncate">{nome}</div>
           <div className="text-xs text-muted-foreground truncate">
             {state.motorista.transportadora || "Toque para configurar perfil"}
           </div>
           {state.motorista.placa && (
-            <div className="mt-1 inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border border-border text-foreground/80">
+            <div className="mt-1.5 inline-block text-[11px] font-mono font-bold tracking-wider px-2 py-0.5 rounded border border-primary/60 text-primary">
               {state.motorista.placa}
             </div>
           )}
