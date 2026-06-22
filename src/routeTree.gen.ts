@@ -9,38 +9,215 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResumoRouteImport } from './routes/resumo'
+import { Route as RecebimentosRouteImport } from './routes/recebimentos'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as ManutencaoRouteImport } from './routes/manutencao'
+import { Route as MaisRouteImport } from './routes/mais'
+import { Route as HistoricoRouteImport } from './routes/historico'
+import { Route as GraficosRouteImport } from './routes/graficos'
+import { Route as AbastecimentosRouteImport } from './routes/abastecimentos'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LancamentoIdRouteImport } from './routes/lancamento.$id'
 
+const ResumoRoute = ResumoRouteImport.update({
+  id: '/resumo',
+  path: '/resumo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecebimentosRoute = RecebimentosRouteImport.update({
+  id: '/recebimentos',
+  path: '/recebimentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManutencaoRoute = ManutencaoRouteImport.update({
+  id: '/manutencao',
+  path: '/manutencao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaisRoute = MaisRouteImport.update({
+  id: '/mais',
+  path: '/mais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraficosRoute = GraficosRouteImport.update({
+  id: '/graficos',
+  path: '/graficos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AbastecimentosRoute = AbastecimentosRouteImport.update({
+  id: '/abastecimentos',
+  path: '/abastecimentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LancamentoIdRoute = LancamentoIdRouteImport.update({
+  id: '/lancamento/$id',
+  path: '/lancamento/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/abastecimentos': typeof AbastecimentosRoute
+  '/graficos': typeof GraficosRoute
+  '/historico': typeof HistoricoRoute
+  '/mais': typeof MaisRoute
+  '/manutencao': typeof ManutencaoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/resumo': typeof ResumoRoute
+  '/lancamento/$id': typeof LancamentoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/abastecimentos': typeof AbastecimentosRoute
+  '/graficos': typeof GraficosRoute
+  '/historico': typeof HistoricoRoute
+  '/mais': typeof MaisRoute
+  '/manutencao': typeof ManutencaoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/resumo': typeof ResumoRoute
+  '/lancamento/$id': typeof LancamentoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/abastecimentos': typeof AbastecimentosRoute
+  '/graficos': typeof GraficosRoute
+  '/historico': typeof HistoricoRoute
+  '/mais': typeof MaisRoute
+  '/manutencao': typeof ManutencaoRoute
+  '/perfil': typeof PerfilRoute
+  '/recebimentos': typeof RecebimentosRoute
+  '/resumo': typeof ResumoRoute
+  '/lancamento/$id': typeof LancamentoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/abastecimentos'
+    | '/graficos'
+    | '/historico'
+    | '/mais'
+    | '/manutencao'
+    | '/perfil'
+    | '/recebimentos'
+    | '/resumo'
+    | '/lancamento/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/abastecimentos'
+    | '/graficos'
+    | '/historico'
+    | '/mais'
+    | '/manutencao'
+    | '/perfil'
+    | '/recebimentos'
+    | '/resumo'
+    | '/lancamento/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/abastecimentos'
+    | '/graficos'
+    | '/historico'
+    | '/mais'
+    | '/manutencao'
+    | '/perfil'
+    | '/recebimentos'
+    | '/resumo'
+    | '/lancamento/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AbastecimentosRoute: typeof AbastecimentosRoute
+  GraficosRoute: typeof GraficosRoute
+  HistoricoRoute: typeof HistoricoRoute
+  MaisRoute: typeof MaisRoute
+  ManutencaoRoute: typeof ManutencaoRoute
+  PerfilRoute: typeof PerfilRoute
+  RecebimentosRoute: typeof RecebimentosRoute
+  ResumoRoute: typeof ResumoRoute
+  LancamentoIdRoute: typeof LancamentoIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/resumo': {
+      id: '/resumo'
+      path: '/resumo'
+      fullPath: '/resumo'
+      preLoaderRoute: typeof ResumoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recebimentos': {
+      id: '/recebimentos'
+      path: '/recebimentos'
+      fullPath: '/recebimentos'
+      preLoaderRoute: typeof RecebimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manutencao': {
+      id: '/manutencao'
+      path: '/manutencao'
+      fullPath: '/manutencao'
+      preLoaderRoute: typeof ManutencaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mais': {
+      id: '/mais'
+      path: '/mais'
+      fullPath: '/mais'
+      preLoaderRoute: typeof MaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graficos': {
+      id: '/graficos'
+      path: '/graficos'
+      fullPath: '/graficos'
+      preLoaderRoute: typeof GraficosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/abastecimentos': {
+      id: '/abastecimentos'
+      path: '/abastecimentos'
+      fullPath: '/abastecimentos'
+      preLoaderRoute: typeof AbastecimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +225,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lancamento/$id': {
+      id: '/lancamento/$id'
+      path: '/lancamento/$id'
+      fullPath: '/lancamento/$id'
+      preLoaderRoute: typeof LancamentoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AbastecimentosRoute: AbastecimentosRoute,
+  GraficosRoute: GraficosRoute,
+  HistoricoRoute: HistoricoRoute,
+  MaisRoute: MaisRoute,
+  ManutencaoRoute: ManutencaoRoute,
+  PerfilRoute: PerfilRoute,
+  RecebimentosRoute: RecebimentosRoute,
+  ResumoRoute: ResumoRoute,
+  LancamentoIdRoute: LancamentoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
