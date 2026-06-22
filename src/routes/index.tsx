@@ -127,7 +127,8 @@ function Dashboard() {
 
       {/* CTA novo lançamento */}
       <Link
-        to="/lancamento/novo"
+        to="/lancamento/$id"
+        params={{ id: "novo" }}
         className="mt-4 flex items-center justify-center gap-2 h-14 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 active:scale-[0.99] transition"
       >
         <Plus className="size-5" /> Novo Lançamento
