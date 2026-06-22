@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Entrega Pro" },
       { name: "theme-color", content: "#1a1f2e" },
-      { property: "og:title", content: "Entrega Pro" },
+      { property: "og:title", content: "Entrega Pro — Controle de entregas, recebimentos e lucro" },
       {
         property: "og:description",
         content:
@@ -94,6 +94,42 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Entrega Pro — Controle de entregas, recebimentos e lucro" },
+      { name: "description", content: "Saiba exatamente quanto trabalhou, quanto gastou e quanto vai receber.
+
+100% OFFLINE
+
+SEM CADASTRO
+
+CONTROLE COMPLETO
+
+PREVISÃO DE RECEBIMENTOS
+
+Horas trabalhad" },
+      { property: "og:description", content: "Saiba exatamente quanto trabalhou, quanto gastou e quanto vai receber.
+
+100% OFFLINE
+
+SEM CADASTRO
+
+CONTROLE COMPLETO
+
+PREVISÃO DE RECEBIMENTOS
+
+Horas trabalhad" },
+      { name: "twitter:description", content: "Saiba exatamente quanto trabalhou, quanto gastou e quanto vai receber.
+
+100% OFFLINE
+
+SEM CADASTRO
+
+CONTROLE COMPLETO
+
+PREVISÃO DE RECEBIMENTOS
+
+Horas trabalhad" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/m19tubHIbHSiTv5dSzYRAfZMFLy1/social-images/social-1782148388724-1000658137.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/m19tubHIbHSiTv5dSzYRAfZMFLy1/social-images/social-1782148388724-1000658137.webp" },
     ],
     links: [
       {
