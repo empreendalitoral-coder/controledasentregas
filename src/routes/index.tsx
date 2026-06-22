@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useFullStore } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
-import { Plus, Pencil, ChevronRight } from "lucide-react";
+import { Plus, Pencil, ChevronRight, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
