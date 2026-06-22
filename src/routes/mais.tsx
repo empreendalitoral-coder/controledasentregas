@@ -175,9 +175,31 @@ function MaisPage() {
         })}
       </ul>
 
+      {/* Versão PRO highlight */}
+      <div className="mt-4 ep-card bg-gradient-to-br from-primary/10 via-card to-card border-primary/30">
+        <div className="flex items-start gap-3">
+          <div className="size-10 rounded-lg bg-primary/20 grid place-items-center text-primary">
+            👑
+          </div>
+          <div className="flex-1">
+            <div className="font-bold text-primary">Versão PRO</div>
+            <div className="text-xs text-muted-foreground">
+              Desbloqueie todos os recursos e tenha controle total!
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={() => toast.info("Tudo já está liberado nesta versão 🎉")}
+          className="mt-3 w-full h-11 rounded-md bg-primary text-primary-foreground font-semibold"
+        >
+          Ver planos
+        </button>
+      </div>
+
       <div className="mt-4 text-center text-xs text-muted-foreground">
         Entrega Pro • 100% offline • Seus dados ficam só no seu aparelho
       </div>
+
     </AppShell>
   );
 }

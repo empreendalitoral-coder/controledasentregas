@@ -6,6 +6,8 @@ import {
   Wallet,
   BarChart3,
   Menu as MenuIcon,
+  Bell,
+  ArrowLeft,
 } from "lucide-react";
 
 type Props = {
@@ -54,19 +56,29 @@ export function AppShell({ title, children, back, right }: Props) {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {title && (
-        <header className="sticky top-0 z-30 backdrop-blur bg-background/85 border-b border-border">
+        <header className="sticky top-0 z-30 backdrop-blur bg-background/90 border-b border-border">
           <div className="mx-auto max-w-2xl flex items-center gap-3 px-4 h-14">
             {back ? (
               <Link
                 to={back}
-                className="text-foreground/90 hover:text-primary transition px-2 -ml-2"
+                className="size-9 grid place-items-center rounded-md text-foreground/90 hover:text-primary -ml-2"
                 aria-label="Voltar"
               >
-                ←
+                <ArrowLeft className="size-5" />
               </Link>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                className="size-9 grid place-items-center rounded-md text-foreground/90 -ml-2"
+                aria-label="Menu"
+              >
+                <MenuIcon className="size-5" />
+              </button>
+            )}
             <h1 className="text-base font-semibold flex-1 text-center">{title}</h1>
-            <div className="w-8 flex justify-end">{right}</div>
+            <div className="w-9 flex justify-end items-center">
+              {right ?? <Bell className="size-5 text-foreground/80" />}
+            </div>
           </div>
         </header>
       )}

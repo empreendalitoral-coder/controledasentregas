@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useFullStore } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
-import { Plus, Pencil, ChevronRight } from "lucide-react";
+import { Plus, Pencil, ChevronRight, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,7 +38,7 @@ function Dashboard() {
     <AppShell title="Entrega Pro">
       {/* Perfil */}
       <Link to="/perfil" className="ep-card flex items-center gap-3 hover:border-primary/40 transition">
-        <div className="size-12 rounded-full bg-secondary grid place-items-center overflow-hidden border border-border">
+        <div className="size-14 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60">
           {state.motorista.foto ? (
             <img src={state.motorista.foto} alt={nome} className="size-full object-cover" />
           ) : (
@@ -48,12 +48,12 @@ function Dashboard() {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold truncate">{nome}</div>
+          <div className="font-semibold text-base truncate">{nome}</div>
           <div className="text-xs text-muted-foreground truncate">
             {state.motorista.transportadora || "Toque para configurar perfil"}
           </div>
           {state.motorista.placa && (
-            <div className="mt-1 inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border border-border text-foreground/80">
+            <div className="mt-1.5 inline-block text-[11px] font-mono font-bold tracking-wider px-2 py-0.5 rounded border border-primary/60 text-primary">
               {state.motorista.placa}
             </div>
           )}
@@ -186,10 +186,21 @@ function ProxRecebimento({
       <Line label="Valor bruto" value={BRL(r.valor_bruto)} pos />
       <Line label="Descontos (PNR + perdidos)" value={`- ${BRL(r.descontos)}`} neg />
       <Line label="Combustível" value={`- ${BRL(r.combustivel)}`} neg />
-      <div className="mt-3 rounded-xl bg-success/15 border border-success/30 p-3 text-center">
-        <div className="text-xs text-success">VALOR LÍQUIDO PREVISTO</div>
-        <div className="text-2xl font-bold text-success">{BRL(previsto)}</div>
+      <div className="mt-4 rounded-xl bg-success p-4 text-center shadow-lg shadow-success/20">
+        <div className="text-xs font-bold tracking-wide text-success-foreground/80">
+          VALOR LÍQUIDO PREVISTO
+        </div>
+        <div className="text-3xl font-extrabold text-success-foreground mt-1">
+          {BRL(previsto)}
+        </div>
       </div>
+      <Link
+        to="/recebimentos"
+        className="mt-3 flex items-center justify-center gap-2 h-11 rounded-md border border-border text-sm text-foreground/90 hover:border-primary/50 transition"
+      >
+        <Calendar className="size-4" />
+        Ver todos os recebimentos
+      </Link>
     </>
   );
 }
