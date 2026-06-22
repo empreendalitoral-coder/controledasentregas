@@ -186,10 +186,21 @@ function ProxRecebimento({
       <Line label="Valor bruto" value={BRL(r.valor_bruto)} pos />
       <Line label="Descontos (PNR + perdidos)" value={`- ${BRL(r.descontos)}`} neg />
       <Line label="Combustível" value={`- ${BRL(r.combustivel)}`} neg />
-      <div className="mt-3 rounded-xl bg-success/15 border border-success/30 p-3 text-center">
-        <div className="text-xs text-success">VALOR LÍQUIDO PREVISTO</div>
-        <div className="text-2xl font-bold text-success">{BRL(previsto)}</div>
+      <div className="mt-4 rounded-xl bg-success p-4 text-center shadow-lg shadow-success/20">
+        <div className="text-xs font-bold tracking-wide text-success-foreground/80">
+          VALOR LÍQUIDO PREVISTO
+        </div>
+        <div className="text-3xl font-extrabold text-success-foreground mt-1">
+          {BRL(previsto)}
+        </div>
       </div>
+      <Link
+        to="/recebimentos"
+        className="mt-3 flex items-center justify-center gap-2 h-11 rounded-md border border-border text-sm text-foreground/90 hover:border-primary/50 transition"
+      >
+        <Calendar className="size-4" />
+        Ver todos os recebimentos
+      </Link>
     </>
   );
 }
