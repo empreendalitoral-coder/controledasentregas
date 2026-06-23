@@ -86,6 +86,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Entrega Pro" },
       { name: "theme-color", content: "#1a1f2e" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Entrega Pro" },
       { property: "og:title", content: "Entrega Pro — Controle de entregas, recebimentos e lucro" },
       {
         property: "og:description",
