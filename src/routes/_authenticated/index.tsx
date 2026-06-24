@@ -22,11 +22,31 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function Dashboard() {
   const state = useFullStore();
+  const premium = usePremium();
   const periodo = currentMonthRange();
   const r = computeResumo(state, periodo);
   const nome = state.motorista.nome || "Motorista";
   const meta = state.meta_mensal || 0;
   const pct = meta > 0 ? Math.min(100, Math.round((r.lucro_liquido / meta) * 100)) : 0;
+
+  const [showImport, setShowImport] = useState(false);
+  const [importing, setImporting] = useState(false);
+  useEffect(() => {
+    if (state.hydrated && actions.hasLegacyData()) setShowImport(true);
+  }, [state.hydrated]);
+
+  async function importar() {
+    setImporting(true);
+    try {
+      await actions.importLegacyLocalStorage();
+      toast.success("Dados importados!");
+      setShowImport(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha");
+    } finally {
+      setImporting(false);
+    }
+  }
 
   // próximo recebimento pendente
   const pendentes = [...state.recebimentos]
@@ -39,6 +59,35 @@ function Dashboard() {
 
   return (
     <AppShell title="Entrega Pro">
+      {showImport && (
+        <div className="ep-card mb-3 bg-primary/10 border-primary/40 flex items-start gap-3">
+          <Upload className="size-5 text-primary mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <div className="font-semibold text-sm">Encontramos dados antigos neste aparelho</div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              Quer importar lançamentos, recebimentos e configurações que estavam salvas localmente?
+            </div>
+            <div className="flex gap-2 mt-2">
+              <button onClick={importar} disabled={importing} className="h-9 px-4 rounded-md bg-primary text-primary-foreground text-xs font-semibold disabled:opacity-50">
+                {importing ? "Importando..." : "Importar agora"}
+              </button>
+              <button onClick={() => setShowImport(false)} className="h-9 px-3 rounded-md bg-secondary text-xs">Depois</button>
+            </div>
+          </div>
+          <button onClick={() => setShowImport(false)} className="text-muted-foreground"><X className="size-4" /></button>
+        </div>
+      )}
+
+      {premium.ativo && premium.plano === "teste" && (
+        <Link to="/premium" className="ep-card mb-3 flex items-center gap-2 bg-primary/10 border-primary/40">
+          <Crown className="size-5 text-primary shrink-0" />
+          <div className="text-xs flex-1">
+            <span className="font-semibold">Teste Premium</span> — {premium.diasRestantes} dias restantes
+          </div>
+          <ChevronRight className="size-4 text-muted-foreground" />
+        </Link>
+      )}
+
       {/* Perfil */}
       <Link to="/perfil" className="ep-card flex items-center gap-3 hover:border-primary/40 transition">
         <div className="size-14 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60">
