@@ -9,109 +9,111 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResumoRouteImport } from './routes/resumo'
-import { Route as RecebimentosRouteImport } from './routes/recebimentos'
-import { Route as PerfilRouteImport } from './routes/perfil'
-import { Route as ManutencaoRouteImport } from './routes/manutencao'
-import { Route as MaisRouteImport } from './routes/mais'
-import { Route as HistoricoRouteImport } from './routes/historico'
-import { Route as GraficosRouteImport } from './routes/graficos'
-import { Route as AbastecimentosRouteImport } from './routes/abastecimentos'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LancamentoIdRouteImport } from './routes/lancamento.$id'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedResumoRouteImport } from './routes/_authenticated/resumo'
+import { Route as AuthenticatedRecebimentosRouteImport } from './routes/_authenticated/recebimentos'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
+import { Route as AuthenticatedManutencaoRouteImport } from './routes/_authenticated/manutencao'
+import { Route as AuthenticatedMaisRouteImport } from './routes/_authenticated/mais'
+import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
+import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
+import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
+import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
 
-const ResumoRoute = ResumoRouteImport.update({
-  id: '/resumo',
-  path: '/resumo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecebimentosRoute = RecebimentosRouteImport.update({
-  id: '/recebimentos',
-  path: '/recebimentos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerfilRoute = PerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManutencaoRoute = ManutencaoRouteImport.update({
-  id: '/manutencao',
-  path: '/manutencao',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MaisRoute = MaisRouteImport.update({
-  id: '/mais',
-  path: '/mais',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HistoricoRoute = HistoricoRouteImport.update({
-  id: '/historico',
-  path: '/historico',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GraficosRoute = GraficosRouteImport.update({
-  id: '/graficos',
-  path: '/graficos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AbastecimentosRoute = AbastecimentosRouteImport.update({
-  id: '/abastecimentos',
-  path: '/abastecimentos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LancamentoIdRoute = LancamentoIdRouteImport.update({
-  id: '/lancamento/$id',
-  path: '/lancamento/$id',
+const AuthenticatedResumoRoute = AuthenticatedResumoRouteImport.update({
+  id: '/_authenticated/resumo',
+  path: '/resumo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRecebimentosRoute =
+  AuthenticatedRecebimentosRouteImport.update({
+    id: '/_authenticated/recebimentos',
+    path: '/recebimentos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/_authenticated/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedManutencaoRoute = AuthenticatedManutencaoRouteImport.update({
+  id: '/_authenticated/manutencao',
+  path: '/manutencao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMaisRoute = AuthenticatedMaisRouteImport.update({
+  id: '/_authenticated/mais',
+  path: '/mais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
+  id: '/_authenticated/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedGraficosRoute = AuthenticatedGraficosRouteImport.update({
+  id: '/_authenticated/graficos',
+  path: '/graficos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAbastecimentosRoute =
+  AuthenticatedAbastecimentosRouteImport.update({
+    id: '/_authenticated/abastecimentos',
+    path: '/abastecimentos',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedLancamentoIdRoute =
+  AuthenticatedLancamentoIdRouteImport.update({
+    id: '/_authenticated/lancamento/$id',
+    path: '/lancamento/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/abastecimentos': typeof AbastecimentosRoute
-  '/graficos': typeof GraficosRoute
-  '/historico': typeof HistoricoRoute
-  '/mais': typeof MaisRoute
-  '/manutencao': typeof ManutencaoRoute
-  '/perfil': typeof PerfilRoute
-  '/recebimentos': typeof RecebimentosRoute
-  '/resumo': typeof ResumoRoute
-  '/lancamento/$id': typeof LancamentoIdRoute
+  '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/graficos': typeof AuthenticatedGraficosRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
+  '/mais': typeof AuthenticatedMaisRoute
+  '/manutencao': typeof AuthenticatedManutencaoRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/recebimentos': typeof AuthenticatedRecebimentosRoute
+  '/resumo': typeof AuthenticatedResumoRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/abastecimentos': typeof AbastecimentosRoute
-  '/graficos': typeof GraficosRoute
-  '/historico': typeof HistoricoRoute
-  '/mais': typeof MaisRoute
-  '/manutencao': typeof ManutencaoRoute
-  '/perfil': typeof PerfilRoute
-  '/recebimentos': typeof RecebimentosRoute
-  '/resumo': typeof ResumoRoute
-  '/lancamento/$id': typeof LancamentoIdRoute
+  '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/graficos': typeof AuthenticatedGraficosRoute
+  '/historico': typeof AuthenticatedHistoricoRoute
+  '/mais': typeof AuthenticatedMaisRoute
+  '/manutencao': typeof AuthenticatedManutencaoRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/recebimentos': typeof AuthenticatedRecebimentosRoute
+  '/resumo': typeof AuthenticatedResumoRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/abastecimentos': typeof AbastecimentosRoute
-  '/graficos': typeof GraficosRoute
-  '/historico': typeof HistoricoRoute
-  '/mais': typeof MaisRoute
-  '/manutencao': typeof ManutencaoRoute
-  '/perfil': typeof PerfilRoute
-  '/recebimentos': typeof RecebimentosRoute
-  '/resumo': typeof ResumoRoute
-  '/lancamento/$id': typeof LancamentoIdRoute
+  '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
+  '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
+  '/_authenticated/mais': typeof AuthenticatedMaisRoute
+  '/_authenticated/manutencao': typeof AuthenticatedManutencaoRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
+  '/_authenticated/resumo': typeof AuthenticatedResumoRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/abastecimentos'
     | '/graficos'
     | '/historico'
@@ -120,10 +122,10 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/recebimentos'
     | '/resumo'
+    | '/'
     | '/lancamento/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/abastecimentos'
     | '/graficos'
     | '/historico'
@@ -132,120 +134,121 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/recebimentos'
     | '/resumo'
+    | '/'
     | '/lancamento/$id'
   id:
     | '__root__'
-    | '/'
-    | '/abastecimentos'
-    | '/graficos'
-    | '/historico'
-    | '/mais'
-    | '/manutencao'
-    | '/perfil'
-    | '/recebimentos'
-    | '/resumo'
-    | '/lancamento/$id'
+    | '/_authenticated/abastecimentos'
+    | '/_authenticated/graficos'
+    | '/_authenticated/historico'
+    | '/_authenticated/mais'
+    | '/_authenticated/manutencao'
+    | '/_authenticated/perfil'
+    | '/_authenticated/recebimentos'
+    | '/_authenticated/resumo'
+    | '/_authenticated/'
+    | '/_authenticated/lancamento/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AbastecimentosRoute: typeof AbastecimentosRoute
-  GraficosRoute: typeof GraficosRoute
-  HistoricoRoute: typeof HistoricoRoute
-  MaisRoute: typeof MaisRoute
-  ManutencaoRoute: typeof ManutencaoRoute
-  PerfilRoute: typeof PerfilRoute
-  RecebimentosRoute: typeof RecebimentosRoute
-  ResumoRoute: typeof ResumoRoute
-  LancamentoIdRoute: typeof LancamentoIdRoute
+  AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
+  AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
+  AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
+  AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
+  AuthenticatedManutencaoRoute: typeof AuthenticatedManutencaoRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedRecebimentosRoute: typeof AuthenticatedRecebimentosRoute
+  AuthenticatedResumoRoute: typeof AuthenticatedResumoRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedLancamentoIdRoute: typeof AuthenticatedLancamentoIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/resumo': {
-      id: '/resumo'
-      path: '/resumo'
-      fullPath: '/resumo'
-      preLoaderRoute: typeof ResumoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recebimentos': {
-      id: '/recebimentos'
-      path: '/recebimentos'
-      fullPath: '/recebimentos'
-      preLoaderRoute: typeof RecebimentosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perfil': {
-      id: '/perfil'
-      path: '/perfil'
-      fullPath: '/perfil'
-      preLoaderRoute: typeof PerfilRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manutencao': {
-      id: '/manutencao'
-      path: '/manutencao'
-      fullPath: '/manutencao'
-      preLoaderRoute: typeof ManutencaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mais': {
-      id: '/mais'
-      path: '/mais'
-      fullPath: '/mais'
-      preLoaderRoute: typeof MaisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/historico': {
-      id: '/historico'
-      path: '/historico'
-      fullPath: '/historico'
-      preLoaderRoute: typeof HistoricoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/graficos': {
-      id: '/graficos'
-      path: '/graficos'
-      fullPath: '/graficos'
-      preLoaderRoute: typeof GraficosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/abastecimentos': {
-      id: '/abastecimentos'
-      path: '/abastecimentos'
-      fullPath: '/abastecimentos'
-      preLoaderRoute: typeof AbastecimentosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lancamento/$id': {
-      id: '/lancamento/$id'
+    '/_authenticated/resumo': {
+      id: '/_authenticated/resumo'
+      path: '/resumo'
+      fullPath: '/resumo'
+      preLoaderRoute: typeof AuthenticatedResumoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/recebimentos': {
+      id: '/_authenticated/recebimentos'
+      path: '/recebimentos'
+      fullPath: '/recebimentos'
+      preLoaderRoute: typeof AuthenticatedRecebimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/manutencao': {
+      id: '/_authenticated/manutencao'
+      path: '/manutencao'
+      fullPath: '/manutencao'
+      preLoaderRoute: typeof AuthenticatedManutencaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/mais': {
+      id: '/_authenticated/mais'
+      path: '/mais'
+      fullPath: '/mais'
+      preLoaderRoute: typeof AuthenticatedMaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/historico': {
+      id: '/_authenticated/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof AuthenticatedHistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/graficos': {
+      id: '/_authenticated/graficos'
+      path: '/graficos'
+      fullPath: '/graficos'
+      preLoaderRoute: typeof AuthenticatedGraficosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/abastecimentos': {
+      id: '/_authenticated/abastecimentos'
+      path: '/abastecimentos'
+      fullPath: '/abastecimentos'
+      preLoaderRoute: typeof AuthenticatedAbastecimentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/lancamento/$id': {
+      id: '/_authenticated/lancamento/$id'
       path: '/lancamento/$id'
       fullPath: '/lancamento/$id'
-      preLoaderRoute: typeof LancamentoIdRouteImport
+      preLoaderRoute: typeof AuthenticatedLancamentoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AbastecimentosRoute: AbastecimentosRoute,
-  GraficosRoute: GraficosRoute,
-  HistoricoRoute: HistoricoRoute,
-  MaisRoute: MaisRoute,
-  ManutencaoRoute: ManutencaoRoute,
-  PerfilRoute: PerfilRoute,
-  RecebimentosRoute: RecebimentosRoute,
-  ResumoRoute: ResumoRoute,
-  LancamentoIdRoute: LancamentoIdRoute,
+  AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
+  AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
+  AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
+  AuthenticatedMaisRoute: AuthenticatedMaisRoute,
+  AuthenticatedManutencaoRoute: AuthenticatedManutencaoRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedRecebimentosRoute: AuthenticatedRecebimentosRoute,
+  AuthenticatedResumoRoute: AuthenticatedResumoRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedLancamentoIdRoute: AuthenticatedLancamentoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

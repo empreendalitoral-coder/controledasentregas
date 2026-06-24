@@ -17,7 +17,7 @@ const TIPOS: TipoManutencao[] = [
   "Outros",
 ];
 
-export const Route = createFileRoute("/manutencao")({
+export const Route = createFileRoute("/_authenticated/manutencao")({
   head: () => ({
     meta: [
       { title: "Manutenção — Entrega Pro" },

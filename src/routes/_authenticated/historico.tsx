@@ -16,7 +16,7 @@ import {
 import { Eye, Pencil, Trash2, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/historico")({
+export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
     meta: [
       { title: "Histórico — Entrega Pro" },

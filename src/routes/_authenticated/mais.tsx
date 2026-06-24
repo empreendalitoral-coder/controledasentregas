@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useRef } from "react";
 import { BRL, computeResumo, rangeFromStrings } from "@/lib/calc";
 
-export const Route = createFileRoute("/mais")({
+export const Route = createFileRoute("/_authenticated/mais")({
   head: () => ({
     meta: [
       { title: "Mais — Entrega Pro" },

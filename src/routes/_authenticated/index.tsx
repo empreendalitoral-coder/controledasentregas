@@ -4,7 +4,7 @@ import { useFullStore } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
 import { Plus, Pencil, ChevronRight, Calendar } from "lucide-react";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Entrega Pro — Painel" },

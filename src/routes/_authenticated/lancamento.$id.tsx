@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
 
-export const Route = createFileRoute("/lancamento/$id")({
+export const Route = createFileRoute("/_authenticated/lancamento/$id")({
   head: () => ({
     meta: [{ title: "Lançamento — Entrega Pro" }],
   }),

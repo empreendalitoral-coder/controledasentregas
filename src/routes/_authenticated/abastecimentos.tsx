@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { BRL } from "@/lib/calc";
 import { Plus, X, Trash2 } from "lucide-react";
 
-export const Route = createFileRoute("/abastecimentos")({
+export const Route = createFileRoute("/_authenticated/abastecimentos")({
   head: () => ({
     meta: [
       { title: "Abastecimentos — Entrega Pro" },
