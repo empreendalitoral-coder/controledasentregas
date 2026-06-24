@@ -265,8 +265,7 @@ function uidOrThrow(): string {
 }
 
 function lancToDb(l: Partial<Lancamento>) {
-  return {
-    data: l.data,
+  const out: Record<string, unknown> = {
     trabalhou: l.trabalhou ?? true,
     hora_inicio: l.hora_inicio || null,
     hora_fim: l.hora_fim || null,
@@ -286,6 +285,8 @@ function lancToDb(l: Partial<Lancamento>) {
     valor_abastecimento: l.valor_abastecimento ?? null,
     litros: l.litros ?? null,
   };
+  if (l.data) out.data = l.data;
+  return out as { data: string; [k: string]: unknown };
 }
 
 export const actions = {
