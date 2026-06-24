@@ -15,12 +15,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedResumoRouteImport } from './routes/_authenticated/resumo'
 import { Route as AuthenticatedRecebimentosRouteImport } from './routes/_authenticated/recebimentos'
+import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedManutencaoRouteImport } from './routes/_authenticated/manutencao'
 import { Route as AuthenticatedMaisRouteImport } from './routes/_authenticated/mais'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
+import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -53,6 +55,11 @@ const AuthenticatedRecebimentosRoute =
     path: '/recebimentos',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPremiumRoute = AuthenticatedPremiumRouteImport.update({
+  id: '/premium',
+  path: '/premium',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -84,6 +91,12 @@ const AuthenticatedAbastecimentosRoute =
     path: '/abastecimentos',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFinanceiroRouteRoute =
+  AuthenticatedFinanceiroRouteRouteImport.update({
+    id: '/financeiro',
+    path: '/financeiro',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedLancamentoIdRoute =
   AuthenticatedLancamentoIdRouteImport.update({
     id: '/lancamento/$id',
@@ -95,12 +108,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/financeiro': typeof AuthenticatedFinanceiroRouteRoute
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
@@ -108,12 +123,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/financeiro': typeof AuthenticatedFinanceiroRouteRoute
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/': typeof AuthenticatedIndexRoute
@@ -124,12 +141,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRoute
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/mais': typeof AuthenticatedMaisRoute
   '/_authenticated/manutencao': typeof AuthenticatedManutencaoRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
@@ -141,12 +160,14 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/financeiro'
     | '/abastecimentos'
     | '/graficos'
     | '/historico'
     | '/mais'
     | '/manutencao'
     | '/perfil'
+    | '/premium'
     | '/recebimentos'
     | '/resumo'
     | '/lancamento/$id'
@@ -154,12 +175,14 @@ export interface FileRouteTypes {
   to:
     | '/auth'
     | '/reset-password'
+    | '/financeiro'
     | '/abastecimentos'
     | '/graficos'
     | '/historico'
     | '/mais'
     | '/manutencao'
     | '/perfil'
+    | '/premium'
     | '/recebimentos'
     | '/resumo'
     | '/'
@@ -169,12 +192,14 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/reset-password'
+    | '/_authenticated/financeiro'
     | '/_authenticated/abastecimentos'
     | '/_authenticated/graficos'
     | '/_authenticated/historico'
     | '/_authenticated/mais'
     | '/_authenticated/manutencao'
     | '/_authenticated/perfil'
+    | '/_authenticated/premium'
     | '/_authenticated/recebimentos'
     | '/_authenticated/resumo'
     | '/_authenticated/'
@@ -231,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRecebimentosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/premium': {
+      id: '/_authenticated/premium'
+      path: '/premium'
+      fullPath: '/premium'
+      preLoaderRoute: typeof AuthenticatedPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -273,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAbastecimentosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/financeiro': {
+      id: '/_authenticated/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof AuthenticatedFinanceiroRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/lancamento/$id': {
       id: '/_authenticated/lancamento/$id'
       path: '/lancamento/$id'
@@ -284,12 +323,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRoute
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
   AuthenticatedManutencaoRoute: typeof AuthenticatedManutencaoRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedRecebimentosRoute: typeof AuthenticatedRecebimentosRoute
   AuthenticatedResumoRoute: typeof AuthenticatedResumoRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -297,12 +338,14 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedFinanceiroRouteRoute: AuthenticatedFinanceiroRouteRoute,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedMaisRoute: AuthenticatedMaisRoute,
   AuthenticatedManutencaoRoute: AuthenticatedManutencaoRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedRecebimentosRoute: AuthenticatedRecebimentosRoute,
   AuthenticatedResumoRoute: AuthenticatedResumoRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
