@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "App offline para motoristas de entrega: saiba quanto trabalhou, quanto gastou e quanto vai receber.",
+          "App para motoristas de entrega: controle de pacotes, combustível, recebimentos e lucro real. Acesso seguro com login.",
       },
       { name: "author", content: "Entrega Pro" },
       { name: "theme-color", content: "#1a1f2e" },
@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "App offline para motoristas: controle de entregas, combustível, recebimentos e lucro real.",
+          "App para motoristas: pacotes, combustível, recebimentos e lucro real. Versão Premium com central financeira completa.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -102,17 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "Saiba exatamente quanto trabalhou, quanto gastou e quanto vai receber. 100% offline, sem cadastro.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83db04eb-3a6a-4d89-92b9-6762c6f5e41c/id-preview-a0c6498c--6ff90475-dd6b-431a-a7e7-ee3120586b89.lovable.app-1782146964165.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/83db04eb-3a6a-4d89-92b9-6762c6f5e41c/id-preview-a0c6498c--6ff90475-dd6b-431a-a7e7-ee3120586b89.lovable.app-1782146964165.png",
+          "Saiba exatamente quanto trabalhou, quanto gastou e quanto vai receber.",
       },
     ],
     links: [
