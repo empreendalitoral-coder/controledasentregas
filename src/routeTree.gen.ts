@@ -24,6 +24,12 @@ import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
+import { Route as AuthenticatedFinanceiroPixRouteImport } from './routes/_authenticated/financeiro/pix'
+import { Route as AuthenticatedFinanceiroMetasRouteImport } from './routes/_authenticated/financeiro/metas'
+import { Route as AuthenticatedFinanceiroMeiRouteImport } from './routes/_authenticated/financeiro/mei'
+import { Route as AuthenticatedFinanceiroFluxoRouteImport } from './routes/_authenticated/financeiro/fluxo'
+import { Route as AuthenticatedFinanceiroContasRouteImport } from './routes/_authenticated/financeiro/contas'
+import { Route as AuthenticatedFinanceiroCartoesRouteImport } from './routes/_authenticated/financeiro/cartoes'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -103,12 +109,48 @@ const AuthenticatedLancamentoIdRoute =
     path: '/lancamento/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFinanceiroPixRoute =
+  AuthenticatedFinanceiroPixRouteImport.update({
+    id: '/pix',
+    path: '/pix',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
+const AuthenticatedFinanceiroMetasRoute =
+  AuthenticatedFinanceiroMetasRouteImport.update({
+    id: '/metas',
+    path: '/metas',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
+const AuthenticatedFinanceiroMeiRoute =
+  AuthenticatedFinanceiroMeiRouteImport.update({
+    id: '/mei',
+    path: '/mei',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
+const AuthenticatedFinanceiroFluxoRoute =
+  AuthenticatedFinanceiroFluxoRouteImport.update({
+    id: '/fluxo',
+    path: '/fluxo',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
+const AuthenticatedFinanceiroContasRoute =
+  AuthenticatedFinanceiroContasRouteImport.update({
+    id: '/contas',
+    path: '/contas',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
+const AuthenticatedFinanceiroCartoesRoute =
+  AuthenticatedFinanceiroCartoesRouteImport.update({
+    id: '/cartoes',
+    path: '/cartoes',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/financeiro': typeof AuthenticatedFinanceiroRouteRoute
+  '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -118,12 +160,18 @@ export interface FileRoutesByFullPath {
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
+  '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
+  '/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
+  '/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
+  '/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
+  '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
+  '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/financeiro': typeof AuthenticatedFinanceiroRouteRoute
+  '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -134,6 +182,12 @@ export interface FileRoutesByTo {
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/': typeof AuthenticatedIndexRoute
+  '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
+  '/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
+  '/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
+  '/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
+  '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
+  '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRoutesById {
@@ -141,7 +195,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRoute
+  '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
@@ -152,6 +206,12 @@ export interface FileRoutesById {
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
+  '/_authenticated/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
+  '/_authenticated/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
+  '/_authenticated/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
+  '/_authenticated/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
+  '/_authenticated/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
 }
 export interface FileRouteTypes {
@@ -170,6 +230,12 @@ export interface FileRouteTypes {
     | '/premium'
     | '/recebimentos'
     | '/resumo'
+    | '/financeiro/cartoes'
+    | '/financeiro/contas'
+    | '/financeiro/fluxo'
+    | '/financeiro/mei'
+    | '/financeiro/metas'
+    | '/financeiro/pix'
     | '/lancamento/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -186,6 +252,12 @@ export interface FileRouteTypes {
     | '/recebimentos'
     | '/resumo'
     | '/'
+    | '/financeiro/cartoes'
+    | '/financeiro/contas'
+    | '/financeiro/fluxo'
+    | '/financeiro/mei'
+    | '/financeiro/metas'
+    | '/financeiro/pix'
     | '/lancamento/$id'
   id:
     | '__root__'
@@ -203,6 +275,12 @@ export interface FileRouteTypes {
     | '/_authenticated/recebimentos'
     | '/_authenticated/resumo'
     | '/_authenticated/'
+    | '/_authenticated/financeiro/cartoes'
+    | '/_authenticated/financeiro/contas'
+    | '/_authenticated/financeiro/fluxo'
+    | '/_authenticated/financeiro/mei'
+    | '/_authenticated/financeiro/metas'
+    | '/_authenticated/financeiro/pix'
     | '/_authenticated/lancamento/$id'
   fileRoutesById: FileRoutesById
 }
@@ -319,11 +397,77 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLancamentoIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/financeiro/pix': {
+      id: '/_authenticated/financeiro/pix'
+      path: '/pix'
+      fullPath: '/financeiro/pix'
+      preLoaderRoute: typeof AuthenticatedFinanceiroPixRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
+    '/_authenticated/financeiro/metas': {
+      id: '/_authenticated/financeiro/metas'
+      path: '/metas'
+      fullPath: '/financeiro/metas'
+      preLoaderRoute: typeof AuthenticatedFinanceiroMetasRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
+    '/_authenticated/financeiro/mei': {
+      id: '/_authenticated/financeiro/mei'
+      path: '/mei'
+      fullPath: '/financeiro/mei'
+      preLoaderRoute: typeof AuthenticatedFinanceiroMeiRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
+    '/_authenticated/financeiro/fluxo': {
+      id: '/_authenticated/financeiro/fluxo'
+      path: '/fluxo'
+      fullPath: '/financeiro/fluxo'
+      preLoaderRoute: typeof AuthenticatedFinanceiroFluxoRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
+    '/_authenticated/financeiro/contas': {
+      id: '/_authenticated/financeiro/contas'
+      path: '/contas'
+      fullPath: '/financeiro/contas'
+      preLoaderRoute: typeof AuthenticatedFinanceiroContasRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
+    '/_authenticated/financeiro/cartoes': {
+      id: '/_authenticated/financeiro/cartoes'
+      path: '/cartoes'
+      fullPath: '/financeiro/cartoes'
+      preLoaderRoute: typeof AuthenticatedFinanceiroCartoesRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
   }
 }
 
+interface AuthenticatedFinanceiroRouteRouteChildren {
+  AuthenticatedFinanceiroCartoesRoute: typeof AuthenticatedFinanceiroCartoesRoute
+  AuthenticatedFinanceiroContasRoute: typeof AuthenticatedFinanceiroContasRoute
+  AuthenticatedFinanceiroFluxoRoute: typeof AuthenticatedFinanceiroFluxoRoute
+  AuthenticatedFinanceiroMeiRoute: typeof AuthenticatedFinanceiroMeiRoute
+  AuthenticatedFinanceiroMetasRoute: typeof AuthenticatedFinanceiroMetasRoute
+  AuthenticatedFinanceiroPixRoute: typeof AuthenticatedFinanceiroPixRoute
+}
+
+const AuthenticatedFinanceiroRouteRouteChildren: AuthenticatedFinanceiroRouteRouteChildren =
+  {
+    AuthenticatedFinanceiroCartoesRoute: AuthenticatedFinanceiroCartoesRoute,
+    AuthenticatedFinanceiroContasRoute: AuthenticatedFinanceiroContasRoute,
+    AuthenticatedFinanceiroFluxoRoute: AuthenticatedFinanceiroFluxoRoute,
+    AuthenticatedFinanceiroMeiRoute: AuthenticatedFinanceiroMeiRoute,
+    AuthenticatedFinanceiroMetasRoute: AuthenticatedFinanceiroMetasRoute,
+    AuthenticatedFinanceiroPixRoute: AuthenticatedFinanceiroPixRoute,
+  }
+
+const AuthenticatedFinanceiroRouteRouteWithChildren =
+  AuthenticatedFinanceiroRouteRoute._addFileChildren(
+    AuthenticatedFinanceiroRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRoute
+  AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
@@ -338,7 +482,8 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedFinanceiroRouteRoute: AuthenticatedFinanceiroRouteRoute,
+  AuthenticatedFinanceiroRouteRoute:
+    AuthenticatedFinanceiroRouteRouteWithChildren,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
