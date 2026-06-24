@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { useFullStore } from "@/lib/store";
+import { useFullStore, actions } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
-import { Plus, Pencil, ChevronRight, Calendar } from "lucide-react";
+import { Plus, Pencil, ChevronRight, Calendar, Upload, X, Crown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePremium } from "@/lib/premium";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
