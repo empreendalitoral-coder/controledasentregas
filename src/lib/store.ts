@@ -329,7 +329,7 @@ export const actions = {
   },
 
   async updateLancamento(id: string, patch: Partial<Lancamento>) {
-    const { error } = await supabase.from("lancamentos").update(lancToDb(patch)).eq("id", id);
+    const { error } = await supabase.from("lancamentos").update(lancToDb(patch) as never).eq("id", id);
     if (error) throw error;
     setState((s) => ({
       ...s,
