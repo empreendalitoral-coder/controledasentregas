@@ -23,6 +23,7 @@ import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authentica
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
 import { Route as AuthenticatedFinanceiroPixRouteImport } from './routes/_authenticated/financeiro/pix'
 import { Route as AuthenticatedFinanceiroMetasRouteImport } from './routes/_authenticated/financeiro/metas'
@@ -30,6 +31,9 @@ import { Route as AuthenticatedFinanceiroMeiRouteImport } from './routes/_authen
 import { Route as AuthenticatedFinanceiroFluxoRouteImport } from './routes/_authenticated/financeiro/fluxo'
 import { Route as AuthenticatedFinanceiroContasRouteImport } from './routes/_authenticated/financeiro/contas'
 import { Route as AuthenticatedFinanceiroCartoesRouteImport } from './routes/_authenticated/financeiro/cartoes'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
+import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -103,6 +107,11 @@ const AuthenticatedFinanceiroRouteRoute =
     path: '/financeiro',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLancamentoIdRoute =
   AuthenticatedLancamentoIdRouteImport.update({
     id: '/lancamento/$id',
@@ -145,11 +154,30 @@ const AuthenticatedFinanceiroCartoesRoute =
     path: '/cartoes',
     getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
   } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminSolicitacoesRoute =
+  AuthenticatedAdminSolicitacoesRouteImport.update({
+    id: '/solicitacoes',
+    path: '/solicitacoes',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
@@ -160,6 +188,9 @@ export interface FileRoutesByFullPath {
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
   '/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
   '/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
@@ -171,6 +202,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/graficos': typeof AuthenticatedGraficosRoute
@@ -182,6 +214,9 @@ export interface FileRoutesByTo {
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/': typeof AuthenticatedIndexRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
   '/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
   '/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
@@ -195,6 +230,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
@@ -206,6 +242,9 @@ export interface FileRoutesById {
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
+  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
   '/_authenticated/financeiro/contas': typeof AuthenticatedFinanceiroContasRoute
   '/_authenticated/financeiro/fluxo': typeof AuthenticatedFinanceiroFluxoRoute
@@ -220,6 +259,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/reset-password'
+    | '/admin'
     | '/financeiro'
     | '/abastecimentos'
     | '/graficos'
@@ -230,6 +270,9 @@ export interface FileRouteTypes {
     | '/premium'
     | '/recebimentos'
     | '/resumo'
+    | '/admin/configuracoes'
+    | '/admin/solicitacoes'
+    | '/admin/usuarios'
     | '/financeiro/cartoes'
     | '/financeiro/contas'
     | '/financeiro/fluxo'
@@ -241,6 +284,7 @@ export interface FileRouteTypes {
   to:
     | '/auth'
     | '/reset-password'
+    | '/admin'
     | '/financeiro'
     | '/abastecimentos'
     | '/graficos'
@@ -252,6 +296,9 @@ export interface FileRouteTypes {
     | '/recebimentos'
     | '/resumo'
     | '/'
+    | '/admin/configuracoes'
+    | '/admin/solicitacoes'
+    | '/admin/usuarios'
     | '/financeiro/cartoes'
     | '/financeiro/contas'
     | '/financeiro/fluxo'
@@ -264,6 +311,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/reset-password'
+    | '/_authenticated/admin'
     | '/_authenticated/financeiro'
     | '/_authenticated/abastecimentos'
     | '/_authenticated/graficos'
@@ -275,6 +323,9 @@ export interface FileRouteTypes {
     | '/_authenticated/recebimentos'
     | '/_authenticated/resumo'
     | '/_authenticated/'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/solicitacoes'
+    | '/_authenticated/admin/usuarios'
     | '/_authenticated/financeiro/cartoes'
     | '/_authenticated/financeiro/contas'
     | '/_authenticated/financeiro/fluxo'
@@ -390,6 +441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinanceiroRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/lancamento/$id': {
       id: '/_authenticated/lancamento/$id'
       path: '/lancamento/$id'
@@ -439,8 +497,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinanceiroCartoesRouteImport
       parentRoute: typeof AuthenticatedFinanceiroRouteRoute
     }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/solicitacoes': {
+      id: '/_authenticated/admin/solicitacoes'
+      path: '/solicitacoes'
+      fullPath: '/admin/solicitacoes'
+      preLoaderRoute: typeof AuthenticatedAdminSolicitacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
+
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
+  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+    AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,
+    AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
 
 interface AuthenticatedFinanceiroRouteRouteChildren {
   AuthenticatedFinanceiroCartoesRoute: typeof AuthenticatedFinanceiroCartoesRoute
@@ -467,6 +564,7 @@ const AuthenticatedFinanceiroRouteRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
@@ -482,6 +580,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedFinanceiroRouteRoute:
     AuthenticatedFinanceiroRouteRouteWithChildren,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
