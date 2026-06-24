@@ -4,7 +4,7 @@ import { useFullStore } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { BRL, NUM, computeResumo, formatHoras } from "@/lib/calc";
 
-export const Route = createFileRoute("/resumo")({
+export const Route = createFileRoute("/_authenticated/resumo")({
   head: () => ({
     meta: [
       { title: "Resumo Mensal — Entrega Pro" },

@@ -6,7 +6,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Camera } from "lucide-react";
 
-export const Route = createFileRoute("/perfil")({
+export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
     meta: [
       { title: "Perfil — Entrega Pro" },

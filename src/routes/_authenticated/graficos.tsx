@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-export const Route = createFileRoute("/graficos")({
+export const Route = createFileRoute("/_authenticated/graficos")({
   head: () => ({
     meta: [
       { title: "Gráficos — Entrega Pro" },

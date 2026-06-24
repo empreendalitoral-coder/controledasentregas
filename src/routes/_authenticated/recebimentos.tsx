@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { BRL, computeResumo, rangeFromStrings } from "@/lib/calc";
 import { Plus, X } from "lucide-react";
 
-export const Route = createFileRoute("/recebimentos")({
+export const Route = createFileRoute("/_authenticated/recebimentos")({
   head: () => ({
     meta: [
       { title: "Recebimentos — Entrega Pro" },
