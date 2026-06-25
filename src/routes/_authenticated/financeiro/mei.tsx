@@ -1,12 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { BRL } from "@/lib/calc";
 import { FileText, Download } from "lucide-react";
 import { toast } from "sonner";
-
-type Row = { data: string; tipo: "entrada" | "saida"; valor: number };
+import { loadFinanceiroUnificado, type UnifiedRow } from "@/lib/financeiro-aggregate";
 
 export const Route = createFileRoute("/_authenticated/financeiro/mei")({
   head: () => ({ meta: [{ title: "Relatório MEI — Entrega Pro" }] }),
@@ -16,30 +14,27 @@ export const Route = createFileRoute("/_authenticated/financeiro/mei")({
 function MeiPage() {
   const [ano, setAno] = useState(new Date().getFullYear());
   const [mes, setMes] = useState<number | "todos">(new Date().getMonth() + 1);
-  const [rows, setRows] = useState<Row[]>([]);
+  const [rows, setRows] = useState<UnifiedRow[]>([]);
 
   useEffect(() => {
     (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return;
-      const start = `${ano}-01-01`;
-      const end = `${ano}-12-31`;
-      const { data } = await supabase
-        .from("fluxo_caixa")
-        .select("data, tipo, valor")
-        .eq("user_id", u.user.id)
-        .gte("data", start).lte("data", end);
-      if (data) setRows(data.map((r) => ({ ...r, valor: Number(r.valor) })) as Row[]);
+      const data = await loadFinanceiroUnificado({
+        start: `${ano}-01-01`,
+        end: `${ano}-12-31`,
+      });
+      setRows(data);
     })();
   }, [ano]);
 
-  const filtered = useMemo(() => mes === "todos" ? rows : rows.filter((r) => new Date(r.data + "T00:00:00").getMonth() + 1 === mes), [rows, mes]);
+  const filtered = useMemo(
+    () => (mes === "todos" ? rows : rows.filter((r) => new Date(r.data + "T00:00:00").getMonth() + 1 === mes)),
+    [rows, mes],
+  );
   const receitas = filtered.filter((r) => r.tipo === "entrada").reduce((s, r) => s + r.valor, 0);
   const despesas = filtered.filter((r) => r.tipo === "saida").reduce((s, r) => s + r.valor, 0);
   const lucro = receitas - despesas;
   const total = receitas + despesas;
 
-  // Limite MEI 2025: R$ 81.000/ano
   const LIMITE = 81000;
   const totalAnoReceitas = rows.filter((r) => r.tipo === "entrada").reduce((s, r) => s + r.valor, 0);
   const pctLimite = Math.min(100, Math.round((totalAnoReceitas / LIMITE) * 100));
