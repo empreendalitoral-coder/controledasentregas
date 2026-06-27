@@ -1,26 +1,57 @@
-import { createFileRoute, Outlet, Link, redirect, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, FileCheck, Settings, BarChart } from "lucide-react";
+import { registrarLogAdmin } from "@/lib/admin-log";
+import { Users, FileCheck, Settings, BarChart, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) throw redirect({ to: "/auth" });
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", u.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-    if (!data) throw redirect({ to: "/" });
-  },
   component: AdminLayout,
 });
 
 function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const [status, setStatus] = useState<"checking" | "ok" | "denied">("checking");
+
+  useEffect(() => {
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) {
+        navigate({ to: "/auth" });
+        return;
+      }
+      const { data } = await supabase
+        .from("administradores")
+        .select("id")
+        .eq("user_id", u.user.id)
+        .eq("ativo", true)
+        .maybeSingle();
+      if (data) {
+        setStatus("ok");
+      } else {
+        setStatus("denied");
+        registrarLogAdmin("acesso_nao_autorizado", { rota: pathname }).catch(() => {});
+      }
+    })();
+  }, []);
+
+  if (status === "checking") {
+    return <AppShell title="Admin" back="/mais"><div className="text-center text-sm text-muted-foreground py-12">Verificando acesso…</div></AppShell>;
+  }
+  if (status === "denied") {
+    return (
+      <AppShell title="Admin" back="/mais">
+        <div className="ep-card flex flex-col items-center text-center gap-3 py-8">
+          <ShieldAlert className="size-10 text-destructive" />
+          <div className="text-lg font-bold">Acesso não autorizado.</div>
+          <div className="text-xs text-muted-foreground">Esta área é restrita aos administradores cadastrados.</div>
+          <Link to="/" className="mt-2 h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm font-semibold flex items-center">Voltar ao início</Link>
+        </div>
+      </AppShell>
+    );
+  }
 
   if (pathname === "/admin" || pathname === "/admin/") return <AdminIndex />;
 
@@ -47,8 +78,6 @@ function AdminLayout() {
     </AppShell>
   );
 }
-
-import { useEffect, useState } from "react";
 
 function AdminIndex() {
   const [stats, setStats] = useState({ usuarios: 0, premium: 0, pendentes: 0, teste: 0 });

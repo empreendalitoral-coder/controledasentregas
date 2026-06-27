@@ -50,6 +50,36 @@ export type Database = {
         }
         Relationships: []
       }
+      administradores: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          telefone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cartao_lancamentos: {
         Row: {
           cartao_id: string
@@ -313,6 +343,30 @@ export type Database = {
           valor_dia?: number | null
           valor_perdidos?: number | null
           valor_pnr?: number | null
+        }
+        Relationships: []
+      }
+      logs_admin: {
+        Row: {
+          acao: string
+          data_hora: string
+          detalhes: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          acao: string
+          data_hora?: string
+          detalhes?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          acao?: string
+          data_hora?: string
+          detalhes?: Json | null
+          id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -643,6 +697,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin_ativo: { Args: { _user_id: string }; Returns: boolean }
       is_premium_ativo: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
