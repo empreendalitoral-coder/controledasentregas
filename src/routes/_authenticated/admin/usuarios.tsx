@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Crown, Calendar } from "lucide-react";
+import { registrarLogAdmin } from "@/lib/admin-log";
 
 type UserRow = {
   id: string;
@@ -50,6 +51,7 @@ function UsuariosPage() {
       data_validade: validade,
     });
     if (error) return toast.error(error.message);
+    await registrarLogAdmin(plano === "anual" ? "renovacao_premium" : "liberacao_manual", { user_id: userId, plano, dias, validade });
     toast.success("Plano liberado");
     load();
   }
@@ -59,12 +61,14 @@ function UsuariosPage() {
     if (!d) return;
     const { error } = await supabase.from("usuarios_premium").update({ data_validade: d, ativo: true }).eq("user_id", userId);
     if (error) return toast.error(error.message);
+    await registrarLogAdmin("alteracao_validade", { user_id: userId, nova_validade: d });
     load();
   }
 
   async function desativar(userId: string) {
     if (!confirm("Desativar Premium deste usuário?")) return;
     await supabase.from("usuarios_premium").update({ ativo: false }).eq("user_id", userId);
+    await registrarLogAdmin("liberacao_manual", { user_id: userId, acao: "desativar" });
     load();
   }
 
