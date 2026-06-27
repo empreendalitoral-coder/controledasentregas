@@ -47,6 +47,9 @@ function SolicAdminPage() {
       .eq("id", s.id);
     setBusy(null);
     if (error) return toast.error(error.message);
+    await registrarLogAdmin(status === "aprovado" ? "aprovacao_premium" : "recusa_premium", {
+      solicitacao_id: s.id, user_id: s.user_id, plano: s.plano, valor: s.valor, observacao: obs,
+    });
     toast.success(status === "aprovado" ? "Premium liberado!" : "Solicitação recusada");
     load();
   }
