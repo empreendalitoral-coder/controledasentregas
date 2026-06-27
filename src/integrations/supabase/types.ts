@@ -699,6 +699,10 @@ export type Database = {
       }
       is_admin_ativo: { Args: { _user_id: string }; Returns: boolean }
       is_premium_ativo: { Args: { _user_id: string }; Returns: boolean }
+      registrar_acesso_nao_autorizado: {
+        Args: { _detalhes?: Json }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
