@@ -135,6 +135,51 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    // Ao abrir o app: revalida sessão e recarrega dados/perfil para garantir RLS atualizada.
+    (async () => {
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data } = await supabase.auth.getUser();
+        if (cancelled) return;
+        if (data.user) {
+          router.invalidate();
+          queryClient.invalidateQueries();
+        }
+      } catch (err) {
+        console.warn("[auth] revalidação inicial falhou", err);
+      }
+    })();
+
+    // Listener global para eventos de auth (SIGNED_IN, SIGNED_OUT, USER_UPDATED).
+    let unsub: (() => void) | undefined;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        if (
+          event !== "SIGNED_IN" &&
+          event !== "SIGNED_OUT" &&
+          event !== "USER_UPDATED"
+        ) {
+          return;
+        }
+        router.invalidate();
+        if (event !== "SIGNED_OUT") {
+          queryClient.invalidateQueries();
+        }
+      });
+      unsub = () => sub.subscription.unsubscribe();
+    })();
+
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
+  }, [queryClient, router]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -144,4 +189,5 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
 
