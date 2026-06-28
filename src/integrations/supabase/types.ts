@@ -690,15 +690,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
+      get_payment_info: {
+        Args: never
+        Returns: {
+          chave_pix: string
+          dias_teste_gratis: number
+          mensagem_pagamento: string
+          nome_recebedor: string
+          tipo_chave_pix: string
+          valor_anual: number
+          valor_mensal: number
+        }[]
       }
-      is_admin_ativo: { Args: { _user_id: string }; Returns: boolean }
-      is_premium_ativo: { Args: { _user_id: string }; Returns: boolean }
       registrar_acesso_nao_autorizado: {
         Args: { _detalhes?: Json }
         Returns: undefined
