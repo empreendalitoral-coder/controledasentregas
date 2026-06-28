@@ -38,15 +38,16 @@ function PremiumPage() {
   const [solicitacoes, setSolicitacoes] = useState<Solic[]>([]);
 
   useEffect(() => {
-    supabase.from("configuracoes").select("*").eq("id", 1).maybeSingle().then(({ data }) => {
-      if (data) setConfig({
-        nome_recebedor: data.nome_recebedor,
-        chave_pix: data.chave_pix,
-        tipo_chave_pix: data.tipo_chave_pix,
-        valor_mensal: Number(data.valor_mensal),
-        valor_anual: Number(data.valor_anual),
-        dias_teste_gratis: data.dias_teste_gratis,
-        mensagem_pagamento: data.mensagem_pagamento,
+    supabase.rpc("get_payment_info").then(({ data }) => {
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row) setConfig({
+        nome_recebedor: row.nome_recebedor,
+        chave_pix: row.chave_pix,
+        tipo_chave_pix: row.tipo_chave_pix,
+        valor_mensal: Number(row.valor_mensal),
+        valor_anual: Number(row.valor_anual),
+        dias_teste_gratis: row.dias_teste_gratis,
+        mensagem_pagamento: row.mensagem_pagamento,
       });
     });
     loadSolic();
