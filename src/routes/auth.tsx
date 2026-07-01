@@ -101,9 +101,14 @@ function AuthPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="inline-flex size-16 items-center justify-center rounded-2xl bg-primary/15 border border-primary/40 mb-4">
-              <Truck className="size-8 text-primary" />
-            </div>
+            <div className="mb-4 flex justify-center">
+  <div className="mb-4 flex justify-center">
+  <img
+    src="/icon-512.png"
+    alt="Entrega Pro"
+    className="w-20 h-20 rounded-2xl"
+  />
+</div>
             <h1 className="text-2xl font-bold">Entrega Pro</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {mode === "login" && "Entre na sua conta"}
