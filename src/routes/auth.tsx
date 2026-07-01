@@ -102,12 +102,12 @@ function AuthPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
   <div className="mb-4 flex justify-center">
-    <img
-      src="/icon-512.png"
-      alt="Entrega Pro"
-      className="w-20 h-20 rounded-2xl"
-    />
-  </div>
+  <img
+    src="/login-logo.png"
+    alt="Logo"
+    className="w-24 h-24 object-contain"
+  />
+</div>
 
   <h1 className="text-2xl font-bold">Entrega Pro</h1>
   <p className="text-sm text-muted-foreground mt-1">
