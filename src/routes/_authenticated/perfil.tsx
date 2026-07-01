@@ -4,7 +4,8 @@ import { Field, TextInput } from "@/components/Field";
 import { actions, useFullStore } from "@/lib/store";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
-import { Camera } from "lucide-react";
+import { Camera, AlertTriangle, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
@@ -147,6 +148,96 @@ function PerfilPage() {
           Salvar
         </button>
       </form>
+
+      <ZonaDePerigo />
     </AppShell>
+  );
+}
+
+function ZonaDePerigo() {
+  const nav = useNavigate();
+  const [aberto, setAberto] = useState(false);
+  const [confirmacao, setConfirmacao] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function excluir() {
+    if (confirmacao.trim().toUpperCase() !== "EXCLUIR") {
+      toast.error('Digite "EXCLUIR" para confirmar');
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.rpc("solicitar_exclusao_conta", {
+      _motivo: motivo.trim() || null,
+    });
+    if (error) {
+      setLoading(false);
+      toast.error(error.message);
+      return;
+    }
+    await supabase.auth.signOut();
+    toast.success("Conta marcada para exclusão. Você tem 30 dias para cancelar.");
+    nav({ to: "/auth", replace: true });
+  }
+
+  return (
+    <div className="mt-10 ep-card border-destructive/40 bg-destructive/5">
+      <div className="flex items-center gap-2 text-destructive">
+        <AlertTriangle className="size-5" />
+        <h2 className="font-semibold">Zona de perigo</h2>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Ao excluir sua conta, ela é bloqueada imediatamente e todos os seus dados
+        (lançamentos, recebimentos, cartões, PIX, backups) são apagados em
+        definitivo em até 30 dias. Você pode cancelar a exclusão dentro desse
+        prazo.
+      </p>
+
+      {!aberto ? (
+        <button
+          onClick={() => setAberto(true)}
+          className="mt-4 w-full h-11 rounded-lg border border-destructive/60 text-destructive font-medium flex items-center justify-center gap-2 hover:bg-destructive/10"
+        >
+          <Trash2 className="size-4" /> Excluir minha conta
+        </button>
+      ) : (
+        <div className="mt-4 space-y-3">
+          <Field label="Motivo (opcional, nos ajuda a melhorar)">
+            <TextInput
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              maxLength={200}
+              placeholder="Ex: não uso mais, achei outro app..."
+            />
+          </Field>
+          <Field label='Digite "EXCLUIR" para confirmar'>
+            <TextInput
+              value={confirmacao}
+              onChange={(e) => setConfirmacao(e.target.value)}
+              placeholder="EXCLUIR"
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => {
+                setAberto(false);
+                setConfirmacao("");
+                setMotivo("");
+              }}
+              className="h-11 rounded-lg bg-secondary text-foreground font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={excluir}
+              disabled={loading || confirmacao.trim().toUpperCase() !== "EXCLUIR"}
+              className="h-11 rounded-lg bg-destructive text-destructive-foreground font-semibold disabled:opacity-50"
+            >
+              {loading ? "Excluindo..." : "Confirmar exclusão"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
