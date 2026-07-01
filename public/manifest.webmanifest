@@ -1,16 +1,42 @@
 {
-  "name": "Entrega Pro",
+  "name": "Entrega Pro — Controle de Entregas",
   "short_name": "Entrega Pro",
-  "description": "Controle de entregas, recebimentos e lucro real — 100% offline.",
+  "description": "Controle profissional de entregas, combustível, recebimentos e lucro real para motoristas de entrega.",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#1a1f2e",
   "theme_color": "#1a1f2e",
   "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "finance"],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo lançamento",
+      "short_name": "Novo",
+      "url": "/lancamento/novo",
+      "description": "Registrar um novo dia de entregas"
+    },
+    {
+      "name": "Histórico",
+      "short_name": "Histórico",
+      "url": "/historico",
+      "description": "Ver seus lançamentos"
+    },
+    {
+      "name": "Gráficos",
+      "short_name": "Gráficos",
+      "url": "/graficos",
+      "description": "Analisar sua evolução"
+    }
   ]
 }

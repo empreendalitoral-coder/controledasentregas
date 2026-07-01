@@ -9,7 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as SuporteRouteImport } from './routes/suporte'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -21,6 +25,7 @@ import { Route as AuthenticatedManutencaoRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMaisRouteImport } from './routes/_authenticated/mais'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
+import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authenticated/conta-excluida'
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
@@ -34,10 +39,31 @@ import { Route as AuthenticatedFinanceiroCartoesRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
+import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuporteRoute = SuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -95,6 +121,12 @@ const AuthenticatedGraficosRoute = AuthenticatedGraficosRouteImport.update({
   path: '/graficos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedContaExcluidaRoute =
+  AuthenticatedContaExcluidaRouteImport.update({
+    id: '/conta-excluida',
+    path: '/conta-excluida',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAbastecimentosRoute =
   AuthenticatedAbastecimentosRouteImport.update({
     id: '/abastecimentos',
@@ -172,14 +204,25 @@ const AuthenticatedAdminConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const ApiPublicHooksPurgeContasRoute =
+  ApiPublicHooksPurgeContasRouteImport.update({
+    id: '/api/public/hooks/purge-contas',
+    path: '/api/public/hooks/purge-contas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
+  '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
@@ -198,13 +241,19 @@ export interface FileRoutesByFullPath {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
+  '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
@@ -224,15 +273,21 @@ export interface FileRoutesByTo {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
+  '/termos': typeof TermosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/_authenticated/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/mais': typeof AuthenticatedMaisRoute
@@ -252,16 +307,22 @@ export interface FileRoutesById {
   '/_authenticated/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/_authenticated/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/privacidade'
     | '/reset-password'
+    | '/sobre'
+    | '/suporte'
+    | '/termos'
     | '/admin'
     | '/financeiro'
     | '/abastecimentos'
+    | '/conta-excluida'
     | '/graficos'
     | '/historico'
     | '/mais'
@@ -280,13 +341,19 @@ export interface FileRouteTypes {
     | '/financeiro/metas'
     | '/financeiro/pix'
     | '/lancamento/$id'
+    | '/api/public/hooks/purge-contas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/privacidade'
     | '/reset-password'
+    | '/sobre'
+    | '/suporte'
+    | '/termos'
     | '/admin'
     | '/financeiro'
     | '/abastecimentos'
+    | '/conta-excluida'
     | '/graficos'
     | '/historico'
     | '/mais'
@@ -306,14 +373,20 @@ export interface FileRouteTypes {
     | '/financeiro/metas'
     | '/financeiro/pix'
     | '/lancamento/$id'
+    | '/api/public/hooks/purge-contas'
   id:
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/privacidade'
     | '/reset-password'
+    | '/sobre'
+    | '/suporte'
+    | '/termos'
     | '/_authenticated/admin'
     | '/_authenticated/financeiro'
     | '/_authenticated/abastecimentos'
+    | '/_authenticated/conta-excluida'
     | '/_authenticated/graficos'
     | '/_authenticated/historico'
     | '/_authenticated/mais'
@@ -333,21 +406,55 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro/metas'
     | '/_authenticated/financeiro/pix'
     | '/_authenticated/lancamento/$id'
+    | '/api/public/hooks/purge-contas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SobreRoute: typeof SobreRoute
+  SuporteRoute: typeof SuporteRoute
+  TermosRoute: typeof TermosRoute
+  ApiPublicHooksPurgeContasRoute: typeof ApiPublicHooksPurgeContasRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suporte': {
+      id: '/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof SuporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -425,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: '/graficos'
       fullPath: '/graficos'
       preLoaderRoute: typeof AuthenticatedGraficosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/conta-excluida': {
+      id: '/_authenticated/conta-excluida'
+      path: '/conta-excluida'
+      fullPath: '/conta-excluida'
+      preLoaderRoute: typeof AuthenticatedContaExcluidaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/abastecimentos': {
@@ -518,6 +632,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/public/hooks/purge-contas': {
+      id: '/api/public/hooks/purge-contas'
+      path: '/api/public/hooks/purge-contas'
+      fullPath: '/api/public/hooks/purge-contas'
+      preLoaderRoute: typeof ApiPublicHooksPurgeContasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -567,6 +688,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
+  AuthenticatedContaExcluidaRoute: typeof AuthenticatedContaExcluidaRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
@@ -584,6 +706,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFinanceiroRouteRoute:
     AuthenticatedFinanceiroRouteRouteWithChildren,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
+  AuthenticatedContaExcluidaRoute: AuthenticatedContaExcluidaRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedMaisRoute: AuthenticatedMaisRoute,
@@ -602,18 +725,13 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SobreRoute: SobreRoute,
+  SuporteRoute: SuporteRoute,
+  TermosRoute: TermosRoute,
+  ApiPublicHooksPurgeContasRoute: ApiPublicHooksPurgeContasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

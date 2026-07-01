@@ -85,6 +85,15 @@ export function AppShell({ title, children, back, right }: Props) {
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 pt-4 pb-28">
         {children}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+          <Link to="/privacidade" className="hover:text-primary">Privacidade</Link>
+          <span>·</span>
+          <Link to="/termos" className="hover:text-primary">Termos</Link>
+          <span>·</span>
+          <Link to="/sobre" className="hover:text-primary">Sobre</Link>
+          <span>·</span>
+          <Link to="/suporte" className="hover:text-primary">Suporte</Link>
+        </div>
       </main>
 
       <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
