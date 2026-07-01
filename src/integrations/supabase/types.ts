@@ -196,6 +196,39 @@ export type Database = {
         }
         Relationships: []
       }
+      contas_excluidas: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          motivo: string | null
+          purgada_em: string | null
+          purge_em: string
+          solicitado_em: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          motivo?: string | null
+          purgada_em?: string | null
+          purge_em: string
+          solicitado_em?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          motivo?: string | null
+          purgada_em?: string | null
+          purge_em?: string
+          solicitado_em?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contas_fixas: {
         Row: {
           categoria: string | null
@@ -503,6 +536,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          excluida_em: string | null
           foto: string | null
           id: string
           meta_mensal: number
@@ -517,6 +551,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email?: string | null
+          excluida_em?: string | null
           foto?: string | null
           id: string
           meta_mensal?: number
@@ -531,6 +566,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string | null
+          excluida_em?: string | null
           foto?: string | null
           id?: string
           meta_mensal?: number
@@ -690,6 +726,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancelar_exclusao_conta: { Args: never; Returns: undefined }
       get_payment_info: {
         Args: never
         Returns: {
@@ -706,6 +743,7 @@ export type Database = {
         Args: { _detalhes?: Json }
         Returns: undefined
       }
+      solicitar_exclusao_conta: { Args: { _motivo?: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
