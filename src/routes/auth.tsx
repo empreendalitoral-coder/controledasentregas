@@ -101,21 +101,21 @@ function AuthPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="mb-4 flex justify-center">
   <div className="mb-4 flex justify-center">
-  <img
-    src="/icon-512.png"
-    alt="Entrega Pro"
-    className="w-20 h-20 rounded-2xl"
-  />
+    <img
+      src="/icon-512.png"
+      alt="Entrega Pro"
+      className="w-20 h-20 rounded-2xl"
+    />
+  </div>
+
+  <h1 className="text-2xl font-bold">Entrega Pro</h1>
+  <p className="text-sm text-muted-foreground mt-1">
+    {mode === "login" && "Entre na sua conta"}
+    {mode === "signup" && "Crie sua conta — 15 dias Premium grátis"}
+    {mode === "reset" && "Recupere seu acesso"}
+  </p>
 </div>
-            <h1 className="text-2xl font-bold">Entrega Pro</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {mode === "login" && "Entre na sua conta"}
-              {mode === "signup" && "Crie sua conta — 15 dias Premium grátis"}
-              {mode === "reset" && "Recupere seu acesso"}
-            </p>
-          </div>
 
           {mode !== "reset" && (
             <div className="grid grid-cols-2 gap-2 mb-5 p-1 rounded-lg bg-secondary/50">
