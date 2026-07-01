@@ -168,7 +168,7 @@ function ZonaDePerigo() {
     }
     setLoading(true);
     const { error } = await supabase.rpc("solicitar_exclusao_conta", {
-      _motivo: motivo.trim() || null,
+      _motivo: motivo.trim() || undefined,
     });
     if (error) {
       setLoading(false);
