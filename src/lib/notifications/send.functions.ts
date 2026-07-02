@@ -77,11 +77,14 @@ export const listNotificationSettings = createServerFn({ method: "GET" })
         .order("ultimo_uso", { ascending: false }),
     ]);
 
-    // Descobre se é admin para filtrar tipos apenas_admin
-    const { data: isAdmin } = await admin.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
+    // Descobre se é admin para filtrar tipos apenas_admin (service role bypassa RLS)
+    const { data: adminRow } = await admin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    const isAdmin = Boolean(adminRow);
 
     const prefMap = new Map((prefRes.data ?? []).map((p) => [p.tipo_codigo, p.ativo]));
     const tipos = (tiposRes.data ?? [])
