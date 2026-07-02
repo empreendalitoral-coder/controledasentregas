@@ -270,13 +270,15 @@ export const dispatchNotificationFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const admin = await loadAdmin();
-    // Autoriza: dono OU admin
+    // Autoriza: dono OU admin (service role bypassa RLS)
     if (data.userId !== context.userId) {
-      const { data: isAdmin } = await admin.rpc("has_role", {
-        _user_id: context.userId,
-        _role: "admin",
-      });
-      if (!isAdmin) throw new Error("forbidden");
+      const { data: adminRow } = await admin
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", context.userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!adminRow) throw new Error("forbidden");
     }
     return dispatchNotification(admin, data);
   });
