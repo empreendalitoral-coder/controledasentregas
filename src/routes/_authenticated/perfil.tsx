@@ -149,6 +149,17 @@ function PerfilPage() {
         </button>
       </form>
 
+      <a
+        href="/perfil/notificacoes"
+        className="mt-4 flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border"
+      >
+        <div>
+          <div className="font-medium text-sm">Notificações</div>
+          <div className="text-xs text-muted-foreground">Ativar/desativar avisos e dispositivos</div>
+        </div>
+        <span className="text-muted-foreground">›</span>
+      </a>
+
       <ZonaDePerigo />
     </AppShell>
   );
