@@ -50,6 +50,21 @@ function SolicAdminPage() {
     await registrarLogAdmin(status === "aprovado" ? "aprovacao_premium" : "recusa_premium", {
       solicitacao_id: s.id, user_id: s.user_id, plano: s.plano, valor: s.valor, observacao: obs,
     });
+    if (status === "aprovado") {
+      try {
+        const { dispatchNotificationFn } = await import("@/lib/notifications/send.functions");
+        await dispatchNotificationFn({
+          data: {
+            userId: s.user_id,
+            tipoCodigo: "pix_aprovado",
+            contexto: { plano: s.plano, valor: s.valor },
+            dedupKey: `pix_aprovado:${s.id}`,
+          },
+        });
+      } catch (e) {
+        console.warn("[notif pix_aprovado] falhou", e);
+      }
+    }
     toast.success(status === "aprovado" ? "Premium liberado!" : "Solicitação recusada");
     load();
   }
