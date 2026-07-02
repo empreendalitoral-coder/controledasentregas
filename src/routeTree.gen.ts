@@ -29,6 +29,7 @@ import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authen
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedPerfilNotificacoesRouteImport } from './routes/_authenticated/perfil/notificacoes'
 import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
 import { Route as AuthenticatedFinanceiroPixRouteImport } from './routes/_authenticated/financeiro/pix'
 import { Route as AuthenticatedFinanceiroMetasRouteImport } from './routes/_authenticated/financeiro/metas'
@@ -40,6 +41,7 @@ import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
+import { Route as ApiPublicHooksNotificacoesDiariasRouteImport } from './routes/api/public/hooks/notificacoes-diarias'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -144,6 +146,12 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPerfilNotificacoesRoute =
+  AuthenticatedPerfilNotificacoesRouteImport.update({
+    id: '/notificacoes',
+    path: '/notificacoes',
+    getParentRoute: () => AuthenticatedPerfilRoute,
+  } as any)
 const AuthenticatedLancamentoIdRoute =
   AuthenticatedLancamentoIdRouteImport.update({
     id: '/lancamento/$id',
@@ -210,6 +218,12 @@ const ApiPublicHooksPurgeContasRoute =
     path: '/api/public/hooks/purge-contas',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksNotificacoesDiariasRoute =
+  ApiPublicHooksNotificacoesDiariasRouteImport.update({
+    id: '/api/public/hooks/notificacoes-diarias',
+    path: '/api/public/hooks/notificacoes-diarias',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -227,7 +241,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
-  '/perfil': typeof AuthenticatedPerfilRoute
+  '/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
@@ -241,6 +255,8 @@ export interface FileRoutesByFullPath {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRoutesByTo {
@@ -258,7 +274,7 @@ export interface FileRoutesByTo {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
-  '/perfil': typeof AuthenticatedPerfilRoute
+  '/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
@@ -273,6 +289,8 @@ export interface FileRoutesByTo {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRoutesById {
@@ -292,7 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/mais': typeof AuthenticatedMaisRoute
   '/_authenticated/manutencao': typeof AuthenticatedManutencaoRoute
-  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
@@ -307,6 +325,8 @@ export interface FileRoutesById {
   '/_authenticated/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/_authenticated/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
+  '/_authenticated/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
 export interface FileRouteTypes {
@@ -341,6 +361,8 @@ export interface FileRouteTypes {
     | '/financeiro/metas'
     | '/financeiro/pix'
     | '/lancamento/$id'
+    | '/perfil/notificacoes'
+    | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -373,6 +395,8 @@ export interface FileRouteTypes {
     | '/financeiro/metas'
     | '/financeiro/pix'
     | '/lancamento/$id'
+    | '/perfil/notificacoes'
+    | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   id:
     | '__root__'
@@ -406,6 +430,8 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro/metas'
     | '/_authenticated/financeiro/pix'
     | '/_authenticated/lancamento/$id'
+    | '/_authenticated/perfil/notificacoes'
+    | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesById: FileRoutesById
 }
@@ -417,6 +443,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
+  ApiPublicHooksNotificacoesDiariasRoute: typeof ApiPublicHooksNotificacoesDiariasRoute
   ApiPublicHooksPurgeContasRoute: typeof ApiPublicHooksPurgeContasRoute
 }
 
@@ -562,6 +589,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/perfil/notificacoes': {
+      id: '/_authenticated/perfil/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/perfil/notificacoes'
+      preLoaderRoute: typeof AuthenticatedPerfilNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedPerfilRoute
+    }
     '/_authenticated/lancamento/$id': {
       id: '/_authenticated/lancamento/$id'
       path: '/lancamento/$id'
@@ -639,6 +673,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksPurgeContasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/notificacoes-diarias': {
+      id: '/api/public/hooks/notificacoes-diarias'
+      path: '/api/public/hooks/notificacoes-diarias'
+      fullPath: '/api/public/hooks/notificacoes-diarias'
+      preLoaderRoute: typeof ApiPublicHooksNotificacoesDiariasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -684,6 +725,17 @@ const AuthenticatedFinanceiroRouteRouteWithChildren =
     AuthenticatedFinanceiroRouteRouteChildren,
   )
 
+interface AuthenticatedPerfilRouteChildren {
+  AuthenticatedPerfilNotificacoesRoute: typeof AuthenticatedPerfilNotificacoesRoute
+}
+
+const AuthenticatedPerfilRouteChildren: AuthenticatedPerfilRouteChildren = {
+  AuthenticatedPerfilNotificacoesRoute: AuthenticatedPerfilNotificacoesRoute,
+}
+
+const AuthenticatedPerfilRouteWithChildren =
+  AuthenticatedPerfilRoute._addFileChildren(AuthenticatedPerfilRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
@@ -693,7 +745,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
   AuthenticatedManutencaoRoute: typeof AuthenticatedManutencaoRoute
-  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRouteWithChildren
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedRecebimentosRoute: typeof AuthenticatedRecebimentosRoute
   AuthenticatedResumoRoute: typeof AuthenticatedResumoRoute
@@ -711,7 +763,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedMaisRoute: AuthenticatedMaisRoute,
   AuthenticatedManutencaoRoute: AuthenticatedManutencaoRoute,
-  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRouteWithChildren,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedRecebimentosRoute: AuthenticatedRecebimentosRoute,
   AuthenticatedResumoRoute: AuthenticatedResumoRoute,
@@ -730,6 +782,8 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
+  ApiPublicHooksNotificacoesDiariasRoute:
+    ApiPublicHooksNotificacoesDiariasRoute,
   ApiPublicHooksPurgeContasRoute: ApiPublicHooksPurgeContasRoute,
 }
 export const routeTree = rootRouteImport
