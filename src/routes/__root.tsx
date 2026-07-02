@@ -175,6 +175,16 @@ function RootComponent() {
       unsub = () => sub.subscription.unsubscribe();
     })();
 
+    // Bootstrap push notifications (Capacitor nativo; no-op no navegador).
+    (async () => {
+      try {
+        const { initPushNotifications } = await import("@/lib/push.client");
+        await initPushNotifications();
+      } catch (e) {
+        console.warn("[push] init falhou", e);
+      }
+    })();
+
     return () => {
       cancelled = true;
       unsub?.();
