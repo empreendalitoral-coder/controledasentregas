@@ -145,7 +145,9 @@ export async function sendFcmMessage(payload: FcmPayload): Promise<FcmSendResult
       body.includes("UNREGISTERED") ||
       body.includes("INVALID_ARGUMENT") ||
       body.includes("registration-token-not-registered");
-    return { ok: false, invalidToken: invalid, error: `${res.status} ${body.slice(0, 300)}` };
+    return invalid
+      ? { ok: false, invalidToken: true, error: `${res.status} ${body.slice(0, 300)}` }
+      : { ok: false, error: `${res.status} ${body.slice(0, 300)}` };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
