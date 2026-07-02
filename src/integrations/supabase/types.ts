@@ -472,6 +472,137 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_envios: {
+        Row: {
+          chave_dedup: string
+          corpo: string | null
+          enviado_em: string
+          erro: string | null
+          id: string
+          sucesso: boolean
+          tipo_codigo: string
+          titulo: string | null
+          user_id: string
+        }
+        Insert: {
+          chave_dedup: string
+          corpo?: string | null
+          enviado_em?: string
+          erro?: string | null
+          id?: string
+          sucesso?: boolean
+          tipo_codigo: string
+          titulo?: string | null
+          user_id: string
+        }
+        Update: {
+          chave_dedup?: string
+          corpo?: string | null
+          enviado_em?: string
+          erro?: string | null
+          id?: string
+          sucesso?: boolean
+          tipo_codigo?: string
+          titulo?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_preferencias: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          tipo_codigo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          tipo_codigo: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          tipo_codigo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferencias_tipo_codigo_fkey"
+            columns: ["tipo_codigo"]
+            isOneToOne: false
+            referencedRelation: "notification_tipos"
+            referencedColumns: ["codigo"]
+          },
+        ]
+      }
+      notification_tipos: {
+        Row: {
+          apenas_admin: boolean
+          categoria: string
+          codigo: string
+          created_at: string
+          descricao: string
+          disponivel: boolean
+          padrao_ativo: boolean
+          titulo: string
+        }
+        Insert: {
+          apenas_admin?: boolean
+          categoria: string
+          codigo: string
+          created_at?: string
+          descricao: string
+          disponivel?: boolean
+          padrao_ativo?: boolean
+          titulo: string
+        }
+        Update: {
+          apenas_admin?: boolean
+          categoria?: string
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          disponivel?: boolean
+          padrao_ativo?: boolean
+          titulo?: string
+        }
+        Relationships: []
+      }
+      notification_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          plataforma: string
+          token: string
+          ultimo_uso: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plataforma: string
+          token: string
+          ultimo_uso?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plataforma?: string
+          token?: string
+          ultimo_uso?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pix_enviados: {
         Row: {
           created_at: string
