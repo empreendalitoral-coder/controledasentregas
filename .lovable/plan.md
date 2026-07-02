@@ -1,95 +1,139 @@
 
-# Entrega Pro — Roteiro para Play Store
+# Fase 2 — Push Notifications (FCM + Capacitor)
 
-Você escolheu começar por **Conteúdo Legal Play Store**, empacotar via **PWA Builder**, **soft delete 30 dias** e **push real (FCM)**. Vou dividir em fases pequenas para não quebrar o que já funciona. Cada fase é um turno separado — você aprova a Fase 1 agora e seguimos.
+Estrutura modular escalável para push notifications no Android nativo, com preferências por usuário e agendamento via cron.
 
----
+## O que você faz (Firebase — passo a passo)
 
-## Fase 1 — Conteúdo legal + Exclusão de conta + PWA de qualidade (AGORA)
+Antes de eu implementar qualquer coisa do lado servidor, você precisa criar o projeto no Firebase Console:
 
-Meta: cumprir requisitos da Play Store sem tocar em bugs de cálculo.
+1. Acesse https://console.firebase.google.com/ → **Adicionar projeto** → nome: `Entrega Pro`.
+2. Desabilite Google Analytics (não precisamos).
+3. No projeto criado → **Adicionar app** → ícone Android:
+   - Package name: `app.entregapro.mobile` (exatamente esse — vai bater com o Capacitor)
+   - Apelido: `Entrega Pro Android`
+   - Baixe o **`google-services.json`** e me envie
+4. Ainda no projeto → ícone de engrenagem → **Configurações do projeto** → aba **Contas de serviço** → **Gerar nova chave privada** → baixa um `.json`. Me envie esse arquivo (é o **Service Account JSON**, usado pela API HTTP v1).
+5. VAPID key **não é necessária** porque não vamos usar Web Push agora — só Android nativo.
 
-**Páginas públicas novas** (fora de `_authenticated`, indexáveis, com `head()` próprio):
-- `/privacidade` — Política de Privacidade completa (LGPD): dados coletados, finalidade, armazenamento (Lovable Cloud), segurança, direitos do titular, exclusão, contato.
-- `/termos` — Termos de Uso: responsabilidades, Premium (R$ 3,90/mês, R$ 24,90/ano), assinatura, cancelamento, limitação.
-- `/sobre` — versão do app, changelog curto, tecnologias, contato/suporte, licenças open-source.
-- `/suporte` — e-mail de contato + WhatsApp opcional + FAQ curto.
+Assim que você me mandar o Service Account JSON, eu salvo no secret `FIREBASE_SERVICE_ACCOUNT_JSON`. O `google-services.json` vai no repositório em `android/app/`.
 
-**Exclusão de conta (soft delete + purge 30 dias)**:
-- Nova tabela `contas_excluidas (user_id, solicitado_em, purge_em, motivo)` com RLS.
-- Coluna `excluida_em` em `profiles`.
-- Server function `solicitarExclusaoConta`: marca `profiles.excluida_em = now()`, insere em `contas_excluidas` com `purge_em = now() + 30d`, faz `supabase.auth.signOut()`.
-- Server function `cancelarExclusaoConta`: se dentro dos 30d, remove marcação.
-- Gate no `_authenticated/route.tsx`: se `profiles.excluida_em` estiver setado, redireciona para tela "Conta em exclusão — cancelar?".
-- Cron `pg_cron` diário chamando rota pública `/api/public/hooks/purge-contas`: apaga dados do usuário (todas as tabelas dele) + `auth.admin.deleteUser` via `supabaseAdmin`. Autenticado por `apikey` header (padrão Lovable).
-- Nova tela em `/perfil` → "Zona de perigo" → botão "Excluir minha conta" com confirmação por texto ("EXCLUIR").
+## O que eu faço (implementação)
 
-**PWA pronto para PWA Builder**:
-- Revisar `public/manifest.webmanifest`: `name`, `short_name`, `description`, `id`, `start_url`, `scope`, `display: standalone`, `theme_color`, `background_color`, `categories`, `screenshots` (2 mobile), `icons` (192, 512, + maskable 512).
-- Gerar screenshots reais do dashboard e histórico via Playwright, salvar em `public/screenshots/`.
-- Gerar ícone maskable 512 se faltar.
-- Adicionar service worker via `vite-plugin-pwa` com registro guardado (só em produção, fora de iframe/preview) — conforme a skill PWA. Excluir `/~oauth` e `/api/public/*` do cache. `NetworkFirst` para navegações.
+### 1. Banco de dados (migração)
 
-**Links de rodapé**: adicionar `Privacidade · Termos · Sobre · Suporte` no `AppShell` (rodapé discreto) e no `/auth` (obrigatório para Play Store).
+Tabelas novas em `public`:
 
-**Head metadata**: `og:title`/`og:description`/`twitter:card` por rota pública, para as páginas legais terem preview decente.
+- **`notification_tipos`** — catálogo dos tipos de notificação. Colunas: `codigo` (PK, ex: `recebimento_proximo`), `titulo`, `descricao`, `categoria` (`operacional`|`financeiro`|`premium`|`admin`|`resumo`), `padrao_ativo` (bool), `apenas_admin` (bool). Pré-populada com os 12 tipos (5 iniciais + 7 futuros).
+- **`notification_tokens`** — device tokens FCM por usuário. Colunas: `user_id`, `token` (unique), `plataforma` (`android`|`ios`|`web`), `ultimo_uso`.
+- **`notification_preferencias`** — on/off por usuário e por tipo. Colunas: `user_id`, `tipo_codigo`, `ativo`. Default segue `notification_tipos.padrao_ativo`.
+- **`notification_envios`** — log de envios (deduplicação + auditoria). Colunas: `user_id`, `tipo_codigo`, `chave_dedup` (ex: `recebimento:<id>`), `enviado_em`, `sucesso`, `erro`. Unique em (`user_id`, `chave_dedup`) evita reenviar a mesma notificação.
 
-Entregável Fase 1: você já pode subir a URL publicada no pwabuilder.com e gerar o `.aab` funcional, com todas as páginas exigidas pela Play Store.
+Todas com RLS: usuário lê/edita só o próprio; `notification_tipos` público para leitura autenticada.
 
----
+### 2. Secret e cliente FCM
 
-## Fase 2 — Push notifications (FCM) [próximo turno]
+- Adiciono o secret `FIREBASE_SERVICE_ACCOUNT_JSON` quando você me enviar o arquivo.
+- Crio `src/lib/fcm.server.ts` que: gera OAuth2 access token via JWT assinado (RS256) usando o service account, chama `https://fcm.googleapis.com/v1/projects/{projectId}/messages:send`. Cache do token em memória (validade 1h).
 
-Não cabe junto com Fase 1 sem risco. O que envolve:
-- Você cria projeto no Firebase Console e me dá 5 valores (`apiKey`, `authDomain`, `projectId`, `messagingSenderId`, `appId`, `vapidKey`) — vou pedir com o fluxo `add_secret` na hora certa.
-- Você me passa o arquivo `service-account.json` do FCM para eu salvar como secret `FCM_SERVICE_ACCOUNT`.
-- Implemento:
-  - `public/firebase-messaging-sw.js` (worker separado, não conflita com o SW do PWA).
-  - Init do Firebase Messaging em client, pedido de permissão em `/perfil`.
-  - Tabela `push_tokens (user_id, token, plataforma, ativo)` com RLS.
-  - Server function `registrarPushToken`.
-  - Rota `/api/public/hooks/enviar-notificacoes` chamada por `pg_cron` (diário 8h e 20h): varre `recebimentos` próximos (3 dias), metas atingidas, premium vencendo em 3 dias, e envia via FCM HTTP v1.
-  - Preferências por tipo em `profiles` (opt-in por categoria).
+### 3. Registry modular de notificações
 
----
+`src/lib/notifications/registry.server.ts` — cada tipo é um módulo com:
 
-## Fase 3 — Bugs de sincronização em tempo real [depois]
+```ts
+{
+  codigo: 'recebimento_proximo',
+  titulo: (ctx) => `Recebimento amanhã: R$ ${ctx.valor}`,
+  corpo: (ctx) => `${ctx.origem} vence em 1 dia`,
+  dedupKey: (ctx) => `recebimento:${ctx.id}`,
+  scan: async (supabaseAdmin) => [...eventos] // opcional: só para tipos agendados
+}
+```
 
-Não misturo com Fase 1. Aqui trato:
-- Store unificar via React Query com invalidação após create/update/delete em: lançamentos, combustível, manutenção, recebimentos, PIX, cartões, contas fixas.
-- Dashboard, Gráficos, Histórico, Resumo, MEI e Fluxo passam a consumir os mesmos `queryKey`s.
-- Realtime opcional (Supabase channel) em `lancamentos` e `recebimentos` para atualizar entre abas/dispositivos.
+Adicionar um tipo novo = criar 1 arquivo e registrar. Zero mudança na arquitetura.
 
-## Fase 4 — Perfil completo + PDF pro + Backup validado
+Tipos implementados agora:
+- `recebimento_proximo` (scan diário, D-1)
+- `meta_atingida` (disparado por trigger DB quando `progresso >= 100%`)
+- `premium_vencendo` (scan diário, D-7)
+- `pix_aprovado` (disparado quando admin aprova solicitação)
+- `nova_solicitacao_premium` (disparado no INSERT, envia só para admins)
 
-- Perfil: foto (bucket `avatars` público), telefone, transportadora, modelo, placa, cidade, estado, meta mensal. Salvamento auto (debounce).
-- Relatório PDF via `@react-pdf/renderer` ou `pdf-lib`: cabeçalho com logo + nome + placa + mês, blocos de bruto/líquido/lucro real, tabela de dias, totais.
-- Backup: exportar JSON versionado (`schema_version`), importar com validação zod, dry-run mostrando diffs.
+Tipos catalogados (padrão desativado) para uso futuro:
+- `lembrete_entregas_dia`, `lembrete_abastecimento`, `pagamento_atrasado`, `resumo_diario`, `resumo_semanal`, `meta_mensal`, `app_update`.
 
-## Fase 5 — QA final + hardening + publicação
+### 4. Server function `enviarNotificacao`
 
-- Testes E2E via Playwright: 20 lançamentos, editar, excluir, importar, exportar, contas, combustível, manutenção, recebimentos, conferência dos totais.
-- Rodar `security--run_security_scan` e `supabase--linter`, corrigir tudo.
-- `preview_ui--publish`.
-- Guia passo a passo para PWA Builder → Play Console (data safety, categorização, screenshots, ícone 512, política de privacidade URL).
+`src/lib/notifications/send.functions.ts`:
+- Recebe `{ userId, tipoCodigo, contexto, dedupKey }`
+- Verifica preferência do usuário (respeita opt-out)
+- Verifica dedup em `notification_envios`
+- Busca tokens do usuário
+- Renderiza título/corpo pelo registry
+- Envia via FCM HTTP v1 (paralelo por token; remove tokens inválidos)
+- Grava resultado em `notification_envios`
 
----
+### 5. Endpoint de cron diário
 
-## Detalhes técnicos (Fase 1)
+`src/routes/api/public/hooks/notificacoes-diarias.ts` (protegido por `apikey`):
+- Percorre todos os tipos do registry que têm `scan()`
+- Para cada evento retornado, chama `enviarNotificacao`
+- Job `pg_cron` roda todo dia 08:00 BRT
 
-- Rotas legais: `src/routes/privacidade.tsx`, `termos.tsx`, `sobre.tsx`, `suporte.tsx` — todas com `head()` completo (title, description, og:*).
-- Migration cria `contas_excluidas` com GRANTs para `authenticated`/`service_role`, RLS `user_id = auth.uid()`, e coluna `profiles.excluida_em`.
-- Cron via `standard_connectors` não é necessário; uso `pg_cron` + `pg_net` chamando `/api/public/hooks/purge-contas` com header `apikey`.
-- PWA: `vite-plugin-pwa` com `registerType: "autoUpdate"`, `injectRegister: null`, wrapper de registro guardando iframe/preview/`?sw=off`, kill-switch já contemplado pela skill.
-- Screenshots reais gerados com Playwright em viewport 360x780, salvos como `public/screenshots/dashboard.png` e `historico.png` e referenciados no manifest com `form_factor: "narrow"`.
+### 6. Triggers realtime (DB)
 
-## O que NÃO faço na Fase 1
+- Trigger `AFTER UPDATE ON solicitacoes_premium` — quando `status='aprovado'`, chama endpoint que envia `pix_aprovado` ao dono.
+- Trigger `AFTER INSERT ON solicitacoes_premium` — envia `nova_solicitacao_premium` para todos os admins.
+- Trigger `AFTER UPDATE ON metas_financeiras` — quando progresso cruza 100%, envia `meta_atingida`.
 
-- Não mexo em cálculos de dashboard/gráficos (fica para Fase 3).
-- Não instalo Firebase ainda (Fase 2).
-- Não regenero o PDF de relatório (Fase 4).
-- Não publico automaticamente — publico só quando você pedir.
+Alternativa mais simples e sem `pg_net` extra: essas notificações "instantâneas" chamadas do próprio código do app (aprovar solicitação já é um server fn → chama `enviarNotificacao` inline). Vou por essa via — mais confiável e menos superfície de erro.
 
----
+### 7. Capacitor Android
 
-Confirma a Fase 1 assim? Se sim, executo já: migration da exclusão de conta + 4 páginas legais + PWA pronto para o PWA Builder + rodapé com links + tela "Excluir minha conta".
+- Instalo: `@capacitor/core`, `@capacitor/cli`, `@capacitor/android`, `@capacitor/push-notifications`.
+- Crio `capacitor.config.ts` com `appId: app.entregapro.mobile`, `webDir: dist`.
+- Adiciono `android/` (build inicial). Você depois roda `bunx cap sync android` e abre no Android Studio para gerar o `.aab`.
+- `src/lib/push.client.ts`: pede permissão, obtém token FCM, registra em `notification_tokens` (via server fn), listener `pushNotificationReceived`.
+- Guardado com `Capacitor.isNativePlatform()` — no navegador não roda.
+
+### 8. UI de preferências
+
+Nova rota `_authenticated/perfil/notificacoes.tsx`:
+- Lista tipos agrupados por categoria com Switch por tipo
+- Card "Dispositivos conectados" (lista tokens registrados, permite remover)
+- Grava preferências em `notification_preferencias`
+
+Link na página `/perfil` existente.
+
+## Arquivos criados/alterados
+
+**Novos:**
+- `supabase/migrations/*_notifications.sql`
+- `src/lib/fcm.server.ts`
+- `src/lib/notifications/registry.server.ts`
+- `src/lib/notifications/tipos/*.ts` (um por tipo)
+- `src/lib/notifications/send.functions.ts`
+- `src/lib/notifications/preferences.functions.ts`
+- `src/lib/push.client.ts`
+- `src/routes/api/public/hooks/notificacoes-diarias.ts`
+- `src/routes/_authenticated/perfil/notificacoes.tsx`
+- `capacitor.config.ts`, `android/*` (via `bunx cap add android`)
+
+**Alterados:**
+- `src/routes/__root.tsx` — registra push no mount (só Capacitor nativo)
+- `src/routes/_authenticated/admin/solicitacoes.tsx` — chama `enviarNotificacao` ao aprovar
+- `src/routes/_authenticated/perfil.tsx` — link para notificações
+
+## Ordem de execução
+
+1. **Agora (sem depender de você):** migração de tabelas + registry + server fn `enviarNotificacao` + UI de preferências + endpoint cron + Capacitor scaffold. O envio real fica no-op enquanto o secret não existir (log "FCM não configurado").
+2. **Quando você me mandar o Service Account JSON:** salvo o secret e o envio passa a funcionar. Sem novo turno de código.
+3. **Quando você me mandar o `google-services.json`:** coloco em `android/app/` e o build Android fica pronto para você gerar o `.aab`.
+
+## Fora do escopo desta fase
+
+- Publicação na Play Store (Store listing, screenshots, política) — Fase 3.
+- iOS/APNs — não solicitado.
+- Web Push — descartado conforme sua escolha.
+
+Confirma que posso começar pelo passo 1?
