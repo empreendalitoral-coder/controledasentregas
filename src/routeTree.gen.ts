@@ -42,6 +42,9 @@ import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
 import { Route as ApiPublicHooksNotificacoesDiariasRouteImport } from './routes/api/public/hooks/notificacoes-diarias'
+import { Route as AuthenticatedPerfilNotificacoesTesteRouteImport } from './routes/_authenticated/perfil/notificacoes.teste'
+import { Route as AuthenticatedPerfilNotificacoesLogsRouteImport } from './routes/_authenticated/perfil/notificacoes.logs'
+import { Route as AuthenticatedPerfilNotificacoesDiagnosticoRouteImport } from './routes/_authenticated/perfil/notificacoes.diagnostico'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -224,6 +227,24 @@ const ApiPublicHooksNotificacoesDiariasRoute =
     path: '/api/public/hooks/notificacoes-diarias',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedPerfilNotificacoesTesteRoute =
+  AuthenticatedPerfilNotificacoesTesteRouteImport.update({
+    id: '/teste',
+    path: '/teste',
+    getParentRoute: () => AuthenticatedPerfilNotificacoesRoute,
+  } as any)
+const AuthenticatedPerfilNotificacoesLogsRoute =
+  AuthenticatedPerfilNotificacoesLogsRouteImport.update({
+    id: '/logs',
+    path: '/logs',
+    getParentRoute: () => AuthenticatedPerfilNotificacoesRoute,
+  } as any)
+const AuthenticatedPerfilNotificacoesDiagnosticoRoute =
+  AuthenticatedPerfilNotificacoesDiagnosticoRouteImport.update({
+    id: '/diagnostico',
+    path: '/diagnostico',
+    getParentRoute: () => AuthenticatedPerfilNotificacoesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -255,7 +276,10 @@ export interface FileRoutesByFullPath {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
-  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
+  '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
+  '/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
+  '/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -289,7 +313,10 @@ export interface FileRoutesByTo {
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
-  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
+  '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
+  '/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
+  '/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -325,7 +352,10 @@ export interface FileRoutesById {
   '/_authenticated/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/_authenticated/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
   '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
-  '/_authenticated/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRoute
+  '/_authenticated/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
+  '/_authenticated/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
+  '/_authenticated/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
+  '/_authenticated/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -362,6 +392,9 @@ export interface FileRouteTypes {
     | '/financeiro/pix'
     | '/lancamento/$id'
     | '/perfil/notificacoes'
+    | '/perfil/notificacoes/diagnostico'
+    | '/perfil/notificacoes/logs'
+    | '/perfil/notificacoes/teste'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesByTo: FileRoutesByTo
@@ -396,6 +429,9 @@ export interface FileRouteTypes {
     | '/financeiro/pix'
     | '/lancamento/$id'
     | '/perfil/notificacoes'
+    | '/perfil/notificacoes/diagnostico'
+    | '/perfil/notificacoes/logs'
+    | '/perfil/notificacoes/teste'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   id:
@@ -431,6 +467,9 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro/pix'
     | '/_authenticated/lancamento/$id'
     | '/_authenticated/perfil/notificacoes'
+    | '/_authenticated/perfil/notificacoes/diagnostico'
+    | '/_authenticated/perfil/notificacoes/logs'
+    | '/_authenticated/perfil/notificacoes/teste'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesById: FileRoutesById
@@ -680,6 +719,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotificacoesDiariasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/perfil/notificacoes/teste': {
+      id: '/_authenticated/perfil/notificacoes/teste'
+      path: '/teste'
+      fullPath: '/perfil/notificacoes/teste'
+      preLoaderRoute: typeof AuthenticatedPerfilNotificacoesTesteRouteImport
+      parentRoute: typeof AuthenticatedPerfilNotificacoesRoute
+    }
+    '/_authenticated/perfil/notificacoes/logs': {
+      id: '/_authenticated/perfil/notificacoes/logs'
+      path: '/logs'
+      fullPath: '/perfil/notificacoes/logs'
+      preLoaderRoute: typeof AuthenticatedPerfilNotificacoesLogsRouteImport
+      parentRoute: typeof AuthenticatedPerfilNotificacoesRoute
+    }
+    '/_authenticated/perfil/notificacoes/diagnostico': {
+      id: '/_authenticated/perfil/notificacoes/diagnostico'
+      path: '/diagnostico'
+      fullPath: '/perfil/notificacoes/diagnostico'
+      preLoaderRoute: typeof AuthenticatedPerfilNotificacoesDiagnosticoRouteImport
+      parentRoute: typeof AuthenticatedPerfilNotificacoesRoute
+    }
   }
 }
 
@@ -725,12 +785,34 @@ const AuthenticatedFinanceiroRouteRouteWithChildren =
     AuthenticatedFinanceiroRouteRouteChildren,
   )
 
+interface AuthenticatedPerfilNotificacoesRouteChildren {
+  AuthenticatedPerfilNotificacoesDiagnosticoRoute: typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
+  AuthenticatedPerfilNotificacoesLogsRoute: typeof AuthenticatedPerfilNotificacoesLogsRoute
+  AuthenticatedPerfilNotificacoesTesteRoute: typeof AuthenticatedPerfilNotificacoesTesteRoute
+}
+
+const AuthenticatedPerfilNotificacoesRouteChildren: AuthenticatedPerfilNotificacoesRouteChildren =
+  {
+    AuthenticatedPerfilNotificacoesDiagnosticoRoute:
+      AuthenticatedPerfilNotificacoesDiagnosticoRoute,
+    AuthenticatedPerfilNotificacoesLogsRoute:
+      AuthenticatedPerfilNotificacoesLogsRoute,
+    AuthenticatedPerfilNotificacoesTesteRoute:
+      AuthenticatedPerfilNotificacoesTesteRoute,
+  }
+
+const AuthenticatedPerfilNotificacoesRouteWithChildren =
+  AuthenticatedPerfilNotificacoesRoute._addFileChildren(
+    AuthenticatedPerfilNotificacoesRouteChildren,
+  )
+
 interface AuthenticatedPerfilRouteChildren {
-  AuthenticatedPerfilNotificacoesRoute: typeof AuthenticatedPerfilNotificacoesRoute
+  AuthenticatedPerfilNotificacoesRoute: typeof AuthenticatedPerfilNotificacoesRouteWithChildren
 }
 
 const AuthenticatedPerfilRouteChildren: AuthenticatedPerfilRouteChildren = {
-  AuthenticatedPerfilNotificacoesRoute: AuthenticatedPerfilNotificacoesRoute,
+  AuthenticatedPerfilNotificacoesRoute:
+    AuthenticatedPerfilNotificacoesRouteWithChildren,
 }
 
 const AuthenticatedPerfilRouteWithChildren =
