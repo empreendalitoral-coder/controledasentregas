@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
@@ -7,9 +7,10 @@ import {
   updateNotificationPreference,
   removeDeviceById,
 } from "@/lib/notifications/send.functions";
+import { getPushStatus, subscribePushStatus, type PushStatus } from "@/lib/push-notifications";
 import { toast } from "sonner";
-import { Bell, Smartphone, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Bell, Smartphone, Trash2, FileText, Send, Activity, CheckCircle2, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
   head: () => ({
@@ -41,6 +42,8 @@ function NotifPrefsPage() {
   });
 
   const [busy, setBusy] = useState<string | null>(null);
+  const [push, setPush] = useState<PushStatus>(getPushStatus());
+  useEffect(() => subscribePushStatus(setPush), []);
 
   async function toggle(codigo: string, ativo: boolean) {
     setBusy(codigo);
@@ -86,6 +89,79 @@ function NotifPrefsPage() {
           <p className="text-xs text-muted-foreground">
             Ative apenas as notificações que você quer receber. Você pode alterar a qualquer momento.
           </p>
+        </div>
+
+        <div className="ep-card">
+          <div className="flex items-center gap-2 mb-3">
+            <Activity className="size-5 text-primary" />
+            <h2 className="font-semibold">Estado deste dispositivo</h2>
+          </div>
+          <ul className="text-sm space-y-2">
+            <li className="flex items-start gap-2">
+              {push.token ? <CheckCircle2 className="size-4 text-green-500 mt-0.5" /> : <XCircle className="size-4 text-destructive mt-0.5" />}
+              <div className="flex-1 min-w-0">
+                <div>Token FCM registrado</div>
+                <div className="text-xs text-muted-foreground break-all">
+                  {push.token ? `${push.token.slice(0, 40)}…` : "Sem token — abra pelo app Android"}
+                </div>
+              </div>
+            </li>
+            <li className="flex items-center gap-2">
+              {push.permission === "granted" ? <CheckCircle2 className="size-4 text-green-500" /> : <XCircle className="size-4 text-destructive" />}
+              <span>Permissão: <span className="text-muted-foreground">{push.permission}</span></span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="size-4 text-green-500" />
+              <span>Firebase conectado (servidor)</span>
+            </li>
+            {push.lastUpdated && (
+              <li className="text-xs text-muted-foreground">
+                Última atualização: {new Date(push.lastUpdated).toLocaleString("pt-BR")}
+              </li>
+            )}
+          </ul>
+        </div>
+
+        <div className="grid gap-2">
+          <Link
+            to="/perfil/notificacoes/logs"
+            className="ep-card flex items-center justify-between hover:bg-secondary/30"
+          >
+            <div className="flex items-center gap-3">
+              <FileText className="size-5 text-primary" />
+              <div>
+                <div className="text-sm font-medium">Logs de notificações</div>
+                <div className="text-xs text-muted-foreground">Histórico de envios e falhas</div>
+              </div>
+            </div>
+            <span className="text-muted-foreground">›</span>
+          </Link>
+          <Link
+            to="/perfil/notificacoes/teste"
+            className="ep-card flex items-center justify-between hover:bg-secondary/30"
+          >
+            <div className="flex items-center gap-3">
+              <Send className="size-5 text-primary" />
+              <div>
+                <div className="text-sm font-medium">Testar notificação</div>
+                <div className="text-xs text-muted-foreground">Enviar para este ou todos os dispositivos</div>
+              </div>
+            </div>
+            <span className="text-muted-foreground">›</span>
+          </Link>
+          <Link
+            to="/perfil/notificacoes/diagnostico"
+            className="ep-card flex items-center justify-between hover:bg-secondary/30"
+          >
+            <div className="flex items-center gap-3">
+              <Activity className="size-5 text-primary" />
+              <div>
+                <div className="text-sm font-medium">Diagnóstico Firebase</div>
+                <div className="text-xs text-muted-foreground">Verificar conexão e permissões</div>
+              </div>
+            </div>
+            <span className="text-muted-foreground">›</span>
+          </Link>
         </div>
 
         {q.isLoading && <div className="text-center text-sm text-muted-foreground py-6">Carregando…</div>}
