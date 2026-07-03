@@ -178,7 +178,7 @@ function RootComponent() {
     // Bootstrap push notifications (Capacitor nativo; no-op no navegador).
     (async () => {
       try {
-        const { initPushNotifications } = await import("@/lib/push.client");
+        const { initPushNotifications } = await import("@/lib/push-notifications");
         await initPushNotifications();
       } catch (e) {
         console.warn("[push] init falhou", e);
