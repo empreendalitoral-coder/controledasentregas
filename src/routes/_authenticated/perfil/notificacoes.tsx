@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
@@ -7,9 +7,10 @@ import {
   updateNotificationPreference,
   removeDeviceById,
 } from "@/lib/notifications/send.functions";
+import { getPushStatus, subscribePushStatus, type PushStatus } from "@/lib/push-notifications";
 import { toast } from "sonner";
-import { Bell, Smartphone, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Bell, Smartphone, Trash2, FileText, Send, Activity, CheckCircle2, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
   head: () => ({
@@ -41,6 +42,8 @@ function NotifPrefsPage() {
   });
 
   const [busy, setBusy] = useState<string | null>(null);
+  const [push, setPush] = useState<PushStatus>(getPushStatus());
+  useEffect(() => subscribePushStatus(setPush), []);
 
   async function toggle(codigo: string, ativo: boolean) {
     setBusy(codigo);
