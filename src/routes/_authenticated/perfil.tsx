@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput } from "@/components/Field";
 import { actions, useFullStore } from "@/lib/store";
@@ -176,8 +176,8 @@ function PerfilPage() {
         </button>
       </form>
 
-      <a
-        href="/perfil/notificacoes"
+      <Link
+        to="/perfil/notificacoes"
         className="mt-4 flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border"
       >
         <div>
@@ -185,7 +185,7 @@ function PerfilPage() {
           <div className="text-xs text-muted-foreground">Ativar/desativar avisos e dispositivos</div>
         </div>
         <span className="text-muted-foreground">›</span>
-      </a>
+      </Link>
 
       <ZonaDePerigo />
     </AppShell>
