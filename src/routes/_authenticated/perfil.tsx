@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput } from "@/components/Field";
 import { actions, useFullStore } from "@/lib/store";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Camera, AlertTriangle, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,12 +17,36 @@ export const Route = createFileRoute("/_authenticated/perfil")({
   component: PerfilPage,
 });
 
+// Rascunho em memória (fora do componente): preserva edições não salvas
+// ao navegar Perfil ↔ Notificações e voltar. É limpo ao salvar ou ao
+// trocar de usuário (ver efeito abaixo).
+let draftMotorista: ReturnType<typeof useFullStore>["motorista"] | null = null;
+let draftMeta: number | null = null;
+let draftOwnerId: string | null = null;
+
 function PerfilPage() {
   const state = useFullStore();
   const nav = useNavigate();
-  const [m, setM] = useState(state.motorista);
-  const [meta, setMeta] = useState(state.meta_mensal);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Reset do rascunho quando muda o usuário logado
+  const ownerId = (state as { userId?: string | null }).userId ?? null;
+  if (draftOwnerId !== ownerId) {
+    draftOwnerId = ownerId;
+    draftMotorista = null;
+    draftMeta = null;
+  }
+
+  const [m, setM] = useState(() => draftMotorista ?? state.motorista);
+  const [meta, setMeta] = useState(() => draftMeta ?? state.meta_mensal);
+
+  // Mantém o rascunho sincronizado com o estado local para sobreviver ao unmount
+  useEffect(() => {
+    draftMotorista = m;
+  }, [m]);
+  useEffect(() => {
+    draftMeta = meta;
+  }, [meta]);
 
   function set<K extends keyof typeof m>(k: K, v: (typeof m)[K]) {
     setM((p) => ({ ...p, [k]: v }));
@@ -48,6 +72,9 @@ function PerfilPage() {
     }
     actions.setMotorista({ ...m, nome: m.nome.trim().slice(0, 80) });
     actions.setMeta(Math.max(0, Number(meta) || 0));
+    // Limpa o rascunho após salvar
+    draftMotorista = null;
+    draftMeta = null;
     toast.success("Perfil salvo");
     nav({ to: "/" });
   }
