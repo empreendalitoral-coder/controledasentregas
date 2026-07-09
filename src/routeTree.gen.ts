@@ -31,6 +31,7 @@ import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedPerfilNotificacoesRouteImport } from './routes/_authenticated/perfil/notificacoes'
 import { Route as AuthenticatedLancamentoIdRouteImport } from './routes/_authenticated/lancamento.$id'
+import { Route as AuthenticatedFinanceiroQuinzenaRouteImport } from './routes/_authenticated/financeiro/quinzena'
 import { Route as AuthenticatedFinanceiroPixRouteImport } from './routes/_authenticated/financeiro/pix'
 import { Route as AuthenticatedFinanceiroMetasRouteImport } from './routes/_authenticated/financeiro/metas'
 import { Route as AuthenticatedFinanceiroMeiRouteImport } from './routes/_authenticated/financeiro/mei'
@@ -161,6 +162,12 @@ const AuthenticatedLancamentoIdRoute =
     path: '/lancamento/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFinanceiroQuinzenaRoute =
+  AuthenticatedFinanceiroQuinzenaRouteImport.update({
+    id: '/quinzena',
+    path: '/quinzena',
+    getParentRoute: () => AuthenticatedFinanceiroRouteRoute,
+  } as any)
 const AuthenticatedFinanceiroPixRoute =
   AuthenticatedFinanceiroPixRouteImport.update({
     id: '/pix',
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
+  '/financeiro/quinzena': typeof AuthenticatedFinanceiroQuinzenaRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
   '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
   '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
@@ -312,6 +320,7 @@ export interface FileRoutesByTo {
   '/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
   '/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
+  '/financeiro/quinzena': typeof AuthenticatedFinanceiroQuinzenaRoute
   '/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
   '/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
   '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
@@ -351,6 +360,7 @@ export interface FileRoutesById {
   '/_authenticated/financeiro/mei': typeof AuthenticatedFinanceiroMeiRoute
   '/_authenticated/financeiro/metas': typeof AuthenticatedFinanceiroMetasRoute
   '/_authenticated/financeiro/pix': typeof AuthenticatedFinanceiroPixRoute
+  '/_authenticated/financeiro/quinzena': typeof AuthenticatedFinanceiroQuinzenaRoute
   '/_authenticated/lancamento/$id': typeof AuthenticatedLancamentoIdRoute
   '/_authenticated/perfil/notificacoes': typeof AuthenticatedPerfilNotificacoesRouteWithChildren
   '/_authenticated/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/financeiro/mei'
     | '/financeiro/metas'
     | '/financeiro/pix'
+    | '/financeiro/quinzena'
     | '/lancamento/$id'
     | '/perfil/notificacoes'
     | '/perfil/notificacoes/diagnostico'
@@ -427,6 +438,7 @@ export interface FileRouteTypes {
     | '/financeiro/mei'
     | '/financeiro/metas'
     | '/financeiro/pix'
+    | '/financeiro/quinzena'
     | '/lancamento/$id'
     | '/perfil/notificacoes'
     | '/perfil/notificacoes/diagnostico'
@@ -465,6 +477,7 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro/mei'
     | '/_authenticated/financeiro/metas'
     | '/_authenticated/financeiro/pix'
+    | '/_authenticated/financeiro/quinzena'
     | '/_authenticated/lancamento/$id'
     | '/_authenticated/perfil/notificacoes'
     | '/_authenticated/perfil/notificacoes/diagnostico'
@@ -642,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLancamentoIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/financeiro/quinzena': {
+      id: '/_authenticated/financeiro/quinzena'
+      path: '/quinzena'
+      fullPath: '/financeiro/quinzena'
+      preLoaderRoute: typeof AuthenticatedFinanceiroQuinzenaRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRouteRoute
+    }
     '/_authenticated/financeiro/pix': {
       id: '/_authenticated/financeiro/pix'
       path: '/pix'
@@ -768,6 +788,7 @@ interface AuthenticatedFinanceiroRouteRouteChildren {
   AuthenticatedFinanceiroMeiRoute: typeof AuthenticatedFinanceiroMeiRoute
   AuthenticatedFinanceiroMetasRoute: typeof AuthenticatedFinanceiroMetasRoute
   AuthenticatedFinanceiroPixRoute: typeof AuthenticatedFinanceiroPixRoute
+  AuthenticatedFinanceiroQuinzenaRoute: typeof AuthenticatedFinanceiroQuinzenaRoute
 }
 
 const AuthenticatedFinanceiroRouteRouteChildren: AuthenticatedFinanceiroRouteRouteChildren =
@@ -778,6 +799,7 @@ const AuthenticatedFinanceiroRouteRouteChildren: AuthenticatedFinanceiroRouteRou
     AuthenticatedFinanceiroMeiRoute: AuthenticatedFinanceiroMeiRoute,
     AuthenticatedFinanceiroMetasRoute: AuthenticatedFinanceiroMetasRoute,
     AuthenticatedFinanceiroPixRoute: AuthenticatedFinanceiroPixRoute,
+    AuthenticatedFinanceiroQuinzenaRoute: AuthenticatedFinanceiroQuinzenaRoute,
   }
 
 const AuthenticatedFinanceiroRouteRouteWithChildren =
