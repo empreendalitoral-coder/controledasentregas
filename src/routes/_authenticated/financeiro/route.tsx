@@ -46,6 +46,7 @@ function FinanceiroIndex() {
     { to: "/financeiro/fluxo", label: "Fluxo de Caixa", desc: "Entradas e saídas do dia", emoji: "📊" },
     { to: "/financeiro/metas", label: "Metas Financeiras", desc: "Sua próxima conquista", emoji: "🎯" },
     { to: "/financeiro/pix", label: "PIX Recebidos & Enviados", desc: "Controle dos seus PIX", emoji: "⚡" },
+    { to: "/financeiro/quinzena", label: "Fechamento por Quinzena", desc: "1ª e 2ª quinzena com PDF", emoji: "📅" },
     { to: "/financeiro/mei", label: "Relatório MEI", desc: "Mensal e anual", emoji: "📈" },
   ] as const;
   return (
