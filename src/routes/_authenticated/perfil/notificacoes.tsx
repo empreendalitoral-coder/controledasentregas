@@ -7,16 +7,34 @@ import {
   updateNotificationPreference,
   removeDeviceById,
 } from "@/lib/notifications/send.functions";
-import { getPushStatus, subscribePushStatus, type PushStatus } from "@/lib/push-notifications";
+import {
+  getPushStatus,
+  subscribePushStatus,
+  type PushStatus,
+} from "@/lib/push-notifications";
 import { toast } from "sonner";
-import { Bell, Smartphone, Trash2, FileText, Send, Activity, CheckCircle2, XCircle } from "lucide-react";
+import {
+  Bell,
+  Smartphone,
+  Trash2,
+  FileText,
+  Send,
+  Activity,
+  CheckCircle2,
+  XCircle,
+  ChevronRight,
+  ShieldCheck,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
   head: () => ({
     meta: [
       { title: "Notificações — Entrega Pro" },
-      { name: "description", content: "Escolha quais notificações receber e gerencie seus dispositivos." },
+      {
+        name: "description",
+        content: "Escolha quais notificações receber e gerencie seus dispositivos.",
+      },
     ],
   }),
   component: NotifPrefsPage,
@@ -58,7 +76,8 @@ function NotifPrefsPage() {
   }
 
   async function removerDispositivo(id: string) {
-    if (!confirm("Remover este dispositivo? Ele deixará de receber notificações.")) return;
+    if (!confirm("Remover este dispositivo? Ele deixará de receber notificações."))
+      return;
     setBusy(id);
     try {
       await removeDev({ data: { id } });
@@ -78,167 +97,192 @@ function NotifPrefsPage() {
     grupos.set(t.categoria, arr);
   }
 
+  const tokenOk = Boolean(push.token);
+  const permOk = push.permission === "granted";
+
   return (
     <AppShell title="Notificações" back="/perfil">
-      <div className="space-y-4">
-        <div className="ep-card">
-          <div className="flex items-center gap-2 mb-2">
-            <Bell className="size-5 text-primary" />
-            <h2 className="font-semibold">Preferências</h2>
+      <div className="space-y-5">
+        {/* Hero */}
+        <div className="ep-hero">
+          <div className="relative z-10 flex items-start gap-3">
+            <div className="size-12 rounded-2xl bg-primary/15 border border-primary/30 grid place-items-center shrink-0">
+              <Bell className="size-6 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">Central de notificações</h2>
+              <p className="text-xs text-muted-foreground max-w-sm">
+                Personalize o que chega no seu celular. Você pode alterar quando quiser.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Ative apenas as notificações que você quer receber. Você pode alterar a qualquer momento.
-          </p>
+
+          <div className="relative z-10 mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-lg bg-background/40 border border-border/70 p-2.5">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                Este dispositivo
+              </div>
+              <div className="flex items-center gap-1.5 mt-1">
+                {tokenOk ? (
+                  <CheckCircle2 className="size-4 text-green-500" />
+                ) : (
+                  <XCircle className="size-4 text-destructive" />
+                )}
+                <span className="text-sm font-semibold">
+                  {tokenOk ? "Conectado" : "Sem token"}
+                </span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-background/40 border border-border/70 p-2.5">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                Permissão
+              </div>
+              <div className="flex items-center gap-1.5 mt-1">
+                {permOk ? (
+                  <ShieldCheck className="size-4 text-green-500" />
+                ) : (
+                  <XCircle className="size-4 text-destructive" />
+                )}
+                <span className="text-sm font-semibold capitalize">
+                  {push.permission === "unknown" ? "—" : push.permission}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="ep-card">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="size-5 text-primary" />
-            <h2 className="font-semibold">Estado deste dispositivo</h2>
-          </div>
-          <ul className="text-sm space-y-2">
-            <li className="flex items-start gap-2">
-              {push.token ? <CheckCircle2 className="size-4 text-green-500 mt-0.5" /> : <XCircle className="size-4 text-destructive mt-0.5" />}
+        {/* Atalhos */}
+        <section>
+          <div className="ep-section-title">Ferramentas</div>
+          <div className="grid gap-2">
+            <Link to="/perfil/notificacoes/logs" className="ep-list-row">
+              <div className="ep-icon-chip">
+                <FileText className="size-4" />
+              </div>
               <div className="flex-1 min-w-0">
-                <div>Token FCM registrado</div>
-                <div className="text-xs text-muted-foreground break-all">
-                  {push.token ? `${push.token.slice(0, 40)}…` : "Sem token — abra pelo app Android"}
+                <div className="text-sm font-semibold">Logs de notificações</div>
+                <div className="text-xs text-muted-foreground">
+                  Histórico de envios e falhas
                 </div>
               </div>
-            </li>
-            <li className="flex items-center gap-2">
-              {push.permission === "granted" ? <CheckCircle2 className="size-4 text-green-500" /> : <XCircle className="size-4 text-destructive" />}
-              <span>Permissão: <span className="text-muted-foreground">{push.permission}</span></span>
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-green-500" />
-              <span>Firebase conectado (servidor)</span>
-            </li>
-            {push.lastUpdated && (
-              <li className="text-xs text-muted-foreground">
-                Última atualização: {new Date(push.lastUpdated).toLocaleString("pt-BR")}
-              </li>
-            )}
-          </ul>
-        </div>
-
-        <div className="grid gap-2">
-          <Link
-            to="/perfil/notificacoes/logs"
-            className="ep-card flex items-center justify-between hover:bg-secondary/30"
-          >
-            <div className="flex items-center gap-3">
-              <FileText className="size-5 text-primary" />
-              <div>
-                <div className="text-sm font-medium">Logs de notificações</div>
-                <div className="text-xs text-muted-foreground">Histórico de envios e falhas</div>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </Link>
+            <Link to="/perfil/notificacoes/teste" className="ep-list-row">
+              <div className="ep-icon-chip">
+                <Send className="size-4" />
               </div>
-            </div>
-            <span className="text-muted-foreground">›</span>
-          </Link>
-          <Link
-            to="/perfil/notificacoes/teste"
-            className="ep-card flex items-center justify-between hover:bg-secondary/30"
-          >
-            <div className="flex items-center gap-3">
-              <Send className="size-5 text-primary" />
-              <div>
-                <div className="text-sm font-medium">Testar notificação</div>
-                <div className="text-xs text-muted-foreground">Enviar para este ou todos os dispositivos</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold">Testar notificação</div>
+                <div className="text-xs text-muted-foreground">
+                  Enviar para este ou todos os dispositivos
+                </div>
               </div>
-            </div>
-            <span className="text-muted-foreground">›</span>
-          </Link>
-          <Link
-            to="/perfil/notificacoes/diagnostico"
-            className="ep-card flex items-center justify-between hover:bg-secondary/30"
-          >
-            <div className="flex items-center gap-3">
-              <Activity className="size-5 text-primary" />
-              <div>
-                <div className="text-sm font-medium">Diagnóstico Firebase</div>
-                <div className="text-xs text-muted-foreground">Verificar conexão e permissões</div>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </Link>
+            <Link to="/perfil/notificacoes/diagnostico" className="ep-list-row">
+              <div className="ep-icon-chip">
+                <Activity className="size-4" />
               </div>
-            </div>
-            <span className="text-muted-foreground">›</span>
-          </Link>
-        </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold">Diagnóstico Firebase</div>
+                <div className="text-xs text-muted-foreground">
+                  Verificar conexão e permissões
+                </div>
+              </div>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </Link>
+          </div>
+        </section>
 
-        {q.isLoading && <div className="text-center text-sm text-muted-foreground py-6">Carregando…</div>}
+        {q.isLoading && (
+          <div className="text-center text-sm text-muted-foreground py-6">
+            Carregando…
+          </div>
+        )}
 
+        {/* Preferências */}
         {[...grupos.entries()].map(([cat, tipos]) => (
-          <div key={cat} className="ep-card">
-            <div className="text-xs font-semibold uppercase text-muted-foreground mb-3">
+          <section key={cat}>
+            <div className="ep-section-title">
               {CATEGORIA_LABEL[cat] ?? cat}
             </div>
-            <ul className="space-y-3">
-              {tipos.map((t) => (
-                <li key={t.codigo} className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium">{t.titulo}</div>
-                    <div className="text-xs text-muted-foreground">{t.descricao}</div>
-                  </div>
-                  <button
-                    disabled={busy === t.codigo}
-                    onClick={() => toggle(t.codigo, !t.ativo)}
-                    className={`shrink-0 w-11 h-6 rounded-full relative transition-colors ${
-                      t.ativo ? "bg-primary" : "bg-secondary"
-                    } disabled:opacity-50`}
-                    aria-label={t.ativo ? "Desativar" : "Ativar"}
+            <div className="ep-card">
+              <ul className="divide-y divide-border/70">
+                {tipos.map((t) => (
+                  <li
+                    key={t.codigo}
+                    className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
                   >
-                    <span
-                      className={`absolute top-0.5 size-5 rounded-full bg-background shadow transition-transform ${
-                        t.ativo ? "translate-x-5" : "translate-x-0.5"
-                      }`}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium">{t.titulo}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {t.descricao}
+                      </div>
+                    </div>
+                    <button
+                      disabled={busy === t.codigo}
+                      onClick={() => toggle(t.codigo, !t.ativo)}
+                      data-on={t.ativo ? "true" : "false"}
+                      className="ep-switch shrink-0 disabled:opacity-50"
+                      aria-label={t.ativo ? "Desativar" : "Ativar"}
                     />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
         ))}
 
-        <div className="ep-card">
-          <div className="flex items-center gap-2 mb-3">
-            <Smartphone className="size-5 text-primary" />
-            <h2 className="font-semibold">Dispositivos conectados</h2>
+        {/* Dispositivos */}
+        <section>
+          <div className="ep-section-title">
+            <Smartphone className="size-3.5" /> Dispositivos conectados
           </div>
-          {(q.data?.dispositivos ?? []).length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              Nenhum dispositivo registrado ainda. Instale o app pela Play Store e permita notificações para
-              começar a receber avisos.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {q.data!.dispositivos.map((d) => (
-                <li
-                  key={d.id}
-                  className="flex items-center justify-between py-2 border-b border-border last:border-0"
-                >
-                  <div>
-                    <div className="text-sm font-medium capitalize">{d.plataforma}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Último uso: {new Date(d.ultimo_uso).toLocaleString("pt-BR")}
-                    </div>
-                  </div>
-                  <button
-                    disabled={busy === d.id}
-                    onClick={() => removerDispositivo(d.id)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded-md disabled:opacity-50"
+          <div className="ep-card">
+            {(q.data?.dispositivos ?? []).length === 0 ? (
+              <p className="text-xs text-muted-foreground py-2">
+                Nenhum dispositivo registrado ainda. Instale o app pela Play Store
+                e permita notificações para começar a receber avisos.
+              </p>
+            ) : (
+              <ul className="divide-y divide-border/70">
+                {q.data!.dispositivos.map((d) => (
+                  <li
+                    key={d.id}
+                    className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
                   >
-                    <Trash2 className="size-4" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                    <div className="ep-icon-chip">
+                      <Smartphone className="size-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium capitalize">
+                        {d.plataforma}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Último uso:{" "}
+                        {new Date(d.ultimo_uso).toLocaleString("pt-BR")}
+                      </div>
+                    </div>
+                    <button
+                      disabled={busy === d.id}
+                      onClick={() => removerDispositivo(d.id)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-md disabled:opacity-50"
+                      aria-label="Remover"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
 
         <button
           onClick={() => router.navigate({ to: "/perfil" })}
-          className="w-full h-11 rounded-lg bg-secondary text-foreground font-medium"
+          className="w-full h-11 rounded-lg bg-secondary text-foreground font-medium hover:bg-secondary/80 transition"
         >
-          Voltar
+          Voltar ao perfil
         </button>
       </div>
     </AppShell>

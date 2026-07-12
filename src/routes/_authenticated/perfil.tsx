@@ -4,7 +4,16 @@ import { Field, TextInput } from "@/components/Field";
 import { actions, useFullStore } from "@/lib/store";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { Camera, AlertTriangle, Trash2 } from "lucide-react";
+import {
+  Camera,
+  AlertTriangle,
+  Trash2,
+  User as UserIcon,
+  Bell,
+  Truck,
+  Target,
+  ChevronRight,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
@@ -18,8 +27,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 });
 
 // Rascunho em memória (fora do componente): preserva edições não salvas
-// ao navegar Perfil ↔ Notificações e voltar. É limpo ao salvar ou ao
-// trocar de usuário (ver efeito abaixo).
+// ao navegar Perfil ↔ Notificações e voltar.
 let draftMotorista: ReturnType<typeof useFullStore>["motorista"] | null = null;
 let draftMeta: number | null = null;
 let draftOwnerId: string | null = null;
@@ -29,7 +37,6 @@ function PerfilPage() {
   const nav = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Reset do rascunho quando muda o usuário logado
   const ownerId = (state as { userId?: string | null }).userId ?? null;
   if (draftOwnerId !== ownerId) {
     draftOwnerId = ownerId;
@@ -40,7 +47,6 @@ function PerfilPage() {
   const [m, setM] = useState(() => draftMotorista ?? state.motorista);
   const [meta, setMeta] = useState(() => draftMeta ?? state.meta_mensal);
 
-  // Mantém o rascunho sincronizado com o estado local para sobreviver ao unmount
   useEffect(() => {
     draftMotorista = m;
   }, [m]);
@@ -72,7 +78,6 @@ function PerfilPage() {
     }
     actions.setMotorista({ ...m, nome: m.nome.trim().slice(0, 80) });
     actions.setMeta(Math.max(0, Number(meta) || 0));
-    // Limpa o rascunho após salvar
     draftMotorista = null;
     draftMeta = null;
     toast.success("Perfil salvo");
@@ -81,18 +86,22 @@ function PerfilPage() {
 
   return (
     <AppShell title="Perfil" back="/">
-      <form onSubmit={save} className="space-y-4">
-        <div className="ep-card flex items-center gap-4">
+      <form onSubmit={save} className="space-y-5">
+        {/* Hero card com avatar */}
+        <div className="ep-hero flex items-center gap-4">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="size-20 rounded-full bg-secondary grid place-items-center overflow-hidden border border-border relative"
+            className="relative size-24 rounded-2xl bg-secondary grid place-items-center overflow-hidden border-2 border-primary/40 shadow-lg shadow-primary/10 shrink-0"
           >
             {m.foto ? (
               <img src={m.foto} alt="" className="size-full object-cover" />
             ) : (
-              <Camera className="size-7 text-muted-foreground" />
+              <UserIcon className="size-9 text-muted-foreground" />
             )}
+            <span className="absolute -bottom-1 -right-1 size-8 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-md">
+              <Camera className="size-4" />
+            </span>
           </button>
           <input
             ref={fileRef}
@@ -101,90 +110,124 @@ function PerfilPage() {
             className="hidden"
             onChange={onPhoto}
           />
-          <div className="text-sm text-muted-foreground">
-            Toque na foto para alterar
+          <div className="min-w-0 relative z-10">
+            <div className="text-lg font-bold truncate">
+              {m.nome?.trim() || "Seu perfil"}
+            </div>
+            <div className="text-xs text-muted-foreground truncate">
+              {m.transportadora || "Motorista Entrega Pro"}
+            </div>
+            <div className="mt-2 text-xs text-primary/90 font-medium">
+              Toque na foto para alterar
+            </div>
           </div>
         </div>
 
-        <div className="ep-card grid grid-cols-1 gap-3">
-          <Field label="Nome">
-            <TextInput
-              value={m.nome}
-              onChange={(e) => set("nome", e.target.value)}
-              maxLength={80}
-              required
-            />
-          </Field>
-          <Field label="Telefone">
-            <TextInput
-              value={m.telefone ?? ""}
-              onChange={(e) => set("telefone", e.target.value)}
-              maxLength={20}
-              inputMode="tel"
-            />
-          </Field>
-          <Field label="Transportadora">
-            <TextInput
-              value={m.transportadora ?? ""}
-              onChange={(e) => set("transportadora", e.target.value)}
-              maxLength={60}
-            />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Veículo">
+        {/* Dados pessoais */}
+        <section>
+          <div className="ep-section-title">
+            <UserIcon className="size-3.5" /> Dados pessoais
+          </div>
+          <div className="ep-card space-y-3">
+            <Field label="Nome">
               <TextInput
-                value={m.veiculo ?? ""}
-                onChange={(e) => set("veiculo", e.target.value)}
-                maxLength={40}
+                value={m.nome}
+                onChange={(e) => set("nome", e.target.value)}
+                maxLength={80}
+                required
               />
             </Field>
-            <Field label="Modelo">
+            <Field label="Telefone">
               <TextInput
-                value={m.modelo ?? ""}
-                onChange={(e) => set("modelo", e.target.value)}
-                maxLength={40}
+                value={m.telefone ?? ""}
+                onChange={(e) => set("telefone", e.target.value)}
+                maxLength={20}
+                inputMode="tel"
+              />
+            </Field>
+            <Field label="Transportadora">
+              <TextInput
+                value={m.transportadora ?? ""}
+                onChange={(e) => set("transportadora", e.target.value)}
+                maxLength={60}
               />
             </Field>
           </div>
-          <Field label="Placa">
-            <TextInput
-              value={m.placa ?? ""}
-              onChange={(e) => set("placa", e.target.value.toUpperCase())}
-              maxLength={10}
-            />
-          </Field>
-        </div>
+        </section>
 
-        <div className="ep-card">
-          <Field label="Meta de lucro líquido do mês (R$)">
-            <TextInput
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              min={0}
-              value={meta}
-              onChange={(e) => setMeta(Number(e.target.value))}
-            />
-          </Field>
-        </div>
+        {/* Veículo */}
+        <section>
+          <div className="ep-section-title">
+            <Truck className="size-3.5" /> Veículo
+          </div>
+          <div className="ep-card space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Veículo">
+                <TextInput
+                  value={m.veiculo ?? ""}
+                  onChange={(e) => set("veiculo", e.target.value)}
+                  maxLength={40}
+                />
+              </Field>
+              <Field label="Modelo">
+                <TextInput
+                  value={m.modelo ?? ""}
+                  onChange={(e) => set("modelo", e.target.value)}
+                  maxLength={40}
+                />
+              </Field>
+            </div>
+            <Field label="Placa">
+              <TextInput
+                value={m.placa ?? ""}
+                onChange={(e) => set("placa", e.target.value.toUpperCase())}
+                maxLength={10}
+              />
+            </Field>
+          </div>
+        </section>
+
+        {/* Meta */}
+        <section>
+          <div className="ep-section-title">
+            <Target className="size-3.5" /> Meta financeira
+          </div>
+          <div className="ep-card">
+            <Field label="Meta de lucro líquido do mês (R$)">
+              <TextInput
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min={0}
+                value={meta}
+                onChange={(e) => setMeta(Number(e.target.value))}
+              />
+            </Field>
+          </div>
+        </section>
 
         <button
           type="submit"
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold"
+          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition"
         >
-          Salvar
+          Salvar alterações
         </button>
       </form>
 
       <Link
         to="/perfil/notificacoes"
-        className="mt-4 flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border"
+        className="mt-5 ep-list-row"
       >
-        <div>
-          <div className="font-medium text-sm">Notificações</div>
-          <div className="text-xs text-muted-foreground">Ativar/desativar avisos e dispositivos</div>
+        <div className="ep-icon-chip">
+          <Bell className="size-4" />
         </div>
-        <span className="text-muted-foreground">›</span>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold">Notificações</div>
+          <div className="text-xs text-muted-foreground">
+            Preferências, dispositivos e diagnóstico
+          </div>
+        </div>
+        <ChevronRight className="size-4 text-muted-foreground" />
       </Link>
 
       <ZonaDePerigo />
