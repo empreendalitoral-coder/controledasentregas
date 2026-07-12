@@ -3,205 +3,230 @@ import { AppShell } from "@/components/AppShell";
 import { useFullStore } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { BRL, NUM } from "@/lib/calc";
-import { FileDown, Calendar } from "lucide-react";
+import { FileDown, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/financeiro/quinzena")({
   head: () => ({
     meta: [
-      { title: "Fechamento por Quinzena — Entrega Pro" },
-      { name: "description", content: "Fechamento financeiro por quinzena com exportação em PDF." },
+      { title: "Relatório Financeiro — Entrega Pro" },
+      { name: "description", content: "Relatório financeiro por semana, quinzena, mês, ano ou período personalizado." },
     ],
   }),
-  component: QuinzenaPage,
+  component: RelatorioPage,
 });
 
 const MESES = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
-
 const DIAS_SEMANA = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
-function diaSemana(dataStr: string) {
-  const d = new Date(dataStr + "T00:00:00");
-  return DIAS_SEMANA[d.getDay()];
+const diaSemana = (s: string) => DIAS_SEMANA[new Date(s + "T00:00:00").getDay()];
+const fmtData = (s: string) => { const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+type Modo = "semana" | "quinzena" | "mes" | "ano" | "personalizado";
+
+type Bucket = { titulo: string; inicio: string; fim: string };
+
+function startOfWeek(d: Date) {
+  const x = new Date(d);
+  const day = x.getDay(); // 0 = domingo
+  x.setDate(x.getDate() - day);
+  x.setHours(0, 0, 0, 0);
+  return x;
 }
 
-function fmtData(dataStr: string) {
-  const [y, m, d] = dataStr.split("-");
-  return `${d}/${m}/${y}`;
+function buildBuckets(modo: Modo, ref: Date, custom: { start: string; end: string }): { buckets: Bucket[]; periodoLabel: string } {
+  const y = ref.getFullYear();
+  const m = ref.getMonth();
+  if (modo === "semana") {
+    const ini = startOfWeek(ref);
+    const fim = new Date(ini); fim.setDate(ini.getDate() + 6);
+    return {
+      buckets: [{ titulo: `Semana de ${fmtData(iso(ini))} a ${fmtData(iso(fim))}`, inicio: iso(ini), fim: iso(fim) }],
+      periodoLabel: `Semana ${fmtData(iso(ini))} — ${fmtData(iso(fim))}`,
+    };
+  }
+  if (modo === "quinzena") {
+    const mm = String(m + 1).padStart(2, "0");
+    const ultimo = new Date(y, m + 1, 0).getDate();
+    return {
+      buckets: [
+        { titulo: "1ª Quinzena (01 a 15)", inicio: `${y}-${mm}-01`, fim: `${y}-${mm}-15` },
+        { titulo: `2ª Quinzena (16 a ${ultimo})`, inicio: `${y}-${mm}-16`, fim: `${y}-${mm}-${String(ultimo).padStart(2, "0")}` },
+      ],
+      periodoLabel: `${MESES[m]} / ${y}`,
+    };
+  }
+  if (modo === "mes") {
+    const mm = String(m + 1).padStart(2, "0");
+    const ultimo = new Date(y, m + 1, 0).getDate();
+    return {
+      buckets: [{ titulo: `${MESES[m]} de ${y}`, inicio: `${y}-${mm}-01`, fim: `${y}-${mm}-${String(ultimo).padStart(2, "0")}` }],
+      periodoLabel: `${MESES[m]} / ${y}`,
+    };
+  }
+  if (modo === "ano") {
+    const buckets: Bucket[] = [];
+    for (let i = 0; i < 12; i++) {
+      const mm = String(i + 1).padStart(2, "0");
+      const ultimo = new Date(y, i + 1, 0).getDate();
+      buckets.push({ titulo: MESES[i], inicio: `${y}-${mm}-01`, fim: `${y}-${mm}-${String(ultimo).padStart(2, "0")}` });
+    }
+    return { buckets, periodoLabel: `Ano ${y}` };
+  }
+  // personalizado
+  return {
+    buckets: [{ titulo: `${fmtData(custom.start)} a ${fmtData(custom.end)}`, inicio: custom.start, fim: custom.end }],
+    periodoLabel: `${fmtData(custom.start)} — ${fmtData(custom.end)}`,
+  };
 }
 
-type LancRow = {
-  id: string;
-  data: string;
-  cidade: string;
-  romaneio: string;
-  pacotes: number;
-  valor: number;
-  observacao: string;
-};
+type LancRow = { id: string; data: string; cidade: string; romaneio: string; pacotes: number; valor: number; observacao: string };
 
-function QuinzenaPage() {
+function RelatorioPage() {
   const state = useFullStore();
   const now = new Date();
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth());
+  const [modo, setModo] = useState<Modo>("quinzena");
+  const [ref, setRef] = useState<Date>(now);
+  const [custom, setCustom] = useState({ start: iso(new Date(now.getFullYear(), now.getMonth(), 1)), end: iso(now) });
   const [exporting, setExporting] = useState(false);
 
+  const { buckets, periodoLabel } = useMemo(() => buildBuckets(modo, ref, custom), [modo, ref, custom]);
+
   const dados = useMemo(() => {
-    const mm = String(month + 1).padStart(2, "0");
-    const yy = String(year);
-    const prefix = `${yy}-${mm}-`;
+    const inicio = buckets[0].inicio;
+    const fim = buckets[buckets.length - 1].fim;
+    const dentro = (d: string) => d >= inicio && d <= fim;
 
-    const lancs: LancRow[] = state.lancamentos
-      .filter((l) => l.data?.startsWith(prefix) && l.trabalhou)
-      .map((l) => ({
-        id: l.id,
-        data: l.data,
-        cidade: l.cidade || "—",
-        romaneio: l.romaneio || "—",
-        pacotes: l.pacotes ?? 0,
-        valor: l.valor_dia ?? 0,
-        observacao: l.observacao || "",
-      }))
-      .sort((a, b) => a.data.localeCompare(b.data));
+    const bucketsComRows = buckets.map((b) => {
+      const rows: LancRow[] = state.lancamentos
+        .filter((l) => l.data >= b.inicio && l.data <= b.fim && l.trabalhou)
+        .map((l) => ({
+          id: l.id,
+          data: l.data,
+          cidade: l.cidade || "—",
+          romaneio: l.romaneio || "—",
+          pacotes: l.pacotes ?? 0,
+          valor: l.valor_dia ?? 0,
+          observacao: l.observacao || "",
+        }))
+        .sort((a, b2) => a.data.localeCompare(b2.data));
+      const total = rows.reduce((s, r) => s + r.valor, 0);
+      return { ...b, rows, total };
+    });
 
-    const q1 = lancs.filter((l) => Number(l.data.slice(8, 10)) <= 15);
-    const q2 = lancs.filter((l) => Number(l.data.slice(8, 10)) > 15);
-    const totalQ1 = q1.reduce((s, l) => s + l.valor, 0);
-    const totalQ2 = q2.reduce((s, l) => s + l.valor, 0);
-    const totalMes = totalQ1 + totalQ2;
+    const totalBruto = bucketsComRows.reduce((s, b) => s + b.total, 0);
+    const combustivel = state.abastecimentos.filter((a) => dentro(a.data)).reduce((s, a) => s + (a.valor_total ?? 0), 0);
+    const outras = state.manutencoes.filter((m) => dentro(m.data)).reduce((s, m) => s + (m.valor ?? 0), 0);
+    const lucro = totalBruto - combustivel - outras;
 
-    const combustivel = state.abastecimentos
-      .filter((a) => a.data?.startsWith(prefix))
-      .reduce((s, a) => s + (a.valor_total ?? 0), 0);
-    const manutencoes = state.manutencoes
-      .filter((m) => m.data?.startsWith(prefix))
-      .reduce((s, m) => s + (m.valor ?? 0), 0);
-    const outras = manutencoes;
-    const lucro = totalMes - combustivel - outras;
+    return { buckets: bucketsComRows, totalBruto, combustivel, outras, lucro };
+  }, [buckets, state.lancamentos, state.abastecimentos, state.manutencoes]);
 
-    return { q1, q2, totalQ1, totalQ2, totalMes, combustivel, outras, lucro };
-  }, [state.lancamentos, state.abastecimentos, state.manutencoes, month, year]);
+  function shift(dir: -1 | 1) {
+    const d = new Date(ref);
+    if (modo === "semana") d.setDate(d.getDate() + 7 * dir);
+    else if (modo === "quinzena" || modo === "mes") d.setMonth(d.getMonth() + dir);
+    else if (modo === "ano") d.setFullYear(d.getFullYear() + dir);
+    setRef(d);
+  }
 
   async function exportarPDF() {
     setExporting(true);
     try {
-      const [{ jsPDF }, autoTableMod] = await Promise.all([
-        import("jspdf"),
-        import("jspdf-autotable"),
-      ]);
+      const [{ jsPDF }, autoTableMod] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
       const autoTable = (autoTableMod as unknown as { default: (doc: unknown, opts: unknown) => void }).default;
-
       const doc = new jsPDF({ unit: "mm", format: "a4" });
       const pageW = doc.internal.pageSize.getWidth();
       const nome = state.motorista.nome || "Motorista";
 
-      // Cabeçalho
-      doc.setFontSize(16);
-      doc.setFont("helvetica", "bold");
-      doc.text("Fechamento por Quinzena", pageW / 2, 15, { align: "center" });
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
+      doc.setFontSize(16); doc.setFont("helvetica", "bold");
+      doc.text("Relatório Financeiro", pageW / 2, 15, { align: "center" });
+      doc.setFontSize(10); doc.setFont("helvetica", "normal");
       doc.text(`Motorista: ${nome}`, 14, 25);
-      doc.text(`Período: ${MESES[month]} / ${year}`, 14, 31);
+      doc.text(`Período: ${periodoLabel}`, 14, 31);
 
       const head = [["Data", "Dia", "Cidade", "Romaneio", "Pacotes", "Valor", "Observação"]];
-      const body = (rows: LancRow[]) =>
-        rows.map((l) => [
-          fmtData(l.data),
-          diaSemana(l.data),
-          l.cidade,
-          l.romaneio,
-          NUM(l.pacotes),
-          BRL(l.valor),
-          l.observacao,
-        ]);
-
       let cursorY = 38;
 
-      // 1ª Quinzena
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.text("1ª Quinzena (01 a 15)", 14, cursorY);
-      cursorY += 3;
-      autoTable(doc, {
-        startY: cursorY,
-        head,
-        body: dados.q1.length ? body(dados.q1) : [["—", "—", "—", "—", "—", "—", "Sem lançamentos"]],
-        styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [34, 197, 94], textColor: 255 },
-        columnStyles: { 6: { cellWidth: 40 } },
-      });
-      // @ts-expect-error autoTable augments doc at runtime
-      cursorY = doc.lastAutoTable.finalY + 4;
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.text(`Total 1ª Quinzena: ${BRL(dados.totalQ1)}`, pageW - 14, cursorY, { align: "right" });
-      cursorY += 8;
+      for (const b of dados.buckets) {
+        doc.setFont("helvetica", "bold"); doc.setFontSize(12);
+        doc.text(b.titulo, 14, cursorY); cursorY += 3;
+        autoTable(doc, {
+          startY: cursorY,
+          head,
+          body: b.rows.length ? b.rows.map((l) => [fmtData(l.data), diaSemana(l.data), l.cidade, l.romaneio, NUM(l.pacotes), BRL(l.valor), l.observacao]) : [["—", "—", "—", "—", "—", "—", "Sem lançamentos"]],
+          styles: { fontSize: 8, cellPadding: 2 },
+          headStyles: { fillColor: [34, 197, 94], textColor: 255 },
+          columnStyles: { 6: { cellWidth: 40 } },
+        });
+        // @ts-expect-error autoTable augments doc
+        cursorY = doc.lastAutoTable.finalY + 4;
+        doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+        doc.text(`Total: ${BRL(b.total)}`, pageW - 14, cursorY, { align: "right" });
+        cursorY += 8;
+        if (cursorY > 260) { doc.addPage(); cursorY = 15; }
+      }
 
-      // 2ª Quinzena
-      doc.setFontSize(12);
-      doc.text("2ª Quinzena (16 ao fim do mês)", 14, cursorY);
-      cursorY += 3;
-      autoTable(doc, {
-        startY: cursorY,
-        head,
-        body: dados.q2.length ? body(dados.q2) : [["—", "—", "—", "—", "—", "—", "Sem lançamentos"]],
-        styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [34, 197, 94], textColor: 255 },
-        columnStyles: { 6: { cellWidth: 40 } },
-      });
-      // @ts-expect-error see above
-      cursorY = doc.lastAutoTable.finalY + 4;
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.text(`Total 2ª Quinzena: ${BRL(dados.totalQ2)}`, pageW - 14, cursorY, { align: "right" });
-      cursorY += 10;
-
-      // Totais
       autoTable(doc, {
         startY: cursorY,
         body: [
-          ["Total do mês", BRL(dados.totalMes)],
+          ["Total bruto", BRL(dados.totalBruto)],
           ["Combustível", `- ${BRL(dados.combustivel)}`],
           ["Outras despesas", `- ${BRL(dados.outras)}`],
           ["Lucro líquido", BRL(dados.lucro)],
         ],
         styles: { fontSize: 10, cellPadding: 3 },
-        columnStyles: {
-          0: { fontStyle: "bold" },
-          1: { halign: "right", fontStyle: "bold" },
-        },
+        columnStyles: { 0: { fontStyle: "bold" }, 1: { halign: "right", fontStyle: "bold" } },
       });
 
-      doc.save(`fechamento-quinzena-${yy(year)}-${String(month + 1).padStart(2, "0")}.pdf`);
+      doc.save(`relatorio-${modo}-${iso(ref)}.pdf`);
       toast.success("PDF gerado");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha ao gerar PDF");
-    } finally {
-      setExporting(false);
-    }
-  }
-
-  function prev() {
-    if (month === 0) { setMonth(11); setYear(year - 1); } else setMonth(month - 1);
-  }
-  function next() {
-    if (month === 11) { setMonth(0); setYear(year + 1); } else setMonth(month + 1);
+    } finally { setExporting(false); }
   }
 
   return (
-    <AppShell title="Fechamento por Quinzena" back="/financeiro">
-      <div className="ep-card flex items-center justify-between">
-        <button onClick={prev} className="px-3 py-1 text-primary">←</button>
-        <div className="font-semibold flex items-center gap-2">
-          <Calendar className="size-4 text-primary" />
-          {MESES[month]} / {year}
+    <AppShell title="Relatório Financeiro" back="/financeiro">
+      <div className="ep-card">
+        <div className="text-xs text-muted-foreground mb-2">Tipo de período</div>
+        <div className="grid grid-cols-5 gap-1">
+          {(["semana", "quinzena", "mes", "ano", "personalizado"] as Modo[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => setModo(m)}
+              className={`h-9 rounded-md text-xs font-medium transition ${modo === m ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+            >
+              {m === "mes" ? "Mês" : m === "personalizado" ? "Custom" : m[0].toUpperCase() + m.slice(1)}
+            </button>
+          ))}
         </div>
-        <button onClick={next} className="px-3 py-1 text-primary">→</button>
+
+        {modo !== "personalizado" ? (
+          <div className="mt-3 flex items-center justify-between">
+            <button onClick={() => shift(-1)} className="p-2 rounded-md hover:bg-muted"><ChevronLeft className="size-5 text-primary" /></button>
+            <div className="font-semibold flex items-center gap-2 text-sm">
+              <Calendar className="size-4 text-primary" />
+              {periodoLabel}
+            </div>
+            <button onClick={() => shift(1)} className="p-2 rounded-md hover:bg-muted"><ChevronRight className="size-5 text-primary" /></button>
+          </div>
+        ) : (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <label className="text-xs text-muted-foreground">
+              De
+              <input type="date" value={custom.start} onChange={(e) => setCustom({ ...custom, start: e.target.value })} className="mt-1 w-full h-10 rounded-md bg-muted px-2 text-sm" />
+            </label>
+            <label className="text-xs text-muted-foreground">
+              Até
+              <input type="date" value={custom.end} onChange={(e) => setCustom({ ...custom, end: e.target.value })} className="mt-1 w-full h-10 rounded-md bg-muted px-2 text-sm" />
+            </label>
+          </div>
+        )}
       </div>
 
       <button
@@ -213,12 +238,13 @@ function QuinzenaPage() {
         {exporting ? "Gerando PDF..." : "Exportar PDF"}
       </button>
 
-      <Quinzena titulo="1ª Quinzena (01 a 15)" rows={dados.q1} total={dados.totalQ1} />
-      <Quinzena titulo="2ª Quinzena (16 ao fim do mês)" rows={dados.q2} total={dados.totalQ2} />
+      {dados.buckets.map((b) => (
+        <Bloco key={b.titulo} titulo={b.titulo} rows={b.rows} total={b.total} />
+      ))}
 
       <section className="ep-card mt-4 space-y-2">
-        <h3 className="font-semibold mb-2">Resumo do mês</h3>
-        <Linha label="Total do mês" valor={BRL(dados.totalMes)} pos />
+        <h3 className="font-semibold mb-2">Resumo</h3>
+        <Linha label="Total bruto" valor={BRL(dados.totalBruto)} pos />
         <Linha label="Combustível" valor={`- ${BRL(dados.combustivel)}`} neg />
         <Linha label="Outras despesas" valor={`- ${BRL(dados.outras)}`} neg />
         <div className="border-t border-border my-2" />
@@ -228,14 +254,12 @@ function QuinzenaPage() {
   );
 }
 
-function yy(y: number) { return String(y); }
-
-function Quinzena({ titulo, rows, total }: { titulo: string; rows: LancRow[]; total: number }) {
+function Bloco({ titulo, rows, total }: { titulo: string; rows: LancRow[]; total: number }) {
   return (
     <section className="ep-card mt-4">
       <h3 className="font-semibold mb-2">{titulo}</h3>
       {rows.length === 0 ? (
-        <div className="text-sm text-muted-foreground">Sem lançamentos nesta quinzena.</div>
+        <div className="text-sm text-muted-foreground">Sem lançamentos neste período.</div>
       ) : (
         <div className="space-y-2">
           {rows.map((l) => (
@@ -247,12 +271,8 @@ function Quinzena({ titulo, rows, total }: { titulo: string; rows: LancRow[]; to
               <div className="mt-1 text-sm font-medium">
                 {l.cidade} {l.romaneio !== "—" && <span className="text-muted-foreground">• Rom. {l.romaneio}</span>}
               </div>
-              <div className="text-xs text-muted-foreground">
-                Pacotes: {NUM(l.pacotes)}
-              </div>
-              {l.observacao && (
-                <div className="text-xs text-muted-foreground mt-1 italic">"{l.observacao}"</div>
-              )}
+              <div className="text-xs text-muted-foreground">Pacotes: {NUM(l.pacotes)}</div>
+              {l.observacao && (<div className="text-xs text-muted-foreground mt-1 italic">"{l.observacao}"</div>)}
             </div>
           ))}
         </div>
@@ -269,9 +289,7 @@ function Linha({ label, valor, pos, neg, big }: { label: string; valor: string; 
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="text-muted-foreground">{label}</span>
-      <span className={`${pos ? "ep-money-pos" : neg ? "ep-money-neg" : ""} ${big ? "text-lg font-bold" : "font-medium"}`}>
-        {valor}
-      </span>
+      <span className={`${pos ? "ep-money-pos" : neg ? "ep-money-neg" : ""} ${big ? "text-lg font-bold" : "font-medium"}`}>{valor}</span>
     </div>
   );
 }
