@@ -26,7 +26,9 @@ type Resultado = {
   enviados: number;
   falhas: number;
   ignorados: number;
+  motivo?: string;
 };
+
 
 function MensagensAdminPage() {
   const enviar = useServerFn(broadcastNotification);
