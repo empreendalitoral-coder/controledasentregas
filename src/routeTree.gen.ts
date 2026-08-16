@@ -40,6 +40,7 @@ import { Route as AuthenticatedFinanceiroContasRouteImport } from './routes/_aut
 import { Route as AuthenticatedFinanceiroCartoesRouteImport } from './routes/_authenticated/financeiro/cartoes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
+import { Route as AuthenticatedAdminMensagensRouteImport } from './routes/_authenticated/admin/mensagens'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
 import { Route as ApiPublicHooksNotificacoesDiariasRouteImport } from './routes/api/public/hooks/notificacoes-diarias'
@@ -216,6 +217,12 @@ const AuthenticatedAdminSolicitacoesRoute =
     path: '/solicitacoes',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminMensagensRoute =
+  AuthenticatedAdminMensagensRouteImport.update({
+    id: '/mensagens',
+    path: '/mensagens',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminConfiguracoesRoute =
   AuthenticatedAdminConfiguracoesRouteImport.update({
     id: '/configuracoes',
@@ -274,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -312,6 +320,7 @@ export interface FileRoutesByTo {
   '/resumo': typeof AuthenticatedResumoRoute
   '/': typeof AuthenticatedIndexRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -352,6 +361,7 @@ export interface FileRoutesById {
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/recebimentos'
     | '/resumo'
     | '/admin/configuracoes'
+    | '/admin/mensagens'
     | '/admin/solicitacoes'
     | '/admin/usuarios'
     | '/financeiro/cartoes'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/resumo'
     | '/'
     | '/admin/configuracoes'
+    | '/admin/mensagens'
     | '/admin/solicitacoes'
     | '/admin/usuarios'
     | '/financeiro/cartoes'
@@ -469,6 +481,7 @@ export interface FileRouteTypes {
     | '/_authenticated/resumo'
     | '/_authenticated/'
     | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/mensagens'
     | '/_authenticated/admin/solicitacoes'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/financeiro/cartoes'
@@ -718,6 +731,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSolicitacoesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/mensagens': {
+      id: '/_authenticated/admin/mensagens'
+      path: '/mensagens'
+      fullPath: '/admin/mensagens'
+      preLoaderRoute: typeof AuthenticatedAdminMensagensRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/configuracoes': {
       id: '/_authenticated/admin/configuracoes'
       path: '/configuracoes'
@@ -765,6 +785,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminMensagensRoute: typeof AuthenticatedAdminMensagensRoute
   AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
 }
@@ -772,6 +793,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+    AuthenticatedAdminMensagensRoute: AuthenticatedAdminMensagensRoute,
     AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,
     AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   }
