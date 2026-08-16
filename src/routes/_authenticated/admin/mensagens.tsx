@@ -53,8 +53,9 @@ function MensagensAdminPage() {
         setTitulo("");
         setMensagem("");
       } else {
-        toast.error("Nenhuma notificação foi entregue");
+        toast.error(r.motivo ?? "Nenhuma notificação foi entregue");
       }
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Falha no envio");
     } finally {
