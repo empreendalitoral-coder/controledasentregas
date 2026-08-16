@@ -23,28 +23,58 @@ export const broadcastNotification = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
-
-    const { data: adminRow } = await admin
+    // Checagem de admin com o cliente do próprio usuário (RLS), evitando erros crus do banco.
+    const { data: adminRow } = await context.supabase
       .from("administradores")
       .select("id")
       .eq("user_id", context.userId)
       .eq("ativo", true)
       .maybeSingle();
-    if (!adminRow) throw new Error("forbidden");
+    if (!adminRow) throw new Error("Apenas administradores podem enviar mensagens.");
 
+    const admin = await loadAdmin();
     const { dispatchNotification } = await import("./send.functions");
+
+    const { isFcmConfigured } = await import("@/lib/fcm.server");
+    if (!isFcmConfigured()) {
+      return {
+        ok: false,
+        destinatarios: 0,
+        enviados: 0,
+        falhas: 0,
+        ignorados: 0,
+        motivo: "As notificações push ainda não estão configuradas no servidor.",
+      };
+    }
 
     // Destinatários: usuários com pelo menos um dispositivo registrado.
     const { data: tokens, error } = await admin
       .from("notification_tokens")
       .select("user_id");
-    if (error) throw new Error(error.message);
+    if (error) {
+      return {
+        ok: false,
+        destinatarios: 0,
+        enviados: 0,
+        falhas: 0,
+        ignorados: 0,
+        motivo: "Não foi possível ler os dispositivos registrados. Tente novamente.",
+      };
+    }
     const userIds = Array.from(new Set((tokens ?? []).map((t) => t.user_id as string)));
 
     if (userIds.length === 0) {
-      return { ok: false, destinatarios: 0, enviados: 0, falhas: 0, ignorados: 0 };
+      return {
+        ok: false,
+        destinatarios: 0,
+        enviados: 0,
+        falhas: 0,
+        ignorados: 0,
+        motivo:
+          "Nenhum aparelho registrado ainda. As notificações só funcionam no app Android instalado, com as notificações permitidas.",
+      };
     }
+
 
     const dedupBase = `aviso_admin:${Date.now()}`;
     let enviados = 0;
