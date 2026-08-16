@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { registrarLogAdmin } from "@/lib/admin-log";
-import { Users, FileCheck, Settings, BarChart, ShieldAlert } from "lucide-react";
+import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
@@ -59,6 +59,7 @@ function AdminLayout() {
     { to: "/admin", label: "Visão geral", icon: BarChart },
     { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck },
     { to: "/admin/usuarios", label: "Usuários", icon: Users },
+    { to: "/admin/mensagens", label: "Mensagens", icon: Megaphone },
     { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
   ];
   return (
@@ -112,6 +113,11 @@ function AdminIndex() {
         <Link to="/admin/usuarios" className="ep-card flex items-center gap-3">
           <Users className="size-5 text-primary" />
           <div className="flex-1"><div className="font-semibold">Usuários</div><div className="text-xs text-muted-foreground">Gerenciar planos manualmente</div></div>
+          <span className="text-muted-foreground">›</span>
+        </Link>
+        <Link to="/admin/mensagens" className="ep-card flex items-center gap-3">
+          <Megaphone className="size-5 text-primary" />
+          <div className="flex-1"><div className="font-semibold">Mensagem para usuários</div><div className="text-xs text-muted-foreground">Enviar aviso por notificação para todos</div></div>
           <span className="text-muted-foreground">›</span>
         </Link>
         <Link to="/admin/configuracoes" className="ep-card flex items-center gap-3">
