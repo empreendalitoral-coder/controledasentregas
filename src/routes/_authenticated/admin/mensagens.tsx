@@ -77,6 +77,11 @@ function MensagensAdminPage() {
             A mensagem chega como notificação push nos aparelhos registrados. Usuários que
             desativaram avisos do administrador não recebem.
           </div>
+          <div className="text-xs text-muted-foreground mt-2 rounded-lg bg-muted/40 p-2">
+            Importante: o registro de aparelhos acontece apenas no aplicativo Android
+            instalado, quando o usuário aceita as notificações. Acessos pelo navegador não
+            contam como destinatários.
+          </div>
         </div>
       </div>
 
