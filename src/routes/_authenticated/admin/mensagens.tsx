@@ -52,6 +52,8 @@ function MensagensAdminPage() {
         toast.success(`Mensagem enviada para ${r.enviados} usuário(s)`);
         setTitulo("");
         setMensagem("");
+      } else if (r.destinatarios === 0) {
+        toast.info(r.motivo ?? "Nenhum aparelho registrado ainda");
       } else {
         toast.error(r.motivo ?? "Nenhuma notificação foi entregue");
       }
