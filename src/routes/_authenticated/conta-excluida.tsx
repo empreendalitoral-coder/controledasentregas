@@ -6,7 +6,17 @@ import { AlertTriangle, Undo2, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conta-excluida")({
   head: () => ({
-    meta: [{ title: "Conta em exclusão — Entrega Pro" }],
+    meta: [
+      { title: "Conta em exclusão — Entrega Pro" },
+      { name: "description", content: "Situação da sua solicitação de exclusão de conta e prazo de recuperação." },
+      { property: "og:title", content: "Conta em exclusão — Entrega Pro" },
+      { property: "og:description", content: "Situação da sua solicitação de exclusão de conta e prazo de recuperação." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/conta-excluida" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/conta-excluida" }],
   }),
   component: ContaExcluidaPage,
 });

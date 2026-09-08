@@ -9,7 +9,19 @@ import { BRL } from "@/lib/calc";
 type Pix = { id: string; data: string; valor: number; contato: string | null; descricao: string | null };
 
 export const Route = createFileRoute("/_authenticated/financeiro/pix")({
-  head: () => ({ meta: [{ title: "PIX — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "PIX — Entrega Pro" },
+      { name: "description", content: "Controle de PIX recebidos e enviados, com pagador, destinatário e totais." },
+      { property: "og:title", content: "PIX — Entrega Pro" },
+      { property: "og:description", content: "Controle de PIX recebidos e enviados, com pagador, destinatário e totais." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/financeiro/pix" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/financeiro/pix" }],
+  }),
   component: PixPage,
 });
 

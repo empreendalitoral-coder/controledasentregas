@@ -16,12 +16,16 @@ export const Route = createFileRoute(
 )({
   head: () => ({
     meta: [
-      { title: "Diagnóstico Firebase — Entrega Pro" },
-      {
-        name: "description",
-        content: "Verificação do estado do Firebase e push notifications.",
-      },
+      { title: "Diagnóstico de notificações — Entrega Pro" },
+      { name: "description", content: "Diagnóstico da permissão, do token e da conexão de notificações do aparelho." },
+      { property: "og:title", content: "Diagnóstico de notificações — Entrega Pro" },
+      { property: "og:description", content: "Diagnóstico da permissão, do token e da conexão de notificações do aparelho." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/perfil/notificacoes/diagnostico" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/perfil/notificacoes/diagnostico" }],
   }),
   component: DiagPage,
 });

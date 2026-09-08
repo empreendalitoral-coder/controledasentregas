@@ -10,7 +10,19 @@ type Cartao = { id: string; nome: string; limite: number; dia_fechamento: number
 type Lanc = { id: string; cartao_id: string; descricao: string; valor_total: number; parcelas: number; data_compra: string };
 
 export const Route = createFileRoute("/_authenticated/financeiro/cartoes")({
-  head: () => ({ meta: [{ title: "Cartões — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Cartões — Entrega Pro" },
+      { name: "description", content: "Cartões de crédito: limites, faturas e vencimentos em um só lugar." },
+      { property: "og:title", content: "Cartões — Entrega Pro" },
+      { property: "og:description", content: "Cartões de crédito: limites, faturas e vencimentos em um só lugar." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/financeiro/cartoes" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/financeiro/cartoes" }],
+  }),
   component: CartoesPage,
 });
 

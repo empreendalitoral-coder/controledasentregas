@@ -38,7 +38,19 @@ type Solic = {
 };
 
 export const Route = createFileRoute("/_authenticated/premium")({
-  head: () => ({ meta: [{ title: "Premium — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Premium — Entrega Pro" },
+      { name: "description", content: "Assinatura Premium do Entrega Pro: central financeira e relatórios avançados." },
+      { property: "og:title", content: "Premium — Entrega Pro" },
+      { property: "og:description", content: "Assinatura Premium do Entrega Pro: central financeira e relatórios avançados." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/premium" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/premium" }],
+  }),
   component: PremiumPage,
 });
 

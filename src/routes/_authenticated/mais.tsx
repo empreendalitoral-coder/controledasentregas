@@ -26,7 +26,19 @@ import { useRef } from "react";
 import { BRL, computeResumo } from "@/lib/calc";
 
 export const Route = createFileRoute("/_authenticated/mais")({
-  head: () => ({ meta: [{ title: "Mais — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Mais — Entrega Pro" },
+      { name: "description", content: "Todas as funções do Entrega Pro: financeiro, manutenção, perfil e Premium." },
+      { property: "og:title", content: "Mais — Entrega Pro" },
+      { property: "og:description", content: "Todas as funções do Entrega Pro: financeiro, manutenção, perfil e Premium." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/mais" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/mais" }],
+  }),
   component: MaisPage,
 });
 

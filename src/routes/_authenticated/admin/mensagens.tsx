@@ -11,12 +11,16 @@ import { Megaphone, Send, CheckCircle2, XCircle } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/admin/mensagens")({
   head: () => ({
     meta: [
-      { title: "Mensagem para usuários — Admin" },
-      {
-        name: "description",
-        content: "Envie um aviso por notificação para todos os usuários do Entrega Pro.",
-      },
+      { title: "Mensagens — Admin — Entrega Pro" },
+      { name: "description", content: "Envio de avisos e notificações para os usuários do Entrega Pro." },
+      { property: "og:title", content: "Mensagens — Admin — Entrega Pro" },
+      { property: "og:description", content: "Envio de avisos e notificações para os usuários do Entrega Pro." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/admin/mensagens" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/admin/mensagens" }],
   }),
   component: MensagensAdminPage,
 });

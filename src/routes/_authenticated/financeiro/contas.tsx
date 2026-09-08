@@ -9,7 +9,19 @@ import { BRL } from "@/lib/calc";
 type Conta = { id: string; nome: string; valor: number; dia_vencimento: number; categoria: string | null; pago: boolean };
 
 export const Route = createFileRoute("/_authenticated/financeiro/contas")({
-  head: () => ({ meta: [{ title: "Contas Fixas — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Contas Fixas — Entrega Pro" },
+      { name: "description", content: "Contas fixas do mês com valor, dia de vencimento e controle de pagamento." },
+      { property: "og:title", content: "Contas Fixas — Entrega Pro" },
+      { property: "og:description", content: "Contas fixas do mês com valor, dia de vencimento e controle de pagamento." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/financeiro/contas" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/financeiro/contas" }],
+  }),
   component: ContasPage,
 });
 

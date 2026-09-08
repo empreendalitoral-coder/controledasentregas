@@ -9,9 +9,16 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/financeiro/quinzena")({
   head: () => ({
     meta: [
-      { title: "Relatório Financeiro — Entrega Pro" },
-      { name: "description", content: "Relatório financeiro por semana, quinzena, mês, ano ou período personalizado." },
+      { title: "Fechamento por Período — Entrega Pro" },
+      { name: "description", content: "Fechamento por semana, quinzena, mês ou período personalizado, com relatório em PDF." },
+      { property: "og:title", content: "Fechamento por Período — Entrega Pro" },
+      { property: "og:description", content: "Fechamento por semana, quinzena, mês ou período personalizado, com relatório em PDF." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/financeiro/quinzena" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/financeiro/quinzena" }],
   }),
   component: RelatorioPage,
 });

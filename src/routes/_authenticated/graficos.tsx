@@ -30,8 +30,15 @@ export const Route = createFileRoute("/_authenticated/graficos")({
   head: () => ({
     meta: [
       { title: "Gráficos — Entrega Pro" },
-      { name: "description", content: "Dashboard financeiro com faturamento, lucro, despesas e entregas." },
+      { name: "description", content: "Gráficos de faturamento, lucro, despesas e entregas mês a mês." },
+      { property: "og:title", content: "Gráficos — Entrega Pro" },
+      { property: "og:description", content: "Gráficos de faturamento, lucro, despesas e entregas mês a mês." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/graficos" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/graficos" }],
   }),
   component: GraficosPage,
 });
