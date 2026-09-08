@@ -18,6 +18,8 @@ import {
   LogOut,
   Shield,
   Wallet2,
+  Lock,
+
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRef } from "react";
@@ -149,9 +151,15 @@ function MaisPage() {
             <div className="flex items-center gap-3 py-3 first:pt-1 last:pb-1">
               <Icon className={`size-5 ${it.highlight ? "text-primary" : "text-foreground/80"}`} />
               <span className={`flex-1 text-sm ${it.highlight ? "font-semibold" : ""}`}>{it.label}</span>
+              {it.highlight && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                  {!premium.ativo && <Lock className="size-3" />} PRO
+                </span>
+              )}
               <span className="text-muted-foreground">›</span>
             </div>
           );
+
           return (
             <li key={it.label}>
               {it.to ? <Link to={it.to}>{inner}</Link> : <button onClick={it.onClick} className="w-full text-left">{inner}</button>}
