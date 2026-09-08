@@ -141,14 +141,14 @@ function RootComponent() {
   useEffect(() => {
     let cancelled = false;
 
-    // Ao abrir o app: revalida sessão e recarrega dados/perfil para garantir RLS atualizada.
+    // Ao abrir o app, renova a sessão sem invalidar a rota que ainda está carregando.
+    // Invalidar aqui podia cancelar o import da rota e causar `Uncaught undefined`.
     (async () => {
       try {
         const { supabase } = await import("@/integrations/supabase/client");
         const { data } = await supabase.auth.getUser();
         if (cancelled) return;
         if (data.user) {
-          router.invalidate();
           queryClient.invalidateQueries();
         }
       } catch (err) {
@@ -159,21 +159,24 @@ function RootComponent() {
     // Listener global para eventos de auth (SIGNED_IN, SIGNED_OUT, USER_UPDATED).
     let unsub: (() => void) | undefined;
     (async () => {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-        if (
-          event !== "SIGNED_IN" &&
-          event !== "SIGNED_OUT" &&
-          event !== "USER_UPDATED"
-        ) {
-          return;
-        }
-        router.invalidate();
-        if (event !== "SIGNED_OUT") {
-          queryClient.invalidateQueries();
-        }
-      });
-      unsub = () => sub.subscription.unsubscribe();
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        if (cancelled) return;
+        const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+          if (event === "SIGNED_OUT") {
+            queryClient.clear();
+            window.location.assign("/auth");
+            return;
+          }
+
+          if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+            queryClient.invalidateQueries();
+          }
+        });
+        unsub = () => sub.subscription.unsubscribe();
+      } catch (err) {
+        console.warn("[auth] listener de sessão falhou", err);
+      }
     })();
 
     // Bootstrap push notifications (Capacitor nativo; no-op no navegador).
