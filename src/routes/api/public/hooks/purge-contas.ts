@@ -42,7 +42,8 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
         ] as const;
 
         let purgados = 0;
-        const erros: Array<{ user_id: string; erro: string }> = [];
+        let falhas = 0;
+
 
         for (const row of pendentes ?? []) {
           const uid = row.user_id;
