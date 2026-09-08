@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Field, TextInput } from "@/components/Field";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 import { broadcastNotification } from "@/lib/notifications/broadcast.functions";
 import { Megaphone, Send, CheckCircle2, XCircle } from "lucide-react";
 
@@ -81,8 +82,8 @@ function MensagensAdminPage() {
         <div>
           <div className="font-semibold">Mensagem para todos</div>
           <div className="text-xs text-muted-foreground mt-0.5">
-            A mensagem chega como notificação push nos aparelhos registrados. Usuários que
-            desativaram avisos do administrador não recebem.
+            O aviso aparece dentro do app para todos os usuários cadastrados e também é
+            enviado como notificação nos celulares com o app instalado.
           </div>
           <div className="text-xs text-muted-foreground mt-2 rounded-lg bg-muted/40 p-2">
             Importante: o registro de aparelhos acontece apenas no aplicativo Android
