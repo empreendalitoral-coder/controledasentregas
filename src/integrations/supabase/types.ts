@@ -80,6 +80,59 @@ export type Database = {
         }
         Relationships: []
       }
+      avisos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          criado_por: string | null
+          id: string
+          mensagem: string
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          mensagem: string
+          titulo: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          mensagem?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
+      avisos_lidos: {
+        Row: {
+          aviso_id: string
+          lido_em: string
+          user_id: string
+        }
+        Insert: {
+          aviso_id: string
+          lido_em?: string
+          user_id: string
+        }
+        Update: {
+          aviso_id?: string
+          lido_em?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_lidos_aviso_id_fkey"
+            columns: ["aviso_id"]
+            isOneToOne: false
+            referencedRelation: "avisos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cartao_lancamentos: {
         Row: {
           cartao_id: string
