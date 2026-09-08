@@ -62,14 +62,14 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
 
             purgados += 1;
           } catch (e) {
-            const msg = e instanceof Error ? e.message : String(e);
-            console.error("[purge-contas] falha", uid, msg);
-            erros.push({ user_id: uid, erro: msg });
+            // Detalhes ficam apenas no log do servidor; a resposta não expõe IDs nem mensagens internas.
+            console.error("[purge-contas] falha", uid, e);
+            falhas += 1;
           }
         }
 
         return new Response(
-          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, erros }),
+          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, falhas }),
           { headers: { "Content-Type": "application/json" } },
         );
       },
