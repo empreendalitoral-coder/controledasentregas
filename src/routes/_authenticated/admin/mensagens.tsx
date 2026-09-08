@@ -44,20 +44,27 @@ function MensagensAdminPage() {
     setSending(true);
     setRes(null);
     try {
-      const r = (await enviar({
-        data: { titulo: titulo.trim(), mensagem: mensagem.trim() },
-      })) as Resultado;
-      setRes(r);
-      if (r.enviados > 0) {
-        toast.success(`Mensagem enviada para ${r.enviados} usuário(s)`);
-        setTitulo("");
-        setMensagem("");
-      } else if (r.destinatarios === 0) {
-        toast.info(r.motivo ?? "Nenhum aparelho registrado ainda");
-      } else {
-        toast.error(r.motivo ?? "Nenhuma notificação foi entregue");
-      }
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("avisos").insert({
+        titulo: titulo.trim(),
+        mensagem: mensagem.trim(),
+        criado_por: u.user?.id ?? null,
+      });
+      if (error) throw new Error("Não foi possível publicar o aviso.");
 
+      toast.success("Aviso publicado para todos os usuários dentro do app");
+      setTitulo("");
+      setMensagem("");
+
+      // Também tenta enviar como notificação no celular (só chega em aparelhos registrados).
+      try {
+        const r = (await enviar({
+          data: { titulo: titulo.trim(), mensagem: mensagem.trim() },
+        })) as Resultado;
+        setRes(r);
+      } catch {
+        /* push é complementar; o aviso no app já foi publicado */
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Falha no envio");
     } finally {
