@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { AvisosBanner } from "@/components/AvisosBanner";
 import type { ReactNode } from "react";
 import {
   Home,
