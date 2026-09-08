@@ -3,20 +3,16 @@ import { createFileRoute } from "@tanstack/react-router";
 /**
  * Endpoint chamado por pg_cron diariamente às 08:00 BRT (11:00 UTC).
  * Varre todos os tipos com `scan()` no registry e dispara envios para os eventos encontrados.
- * Autenticação: header `apikey` deve conter a SUPABASE_PUBLISHABLE_KEY.
+ * Autenticação: header `x-cron-secret` com o token privado de servidor.
  */
 export const Route = createFileRoute("/api/public/hooks/notificacoes-diarias")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!apikey || !expected || apikey !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
+        const { assertCronRequest } = await import("@/lib/cron-auth.server");
+        const denied = await assertCronRequest(request);
+        if (denied) return denied;
+
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { listTiposComScan } = await import("@/lib/notifications/registry.server");
