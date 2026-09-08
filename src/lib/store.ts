@@ -223,23 +223,37 @@ let initialised = false;
 function ensureInit() {
   if (initialised || typeof window === "undefined") return;
   initialised = true;
-  supabase.auth.getSession().then(({ data }) => {
-    const uid = data.session?.user.id ?? null;
-    userId = uid;
-    if (uid) hydrate(uid);
-  });
+  supabase.auth
+    .getSession()
+    .then(({ data }) => {
+      const uid = data.session?.user.id ?? null;
+      userId = uid;
+      if (uid) return hydrate(uid);
+      setState(() => ({ ...defaultState, hydrated: true }));
+    })
+    .catch((error) => {
+      console.error("[store] falha ao carregar sessão", error);
+      setState(() => ({ ...defaultState, hydrated: true }));
+    });
   supabase.auth.onAuthStateChange((_event, session) => {
     const uid = session?.user.id ?? null;
     if (uid !== userId) {
       userId = uid;
-      if (uid) hydrate(uid);
-      else setState(() => defaultState);
+      if (uid) {
+        void hydrate(uid).catch((error) => {
+          console.error("[store] falha ao carregar dados", error);
+        });
+      } else {
+        setState(() => ({ ...defaultState, hydrated: true }));
+      }
     }
   });
 }
 
 export function useStore<T>(selector: (s: State) => T): T {
-  ensureInit();
+  useEffect(() => {
+    ensureInit();
+  }, []);
   return useSyncExternalStore(
     subscribe,
     () => selector(getSnapshot()),
@@ -248,7 +262,9 @@ export function useStore<T>(selector: (s: State) => T): T {
 }
 
 export function useFullStore(): State {
-  ensureInit();
+  useEffect(() => {
+    ensureInit();
+  }, []);
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 

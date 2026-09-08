@@ -3,7 +3,6 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
-  useRouter,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -37,7 +36,6 @@ function NotFoundComponent() {
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
-  const router = useRouter();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -54,7 +52,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
-              router.invalidate();
               reset();
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -136,19 +133,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const router = useRouter();
 
   useEffect(() => {
     let cancelled = false;
 
-    // Ao abrir o app: revalida sessão e recarrega dados/perfil para garantir RLS atualizada.
+    // Ao abrir o app, renova a sessão sem invalidar a rota que ainda está carregando.
+    // Invalidar aqui podia cancelar o import da rota e causar `Uncaught undefined`.
     (async () => {
       try {
         const { supabase } = await import("@/integrations/supabase/client");
         const { data } = await supabase.auth.getUser();
         if (cancelled) return;
         if (data.user) {
-          router.invalidate();
           queryClient.invalidateQueries();
         }
       } catch (err) {
@@ -159,21 +155,24 @@ function RootComponent() {
     // Listener global para eventos de auth (SIGNED_IN, SIGNED_OUT, USER_UPDATED).
     let unsub: (() => void) | undefined;
     (async () => {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-        if (
-          event !== "SIGNED_IN" &&
-          event !== "SIGNED_OUT" &&
-          event !== "USER_UPDATED"
-        ) {
-          return;
-        }
-        router.invalidate();
-        if (event !== "SIGNED_OUT") {
-          queryClient.invalidateQueries();
-        }
-      });
-      unsub = () => sub.subscription.unsubscribe();
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        if (cancelled) return;
+        const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+          if (event === "SIGNED_OUT") {
+            queryClient.clear();
+            window.location.assign("/auth");
+            return;
+          }
+
+          if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+            queryClient.invalidateQueries();
+          }
+        });
+        unsub = () => sub.subscription.unsubscribe();
+      } catch (err) {
+        console.warn("[auth] listener de sessão falhou", err);
+      }
     })();
 
     // Bootstrap push notifications (Capacitor nativo; no-op no navegador).
@@ -190,7 +189,7 @@ function RootComponent() {
       cancelled = true;
       unsub?.();
     };
-  }, [queryClient, router]);
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
