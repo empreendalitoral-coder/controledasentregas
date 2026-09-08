@@ -5,6 +5,8 @@ import { actions, useFullStore, type Lancamento } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
+import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
   head: () => ({
