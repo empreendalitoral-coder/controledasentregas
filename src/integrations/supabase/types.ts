@@ -911,6 +911,7 @@ export type Database = {
     }
     Functions: {
       cancelar_exclusao_conta: { Args: never; Returns: undefined }
+      cron_token_valido: { Args: { _token: string }; Returns: boolean }
       get_payment_info: {
         Args: never
         Returns: {
