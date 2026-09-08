@@ -30,7 +30,7 @@ function SuportePage() {
       <h2>Fale com a gente</h2>
       <ul>
         <li>
-          E-mail: <a href="mailto:suporte@entregapro.app">suporte@entregapro.app</a>
+          E-mail: <a href="mailto:marcelo100surf@gmail.com">marcelo100surf@gmail.com</a>
         </li>
       </ul>
       <p>

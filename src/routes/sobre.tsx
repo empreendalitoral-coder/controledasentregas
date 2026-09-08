@@ -73,7 +73,7 @@ function SobrePage() {
 
       <h2>Contato</h2>
       <p>
-        <a href="mailto:suporte@entregapro.app">suporte@entregapro.app</a>
+        <a href="mailto:marcelo100surf@gmail.com">marcelo100surf@gmail.com</a>
       </p>
     </LegalPage>
   );
