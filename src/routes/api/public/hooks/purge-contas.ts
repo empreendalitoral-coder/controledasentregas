@@ -4,22 +4,17 @@ import { createFileRoute } from "@tanstack/react-router";
  * Rota chamada por pg_cron diariamente para apagar em definitivo contas
  * cujo período de 30 dias de exclusão já venceu.
  *
- * Autenticação: header `apikey` deve conter a SUPABASE_PUBLISHABLE_KEY (padrão
- * pg_cron do Lovable). O corpo pode ser vazio.
+ * Autenticação: header `x-cron-secret` com o token privado de servidor.
+ * O corpo pode ser vazio.
  */
 export const Route = createFileRoute("/api/public/hooks/purge-contas")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
+        const { assertCronRequest } = await import("@/lib/cron-auth.server");
+        const denied = await assertCronRequest(request);
+        if (denied) return denied;
 
-        if (!apikey || !expected || apikey !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
