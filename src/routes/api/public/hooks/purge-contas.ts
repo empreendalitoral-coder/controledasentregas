@@ -4,22 +4,17 @@ import { createFileRoute } from "@tanstack/react-router";
  * Rota chamada por pg_cron diariamente para apagar em definitivo contas
  * cujo período de 30 dias de exclusão já venceu.
  *
- * Autenticação: header `apikey` deve conter a SUPABASE_PUBLISHABLE_KEY (padrão
- * pg_cron do Lovable). O corpo pode ser vazio.
+ * Autenticação: header `x-cron-secret` com o token privado de servidor.
+ * O corpo pode ser vazio.
  */
 export const Route = createFileRoute("/api/public/hooks/purge-contas")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
+        const { assertCronRequest } = await import("@/lib/cron-auth.server");
+        const denied = await assertCronRequest(request);
+        if (denied) return denied;
 
-        if (!apikey || !expected || apikey !== expected) {
-          return new Response(JSON.stringify({ error: "unauthorized" }), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -33,7 +28,7 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
 
         if (errList) {
           console.error("[purge-contas] erro listando", errList);
-          return new Response(JSON.stringify({ error: errList.message }), {
+          return new Response(JSON.stringify({ error: "internal_error" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
           });
@@ -47,7 +42,8 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
         ] as const;
 
         let purgados = 0;
-        const erros: Array<{ user_id: string; erro: string }> = [];
+        let falhas = 0;
+
 
         for (const row of pendentes ?? []) {
           const uid = row.user_id;
@@ -66,14 +62,14 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
 
             purgados += 1;
           } catch (e) {
-            const msg = e instanceof Error ? e.message : String(e);
-            console.error("[purge-contas] falha", uid, msg);
-            erros.push({ user_id: uid, erro: msg });
+            // Detalhes ficam apenas no log do servidor; a resposta não expõe IDs nem mensagens internas.
+            console.error("[purge-contas] falha", uid, e);
+            falhas += 1;
           }
         }
 
         return new Response(
-          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, erros }),
+          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, falhas }),
           { headers: { "Content-Type": "application/json" } },
         );
       },
