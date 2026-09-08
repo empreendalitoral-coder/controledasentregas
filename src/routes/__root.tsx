@@ -85,6 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "App para motoristas de entrega: controle de pacotes, combustível, recebimentos e lucro real. Acesso seguro com login.",
       },
       { name: "author", content: "Entrega Pro" },
+      { name: "google-site-verification", content: "wLesMwbLueQC829QzZsy236qRPupOR1_UiMJR86ngMU" },
       { name: "theme-color", content: "#1a1f2e" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
