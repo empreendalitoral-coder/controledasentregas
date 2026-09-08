@@ -9,8 +9,18 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Entrar — Entrega Pro" },
       { name: "description", content: "Entre ou crie sua conta no Entrega Pro." },
+      { property: "og:title", content: "Entrar — Entrega Pro" },
+      {
+        property: "og:description",
+        content: "Acesse sua conta do Entrega Pro e controle entregas, gastos e recebimentos.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/auth" },
+      { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://meuentregapro.app/auth" }],
   }),
+
   component: AuthPage,
 });
 

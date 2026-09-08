@@ -5,7 +5,25 @@ import { toast } from "sonner";
 import { Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Nova senha — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Nova senha — Entrega Pro" },
+      {
+        name: "description",
+        content: "Defina uma nova senha para recuperar o acesso à sua conta do Entrega Pro.",
+      },
+      { property: "og:title", content: "Nova senha — Entrega Pro" },
+      {
+        property: "og:description",
+        content: "Recupere o acesso à sua conta do Entrega Pro definindo uma nova senha.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/reset-password" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+
   component: ResetPage,
 });
 
