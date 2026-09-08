@@ -43,9 +43,10 @@ function SobrePage() {
 
       <h2>Tecnologias</h2>
       <p>
-        React, TanStack Start, TypeScript, Tailwind CSS, Supabase (banco e
-        autenticação), Lovable Cloud e Cloudflare.
+        React, TanStack Start, TypeScript, Tailwind CSS, banco de dados e
+        autenticação em nuvem, com entrega via Cloudflare.
       </p>
+
 
       <h2>Licenças de terceiros</h2>
       <p>
