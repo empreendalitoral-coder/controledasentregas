@@ -211,25 +211,33 @@ function ProxRecebimento({
   const r = computeResumo(state, periodo);
   const previsto = r.valor_bruto - r.descontos - r.combustivel;
   const fmt = (s: string) => new Date(s + "T00:00:00").toLocaleDateString("pt-BR");
-  const dias = Math.max(
-    0,
-    Math.ceil(
-      (new Date(prox.data_pagamento + "T00:00:00").getTime() - Date.now()) /
-        86400000,
-    ),
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const diffDias = Math.round(
+    (new Date(prox.data_pagamento + "T00:00:00").getTime() - hoje.getTime()) / 86400000,
   );
+  const atrasado = diffDias < 0;
+  const dias = Math.abs(diffDias);
   return (
     <>
-      <div className="ep-stat-tile text-center">
+      <div
+        className={`ep-stat-tile text-center ${atrasado ? "border border-destructive/50 bg-destructive/10" : ""}`}
+      >
         <div className="font-semibold">
           {fmt(prox.data_inicial)} até {fmt(prox.data_final)}
         </div>
         <div className="text-xs text-muted-foreground mt-1">
           Pagamento previsto: {fmt(prox.data_pagamento)}
         </div>
-        <div className="text-xs text-primary font-medium mt-2">
-          Faltam <span className="font-bold">{dias}</span> dias para o pagamento
-        </div>
+        {atrasado ? (
+          <div className="text-xs text-destructive font-semibold mt-2">
+            Atrasado há <span className="font-bold">{dias}</span> {dias === 1 ? "dia" : "dias"}
+          </div>
+        ) : (
+          <div className="text-xs text-primary font-medium mt-2">
+            Faltam <span className="font-bold">{dias}</span> dias para o pagamento
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-2 gap-2 mt-3">
         <Stat label="Dias trabalhados" value={NUM(r.dias_trabalhados)} />

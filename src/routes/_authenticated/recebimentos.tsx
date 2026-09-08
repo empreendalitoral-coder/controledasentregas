@@ -117,12 +117,26 @@ function RecebimentosPage() {
             rangeFromStrings(r.data_inicial, r.data_final),
           );
           const previsto = resumo.valor_bruto - resumo.descontos - resumo.combustivel;
+          const hoje = new Date();
+          hoje.setHours(0, 0, 0, 0);
+          const diasAtraso = Math.round(
+            (hoje.getTime() - new Date(r.data_pagamento + "T00:00:00").getTime()) / 86400000,
+          );
+          const atrasado = r.status === "pendente" && diasAtraso > 0;
           const status =
             r.status === "recebido"
               ? { txt: "Recebido", cls: "text-success" }
-              : { txt: "Pendente", cls: "text-warning" };
+              : atrasado
+                ? {
+                    txt: `Atrasado há ${diasAtraso} ${diasAtraso === 1 ? "dia" : "dias"}`,
+                    cls: "text-destructive",
+                  }
+                : { txt: "Pendente", cls: "text-warning" };
           return (
-            <div key={r.id} className="ep-card">
+            <div
+              key={r.id}
+              className={`ep-card ${atrasado ? "border-destructive/50 bg-destructive/10" : ""}`}
+            >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <div className="text-xs text-muted-foreground">{r.nome_periodo}</div>
