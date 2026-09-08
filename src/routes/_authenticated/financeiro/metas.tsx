@@ -9,7 +9,19 @@ import { BRL } from "@/lib/calc";
 type Meta = { id: string; nome: string; valor_meta: number; valor_atual: number; icone: string | null };
 
 export const Route = createFileRoute("/_authenticated/financeiro/metas")({
-  head: () => ({ meta: [{ title: "Metas — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Metas — Entrega Pro" },
+      { name: "description", content: "Metas financeiras com aportes e progresso até o valor desejado." },
+      { property: "og:title", content: "Metas — Entrega Pro" },
+      { property: "og:description", content: "Metas financeiras com aportes e progresso até o valor desejado." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/metas" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/financeiro/metas" }],
+  }),
   component: MetasPage,
 });
 

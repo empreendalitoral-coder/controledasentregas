@@ -21,8 +21,15 @@ export const Route = createFileRoute("/_authenticated/manutencao")({
   head: () => ({
     meta: [
       { title: "Manutenção — Entrega Pro" },
-      { name: "description", content: "Histórico de manutenções do veículo." },
+      { name: "description", content: "Histórico de manutenções do veículo com custos e quilometragem." },
+      { property: "og:title", content: "Manutenção — Entrega Pro" },
+      { property: "og:description", content: "Histórico de manutenções do veículo com custos e quilometragem." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/manutencao" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/manutencao" }],
   }),
   component: ManutPage,
 });

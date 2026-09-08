@@ -16,7 +16,19 @@ type Config = {
 };
 
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
-  head: () => ({ meta: [{ title: "Configurações — Admin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Configurações — Admin — Entrega Pro" },
+      { name: "description", content: "Configurações gerais do Entrega Pro, planos e valores do Premium." },
+      { property: "og:title", content: "Configurações — Admin — Entrega Pro" },
+      { property: "og:description", content: "Configurações gerais do Entrega Pro, planos e valores do Premium." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/admin/configuracoes" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/admin/configuracoes" }],
+  }),
   component: ConfigAdminPage,
 });
 

@@ -10,7 +10,17 @@ import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
   head: () => ({
-    meta: [{ title: "Lançamento — Entrega Pro" }],
+    meta: [
+      { title: "Lançamento do dia — Entrega Pro" },
+      { name: "description", content: "Registro do dia de trabalho: entregas, PNR, quilometragem e combustível." },
+      { property: "og:title", content: "Lançamento do dia — Entrega Pro" },
+      { property: "og:description", content: "Registro do dia de trabalho: entregas, PNR, quilometragem e combustível." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/lancamento/novo" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/lancamento/novo" }],
   }),
   component: LancamentoPage,
 });

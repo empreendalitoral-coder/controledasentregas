@@ -11,8 +11,15 @@ export const Route = createFileRoute("/_authenticated/recebimentos")({
   head: () => ({
     meta: [
       { title: "Recebimentos — Entrega Pro" },
-      { name: "description", content: "Períodos de pagamento, valores pendentes e recebidos." },
+      { name: "description", content: "Períodos de pagamento, valores pendentes, atrasados e já recebidos." },
+      { property: "og:title", content: "Recebimentos — Entrega Pro" },
+      { property: "og:description", content: "Períodos de pagamento, valores pendentes, atrasados e já recebidos." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/recebimentos" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/recebimentos" }],
   }),
   component: RecebimentosPage,
 });

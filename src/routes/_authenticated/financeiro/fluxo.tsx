@@ -8,7 +8,19 @@ import { BRL } from "@/lib/calc";
 import { loadFinanceiroUnificado, totalizar, type UnifiedRow } from "@/lib/financeiro-aggregate";
 
 export const Route = createFileRoute("/_authenticated/financeiro/fluxo")({
-  head: () => ({ meta: [{ title: "Fluxo de Caixa — Entrega Pro" }] }),
+  head: () => ({
+    meta: [
+      { title: "Fluxo de Caixa — Entrega Pro" },
+      { name: "description", content: "Entradas e saídas do período com saldo consolidado do motorista." },
+      { property: "og:title", content: "Fluxo de Caixa — Entrega Pro" },
+      { property: "og:description", content: "Entradas e saídas do período com saldo consolidado do motorista." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/fluxo" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/financeiro/fluxo" }],
+  }),
   component: FluxoPage,
 });
 

@@ -20,8 +20,15 @@ export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
     meta: [
       { title: "Perfil — Entrega Pro" },
-      { name: "description", content: "Configure seu perfil, veículo e meta mensal." },
+      { name: "description", content: "Dados do motorista, veículo, metas e preferências do aplicativo." },
+      { property: "og:title", content: "Perfil — Entrega Pro" },
+      { property: "og:description", content: "Dados do motorista, veículo, metas e preferências do aplicativo." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/perfil" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/perfil" }],
   }),
   component: PerfilPage,
 });

@@ -21,7 +21,19 @@ type Solic = {
 };
 
 export const Route = createFileRoute("/_authenticated/admin/solicitacoes")({
-  head: () => ({ meta: [{ title: "Solicitações — Admin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Solicitações — Admin — Entrega Pro" },
+      { name: "description", content: "Solicitações de assinatura Premium aguardando aprovação." },
+      { property: "og:title", content: "Solicitações — Admin — Entrega Pro" },
+      { property: "og:description", content: "Solicitações de assinatura Premium aguardando aprovação." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/admin/solicitacoes" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/admin/solicitacoes" }],
+  }),
   component: SolicAdminPage,
 });
 

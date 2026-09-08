@@ -11,8 +11,15 @@ export const Route = createFileRoute("/_authenticated/abastecimentos")({
   head: () => ({
     meta: [
       { title: "Abastecimentos — Entrega Pro" },
-      { name: "description", content: "Histórico de abastecimentos e consumo." },
+      { name: "description", content: "Abastecimentos registrados com litros, valor pago e consumo do veículo." },
+      { property: "og:title", content: "Abastecimentos — Entrega Pro" },
+      { property: "og:description", content: "Abastecimentos registrados com litros, valor pago e consumo do veículo." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/abastecimentos" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "/abastecimentos" }],
   }),
   component: AbastPage,
 });

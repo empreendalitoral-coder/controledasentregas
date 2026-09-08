@@ -14,7 +14,19 @@ type UserRow = {
 };
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
-  head: () => ({ meta: [{ title: "Usuários — Admin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Usuários — Admin — Entrega Pro" },
+      { name: "description", content: "Lista de motoristas cadastrados e situação da assinatura de cada um." },
+      { property: "og:title", content: "Usuários — Admin — Entrega Pro" },
+      { property: "og:description", content: "Lista de motoristas cadastrados e situação da assinatura de cada um." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/admin/usuarios" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "/admin/usuarios" }],
+  }),
   component: UsuariosPage,
 });
 

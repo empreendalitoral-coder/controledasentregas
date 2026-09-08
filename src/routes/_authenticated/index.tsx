@@ -24,7 +24,9 @@ export const Route = createFileRoute("/_authenticated/")({
       { property: "og:url", content: "https://meuentregapro.app/" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://meuentregapro.app/" }],
   }),
+
 
   component: Dashboard,
 });
