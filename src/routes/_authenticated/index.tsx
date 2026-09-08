@@ -15,8 +15,17 @@ export const Route = createFileRoute("/_authenticated/")({
         name: "description",
         content: "Dashboard do motorista: resumo do mês, meta e próximo recebimento.",
       },
+      { property: "og:title", content: "Entrega Pro — Painel" },
+      {
+        property: "og:description",
+        content: "Veja seu resumo do mês, sua meta e o próximo recebimento no Entrega Pro.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://meuentregapro.app/" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
+
   component: Dashboard,
 });
 
