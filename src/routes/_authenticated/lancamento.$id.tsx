@@ -357,6 +357,19 @@ function LancamentoPage() {
   );
 }
 
+function SectionTitle({ icon, title }: { icon: ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2 pb-1 border-b border-border/60">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+        {icon}
+      </span>
+      <h2 className="text-sm font-semibold tracking-wide text-foreground">
+        {title}
+      </h2>
+    </div>
+  );
+}
+
 function Calc({ label, v }: { label: string; v: string }) {
   return (
     <div className="ep-stat-tile">
