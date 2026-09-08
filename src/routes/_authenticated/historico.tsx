@@ -255,34 +255,6 @@ function HistoricoPage() {
   );
 }
 
-function Th({ children, right }: { children: React.ReactNode; right?: boolean }) {
-  return (
-    <th
-      className={`py-2 px-1.5 font-medium text-[11px] uppercase tracking-wide ${
-        right ? "text-right" : "text-left"
-      }`}
-    >
-      {children}
-    </th>
-  );
-}
-
-function Td({
-  children,
-  right,
-  className = "",
-}: {
-  children?: React.ReactNode;
-  right?: boolean;
-  className?: string;
-}) {
-  return (
-    <td className={`py-2 px-1.5 ${right ? "text-right" : "text-left"} ${className}`}>
-      {children}
-    </td>
-  );
-}
-
 function ActionBtn({
   icon,
   label,
