@@ -142,7 +142,7 @@ function GraficosPage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 min-w-[88px] h-10 rounded-lg text-sm font-medium transition ${
+            className={`flex-1 min-w-0 px-1 h-10 rounded-lg text-[11px] sm:text-sm font-medium leading-tight whitespace-nowrap transition ${
               tab === t.id
                 ? "bg-primary/15 text-primary shadow-inner"
                 : "text-muted-foreground hover:text-foreground"
@@ -364,11 +364,14 @@ function StatTile({
 function LegendRow({ color, label, value, valueColor }: { color: string; label: string; value: string; valueColor?: string }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
         <span className="size-2.5 rounded-full shrink-0" style={{ background: color }} />
-        <span className="text-muted-foreground truncate">{label}</span>
+        <span className="text-muted-foreground text-[11px] sm:text-xs leading-tight">{label}</span>
       </div>
-      <span className="font-semibold truncate" style={valueColor ? { color: valueColor } : undefined}>
+      <span
+        className="font-semibold shrink-0 whitespace-nowrap text-[11px] sm:text-xs"
+        style={valueColor ? { color: valueColor } : undefined}
+      >
         {value}
       </span>
     </div>
