@@ -155,66 +155,61 @@ function HistoricoPage() {
         )}
       </div>
 
-      <div className="ep-card mt-4 overflow-x-auto">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="text-muted-foreground border-b border-border">
-              <Th>Data</Th>
-              <Th>Cidade</Th>
-              <Th right>Pac.</Th>
-              <Th right>PNR</Th>
-              <Th right>Perd.</Th>
-              <Th right>KM</Th>
-              <Th right>Líquido</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {lancs.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="py-10 text-center text-muted-foreground">
-                  Sem lançamentos no período.
-                </td>
-              </tr>
-            ) : (
-              lancs.map((l) => (
-                <tr
-                  key={l.id}
-                  onClick={() => setSelected(selected === l.id ? null : l.id)}
-                  className={`cursor-pointer border-b border-border/50 last:border-0 transition ${
-                    selected === l.id ? "bg-primary/15" : "hover:bg-secondary/30"
-                  }`}
-                >
-                  <Td>{fmtD(l.data)}</Td>
-                  <Td className="text-muted-foreground">
+      <div className="mt-4 space-y-2">
+        {lancs.length === 0 ? (
+          <div className="ep-card py-10 text-center text-muted-foreground text-sm">
+            Sem lançamentos no período.
+          </div>
+        ) : (
+          lancs.map((l) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => setSelected(selected === l.id ? null : l.id)}
+              className={`w-full text-left ep-card !p-3 transition ${
+                selected === l.id
+                  ? "border-primary bg-primary/10"
+                  : "hover:bg-secondary/20"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold">{fmtD(l.data)}</div>
+                  <div className="text-xs text-muted-foreground truncate">
                     {l.trabalhou ? l.cidade ?? "—" : "Folga"}
-                  </Td>
-                  <Td right>{NUM(l.pacotes ?? 0)}</Td>
-                  <Td right>{NUM(l.pnr ?? 0)}</Td>
-                  <Td right>{NUM(l.pacotes_perdidos ?? 0)}</Td>
-                  <Td right>{NUM(kmRodado(l))}</Td>
-                  <Td right>
-                    <span className="ep-money-pos">{BRL(lucroLiquido(l))}</span>
-                  </Td>
-                </tr>
-              ))
-            )}
-          </tbody>
-          {lancs.length > 0 && (
-            <tfoot>
-              <tr className="border-t-2 border-border font-semibold">
-                <Td>Totalização</Td>
-                <Td></Td>
-                <Td right>{NUM(r.pacotes)}</Td>
-                <Td right>{NUM(r.pnr)}</Td>
-                <Td right>{NUM(r.pacotes_perdidos)}</Td>
-                <Td right>{NUM(r.km)}</Td>
-                <Td right>
-                  <span className="ep-money-pos">{BRL(r.lucro_liquido)}</span>
-                </Td>
-              </tr>
-            </tfoot>
-          )}
-        </table>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="ep-money-pos text-base">{BRL(lucroLiquido(l))}</div>
+                  <div className="text-[10px] text-muted-foreground">Líquido</div>
+                </div>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+                <span>Pacotes: {NUM(l.pacotes ?? 0)}</span>
+                <span>PNR: {NUM(l.pnr ?? 0)}</span>
+                <span>Perdidos: {NUM(l.pacotes_perdidos ?? 0)}</span>
+                <span>KM: {NUM(kmRodado(l))}</span>
+              </div>
+            </button>
+          ))
+        )}
+
+        {lancs.length > 0 && (
+          <div className="ep-card !p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Totalização
+              </span>
+              <span className="ep-money-pos text-base">{BRL(r.lucro_liquido)}</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+              <span>Pacotes: {NUM(r.pacotes)}</span>
+              <span>PNR: {NUM(r.pnr)}</span>
+              <span>Perdidos: {NUM(r.pacotes_perdidos)}</span>
+              <span>KM: {NUM(r.km)}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action card (Visualizar / Editar / Excluir) */}
