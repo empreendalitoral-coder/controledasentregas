@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const URL = "https://controledasentregas.lovable.app/privacidade";
+const URL = "https://meuentregapro.com.br/privacidade";
 
 export const Route = createFileRoute("/privacidade")({
   head: () => ({

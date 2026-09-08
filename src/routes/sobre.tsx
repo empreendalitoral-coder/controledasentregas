@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const URL = "https://controledasentregas.lovable.app/sobre";
+const URL = "https://meuentregapro.com.br/sobre";
 const VERSAO = "1.0.0";
 
 export const Route = createFileRoute("/sobre")({
