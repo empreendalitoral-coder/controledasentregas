@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { AvisosBanner } from "@/components/AvisosBanner";
 import type { ReactNode } from "react";
 import {
   Home,
@@ -84,6 +85,7 @@ export function AppShell({ title, children, back, right }: Props) {
       )}
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 pt-4 pb-28">
+        <AvisosBanner />
         {children}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
           <Link to="/privacidade" className="hover:text-primary">Privacidade</Link>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Field, TextInput } from "@/components/Field";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 import { broadcastNotification } from "@/lib/notifications/broadcast.functions";
 import { Megaphone, Send, CheckCircle2, XCircle } from "lucide-react";
 
@@ -44,20 +45,27 @@ function MensagensAdminPage() {
     setSending(true);
     setRes(null);
     try {
-      const r = (await enviar({
-        data: { titulo: titulo.trim(), mensagem: mensagem.trim() },
-      })) as Resultado;
-      setRes(r);
-      if (r.enviados > 0) {
-        toast.success(`Mensagem enviada para ${r.enviados} usuário(s)`);
-        setTitulo("");
-        setMensagem("");
-      } else if (r.destinatarios === 0) {
-        toast.info(r.motivo ?? "Nenhum aparelho registrado ainda");
-      } else {
-        toast.error(r.motivo ?? "Nenhuma notificação foi entregue");
-      }
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("avisos").insert({
+        titulo: titulo.trim(),
+        mensagem: mensagem.trim(),
+        criado_por: u.user?.id ?? null,
+      });
+      if (error) throw new Error("Não foi possível publicar o aviso.");
 
+      toast.success("Aviso publicado para todos os usuários dentro do app");
+      setTitulo("");
+      setMensagem("");
+
+      // Também tenta enviar como notificação no celular (só chega em aparelhos registrados).
+      try {
+        const r = (await enviar({
+          data: { titulo: titulo.trim(), mensagem: mensagem.trim() },
+        })) as Resultado;
+        setRes(r);
+      } catch {
+        /* push é complementar; o aviso no app já foi publicado */
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Falha no envio");
     } finally {
@@ -74,8 +82,8 @@ function MensagensAdminPage() {
         <div>
           <div className="font-semibold">Mensagem para todos</div>
           <div className="text-xs text-muted-foreground mt-0.5">
-            A mensagem chega como notificação push nos aparelhos registrados. Usuários que
-            desativaram avisos do administrador não recebem.
+            O aviso aparece dentro do app para todos os usuários cadastrados e também é
+            enviado como notificação nos celulares com o app instalado.
           </div>
           <div className="text-xs text-muted-foreground mt-2 rounded-lg bg-muted/40 p-2">
             Importante: o registro de aparelhos acontece apenas no aplicativo Android
