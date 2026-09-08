@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
 
         if (errList) {
           console.error("[purge-contas] erro listando", errList);
-          return new Response(JSON.stringify({ error: errList.message }), {
+          return new Response(JSON.stringify({ error: "internal_error" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
           });
