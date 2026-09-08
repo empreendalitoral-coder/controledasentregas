@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const URL = "https://meuentregapro.com.br/sobre";
+const URL = "https://meuentregapro.app/sobre";
 const VERSAO = "1.0.0";
 
 export const Route = createFileRoute("/sobre")({
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/sobre")({
         content: `Sobre o Entrega Pro, versão ${VERSAO}. App para motoristas de entrega.`,
       },
       { property: "og:title", content: "Sobre — Entrega Pro" },
-      { property: "og:description", content: "Sobre, versão e licenças do Entrega Pro." },
+      { property: "og:description", content: "Conheça o Entrega Pro: para que serve, versão atual e licenças do aplicativo." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: URL },
     ],

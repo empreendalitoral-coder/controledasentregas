@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const URL = "https://meuentregapro.com.br/suporte";
+const URL = "https://meuentregapro.app/suporte";
 
 export const Route = createFileRoute("/suporte")({
   head: () => ({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/suporte")({
         content: "Central de ajuda do Entrega Pro. Contato e perguntas frequentes.",
       },
       { property: "og:title", content: "Suporte — Entrega Pro" },
-      { property: "og:description", content: "Como podemos te ajudar." },
+      { property: "og:description", content: "Central de ajuda do Entrega Pro: contato, dúvidas frequentes e suporte ao motorista." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: URL },
     ],
