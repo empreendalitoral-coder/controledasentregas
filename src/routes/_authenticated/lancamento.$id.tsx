@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput, TextArea } from "@/components/Field";
 import { actions, useFullStore, type Lancamento } from "@/lib/store";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
 import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
+
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
   head: () => ({
@@ -22,6 +23,9 @@ export const Route = createFileRoute("/_authenticated/lancamento/$id")({
     ],
     links: [{ rel: "canonical", href: "/lancamento/novo" }],
   }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    repetir: search["repetir"] === "1" || search["repetir"] === true ? true : undefined,
+  }),
   component: LancamentoPage,
 });
 
@@ -32,6 +36,7 @@ function todayStr() {
 
 function LancamentoPage() {
   const { id } = Route.useParams();
+  const { repetir } = Route.useSearch();
   const isNew = id === "novo";
   const nav = useNavigate();
   const state = useFullStore();
@@ -48,9 +53,33 @@ function LancamentoPage() {
     },
   );
 
+  // Copia os dados do último dia trabalhado (cidade, diária, valores) quando vier de "Repetir último dia".
+  const jaCopiou = useRef(false);
+  useEffect(() => {
+    if (!isNew || !repetir || jaCopiou.current || !state.hydrated) return;
+    const ultimo = [...state.lancamentos]
+      .filter((l) => l.trabalhou && l.data !== todayStr())
+      .sort((a, b) => b.data.localeCompare(a.data))[0];
+    if (!ultimo) return;
+    jaCopiou.current = true;
+    setF((p) => ({
+      ...p,
+      trabalhou: true,
+      cidade: ultimo.cidade,
+      hora_inicio: ultimo.hora_inicio,
+      hora_fim: ultimo.hora_fim,
+      valor_dia: ultimo.valor_dia,
+      valor_pnr: ultimo.valor_pnr,
+      valor_perdidos: ultimo.valor_perdidos,
+      km_inicial: ultimo.km_final ?? ultimo.km_inicial,
+    }));
+    toast.success("Dados do último dia copiados");
+  }, [isNew, repetir, state.hydrated, state.lancamentos]);
+
   function set<K extends keyof Lancamento>(k: K, v: Lancamento[K]) {
     setF((p) => ({ ...p, [k]: v }));
   }
+
 
   function num(v: string): number | undefined {
     if (v === "" || v == null) return undefined;
