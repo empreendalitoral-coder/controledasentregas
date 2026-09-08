@@ -21,7 +21,7 @@ export const Route = createFileRoute(
       { property: "og:title", content: "Diagnóstico de notificações — Entrega Pro" },
       { property: "og:description", content: "Diagnóstico da permissão, do token e da conexão de notificações do aparelho." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/perfil/notificacoes/diagnostico" },
+      { property: "og:url", content: "https://meuentregapro.app/perfil/notificacoes/diagnostico" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

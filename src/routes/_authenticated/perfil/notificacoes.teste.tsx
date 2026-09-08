@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/perfil/notificacoes/teste"
       { property: "og:title", content: "Teste de notificações — Entrega Pro" },
       { property: "og:description", content: "Envie uma notificação de teste para conferir se o aparelho está recebendo." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/perfil/notificacoes/teste" },
+      { property: "og:url", content: "https://meuentregapro.app/perfil/notificacoes/teste" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

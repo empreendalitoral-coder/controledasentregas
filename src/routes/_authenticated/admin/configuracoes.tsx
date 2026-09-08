@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
       { property: "og:title", content: "Configurações — Admin — Entrega Pro" },
       { property: "og:description", content: "Configurações gerais do Entrega Pro, planos e valores do Premium." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/admin/configuracoes" },
+      { property: "og:url", content: "https://meuentregapro.app/admin/configuracoes" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

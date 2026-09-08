@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/perfil/notificacoes/logs")
       { property: "og:title", content: "Logs de notificações — Entrega Pro" },
       { property: "og:description", content: "Histórico de notificações enviadas para o seu aparelho, com status de entrega." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/perfil/notificacoes/logs" },
+      { property: "og:url", content: "https://meuentregapro.app/perfil/notificacoes/logs" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

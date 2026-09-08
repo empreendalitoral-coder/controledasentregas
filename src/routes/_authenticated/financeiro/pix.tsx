@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/pix")({
       { property: "og:title", content: "PIX — Entrega Pro" },
       { property: "og:description", content: "Controle de PIX recebidos e enviados, com pagador, destinatário e totais." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/pix" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/pix" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

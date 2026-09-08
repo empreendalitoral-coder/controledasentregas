@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/admin/mensagens")({
       { property: "og:title", content: "Mensagens — Admin — Entrega Pro" },
       { property: "og:description", content: "Envio de avisos e notificações para os usuários do Entrega Pro." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/admin/mensagens" },
+      { property: "og:url", content: "https://meuentregapro.app/admin/mensagens" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

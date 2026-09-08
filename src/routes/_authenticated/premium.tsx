@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_authenticated/premium")({
       { property: "og:title", content: "Premium — Entrega Pro" },
       { property: "og:description", content: "Assinatura Premium do Entrega Pro: central financeira e relatórios avançados." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/premium" },
+      { property: "og:url", content: "https://meuentregapro.app/premium" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/cartoes")({
       { property: "og:title", content: "Cartões — Entrega Pro" },
       { property: "og:description", content: "Cartões de crédito: limites, faturas e vencimentos em um só lugar." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/cartoes" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/cartoes" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

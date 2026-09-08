@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/graficos")({
       { property: "og:title", content: "Gráficos — Entrega Pro" },
       { property: "og:description", content: "Gráficos de faturamento, lucro, despesas e entregas mês a mês." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/graficos" },
+      { property: "og:url", content: "https://meuentregapro.app/graficos" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

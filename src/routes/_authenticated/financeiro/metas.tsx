@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/metas")({
       { property: "og:title", content: "Metas — Entrega Pro" },
       { property: "og:description", content: "Metas financeiras com aportes e progresso até o valor desejado." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/metas" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/metas" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

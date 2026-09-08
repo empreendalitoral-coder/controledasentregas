@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/quinzena")({
       { property: "og:title", content: "Fechamento por Período — Entrega Pro" },
       { property: "og:description", content: "Fechamento por semana, quinzena, mês ou período personalizado, com relatório em PDF." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/quinzena" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/quinzena" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

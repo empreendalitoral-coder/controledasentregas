@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/fluxo")({
       { property: "og:title", content: "Fluxo de Caixa — Entrega Pro" },
       { property: "og:description", content: "Entradas e saídas do período com saldo consolidado do motorista." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/fluxo" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/fluxo" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

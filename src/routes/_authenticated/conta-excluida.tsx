@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/conta-excluida")({
       { property: "og:title", content: "Conta em exclusão — Entrega Pro" },
       { property: "og:description", content: "Situação da sua solicitação de exclusão de conta e prazo de recuperação." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/conta-excluida" },
+      { property: "og:url", content: "https://meuentregapro.app/conta-excluida" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

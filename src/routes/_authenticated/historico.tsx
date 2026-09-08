@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/historico")({
       { property: "og:title", content: "Histórico — Entrega Pro" },
       { property: "og:description", content: "Histórico de todos os dias trabalhados, com cidade, entregas e lucro líquido." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/historico" },
+      { property: "og:url", content: "https://meuentregapro.app/historico" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/mais")({
       { property: "og:title", content: "Mais — Entrega Pro" },
       { property: "og:description", content: "Todas as funções do Entrega Pro: financeiro, manutenção, perfil e Premium." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/mais" },
+      { property: "og:url", content: "https://meuentregapro.app/mais" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

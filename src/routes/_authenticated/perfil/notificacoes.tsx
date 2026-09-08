@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
       { property: "og:title", content: "Notificações — Entrega Pro" },
       { property: "og:description", content: "Preferências de notificações e avisos do Entrega Pro no seu celular." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/perfil/notificacoes" },
+      { property: "og:url", content: "https://meuentregapro.app/perfil/notificacoes" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

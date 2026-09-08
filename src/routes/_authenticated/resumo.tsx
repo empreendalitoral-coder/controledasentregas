@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_authenticated/resumo")({
       { property: "og:title", content: "Resumo Mensal — Entrega Pro" },
       { property: "og:description", content: "Resumo mensal completo do motorista, com médias diárias e lucro real." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/resumo" },
+      { property: "og:url", content: "https://meuentregapro.app/resumo" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

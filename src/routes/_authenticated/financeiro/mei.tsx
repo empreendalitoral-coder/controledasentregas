@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/mei")({
       { property: "og:title", content: "Relatório MEI — Entrega Pro" },
       { property: "og:description", content: "Relatório MEI com receitas, despesas, lucro e acompanhamento do limite anual." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/financeiro/mei" },
+      { property: "og:url", content: "https://meuentregapro.app/financeiro/mei" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
