@@ -132,7 +132,7 @@ function PrivacidadePage() {
 
       <h2>11. Contato / Encarregado (DPO)</h2>
       <p>
-        Dúvidas, solicitações LGPD ou incidentes: <a href="mailto:suporte@entregapro.app">suporte@entregapro.app</a>.
+        Dúvidas, solicitações LGPD ou incidentes: <a href="mailto:marcelo100surf@gmail.com">marcelo100surf@gmail.com</a>.
       </p>
     </LegalPage>
   );
