@@ -14,6 +14,7 @@ import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as CalculadoraLucroEntregadorRouteImport } from './routes/calculadora-lucro-entregador'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -73,6 +74,12 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalculadoraLucroEntregadorRoute =
+  CalculadoraLucroEntregadorRouteImport.update({
+    id: '/calculadora-lucro-entregador',
+    path: '/calculadora-lucro-entregador',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -263,6 +270,7 @@ const AuthenticatedPerfilNotificacoesDiagnosticoRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
+  '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -301,6 +309,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -342,6 +351,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/calculadora-lucro-entregador'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/calculadora-lucro-entregador'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -462,6 +474,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/calculadora-lucro-entregador'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -503,6 +516,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CalculadoraLucroEntregadorRoute: typeof CalculadoraLucroEntregadorRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SobreRoute: typeof SobreRoute
@@ -547,6 +561,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculadora-lucro-entregador': {
+      id: '/calculadora-lucro-entregador'
+      path: '/calculadora-lucro-entregador'
+      fullPath: '/calculadora-lucro-entregador'
+      preLoaderRoute: typeof CalculadoraLucroEntregadorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -903,6 +924,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CalculadoraLucroEntregadorRoute: CalculadoraLucroEntregadorRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SobreRoute: SobreRoute,
