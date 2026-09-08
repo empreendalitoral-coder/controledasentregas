@@ -1,25 +1,41 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, isRedirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
+    try {
+      // getSession lê a sessão local (instantâneo) e evita tela branca em rede lenta.
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (!user) throw redirect({ to: "/auth" });
 
-    // Se a conta está marcada para exclusão, força a tela de conta excluída
-    // (exceto quando o usuário já está nela ou saindo).
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("excluida_em")
-      .eq("id", data.user.id)
-      .maybeSingle();
+      // Verificação de conta em exclusão não pode derrubar o app se a rede falhar.
+      if (location.pathname !== "/conta-excluida") {
+        try {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("excluida_em")
+            .eq("id", user.id)
+            .maybeSingle();
+          if (prof?.excluida_em) throw redirect({ to: "/conta-excluida" });
+        } catch (e) {
+          if (isRedirect(e)) throw e;
+          console.warn("[auth] verificação de perfil falhou", e);
+        }
+      }
 
-    if (prof?.excluida_em && location.pathname !== "/conta-excluida") {
-      throw redirect({ to: "/conta-excluida" });
+      return { user };
+    } catch (e) {
+      if (isRedirect(e)) throw e;
+      console.error("[auth] falha ao validar sessão", e);
+      throw redirect({ to: "/auth" });
     }
-
-    return { user: data.user };
   },
+  pendingComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  ),
   component: () => <Outlet />,
 });
