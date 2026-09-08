@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const URL = "https://meuentregapro.com.br/privacidade";
+const URL = "https://meuentregapro.app/privacidade";
 
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
