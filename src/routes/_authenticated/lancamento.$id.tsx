@@ -5,6 +5,8 @@ import { actions, useFullStore, type Lancamento } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
+import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
   head: () => ({
@@ -99,8 +101,9 @@ function LancamentoPage() {
 
   return (
     <AppShell title={isNew ? "Novo Lançamento" : "Editar Lançamento"} back="/historico">
-      <form onSubmit={save} className="space-y-4">
-        <div className="ep-card space-y-3">
+      <form onSubmit={save} className="space-y-4 pb-4">
+        <div className="ep-card space-y-4">
+          <SectionTitle icon={<CalendarDays className="size-4" />} title="Dia" />
           <Field label="Data">
             <TextInput
               type="date"
@@ -140,42 +143,54 @@ function LancamentoPage() {
 
         {f.trabalhou && (
           <>
-            <div className="ep-card grid grid-cols-2 gap-3">
-              <Field label="Horário de início">
-                <TextInput
-                  type="time"
-                  value={f.hora_inicio ?? ""}
-                  onChange={(e) => set("hora_inicio", e.target.value)}
-                />
-              </Field>
-              <Field label="Horário de término">
-                <TextInput
-                  type="time"
-                  value={f.hora_fim ?? ""}
-                  onChange={(e) => set("hora_fim", e.target.value)}
-                />
-              </Field>
-              <Field label="Cidade" className="col-span-2">
+            <div className="ep-card space-y-4">
+              <SectionTitle icon={<Clock className="size-4" />} title="Jornada" />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label="Horário de início">
+                  <TextInput
+                    type="time"
+                    value={f.hora_inicio ?? ""}
+                    onChange={(e) => set("hora_inicio", e.target.value)}
+                  />
+                </Field>
+                <Field label="Horário de término">
+                  <TextInput
+                    type="time"
+                    value={f.hora_fim ?? ""}
+                    onChange={(e) => set("hora_fim", e.target.value)}
+                  />
+                </Field>
+              </div>
+              <Field label="Cidade">
                 <TextInput
                   value={f.cidade ?? ""}
                   onChange={(e) => set("cidade", e.target.value)}
                   maxLength={60}
                 />
               </Field>
-              <Field label="Romaneio">
-                <TextInput
-                  value={f.romaneio ?? ""}
-                  onChange={(e) => set("romaneio", e.target.value)}
-                  maxLength={30}
-                />
-              </Field>
-              <Field label="Gaiola">
-                <TextInput
-                  value={f.gaiola ?? ""}
-                  onChange={(e) => set("gaiola", e.target.value)}
-                  maxLength={20}
-                />
-              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Romaneio">
+                  <TextInput
+                    value={f.romaneio ?? ""}
+                    onChange={(e) => set("romaneio", e.target.value)}
+                    maxLength={30}
+                  />
+                </Field>
+                <Field label="Gaiola">
+                  <TextInput
+                    value={f.gaiola ?? ""}
+                    onChange={(e) => set("gaiola", e.target.value)}
+                    maxLength={20}
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <div className="ep-card grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <SectionTitle icon={<Package className="size-4" />} title="Entregas" />
+              </div>
+
               <Field label="Pacotes entregues">
                 <TextInput
                   type="number"
@@ -242,6 +257,12 @@ function LancamentoPage() {
                   onChange={(e) => set("valor_dia", num(e.target.value))}
                 />
               </Field>
+            </div>
+
+            <div className="ep-card grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <SectionTitle icon={<Fuel className="size-4" />} title="KM e combustível" />
+              </div>
               <Field label="KM inicial">
                 <TextInput
                   type="number"
@@ -290,6 +311,9 @@ function LancamentoPage() {
             </div>
 
             <div className="ep-card grid grid-cols-2 gap-2">
+              <div className="col-span-2">
+                <SectionTitle icon={<Calculator className="size-4" />} title="Resumo do dia" />
+              </div>
               <Calc label="KM rodado" v={`${km.toLocaleString("pt-BR")} km`} />
               <Calc
                 label="Preço por litro"
@@ -308,6 +332,7 @@ function LancamentoPage() {
                 <div className="text-xl font-bold ep-money-pos">{BRL(lucroLiq)}</div>
               </div>
             </div>
+
           </>
         )}
 
