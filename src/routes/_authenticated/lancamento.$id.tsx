@@ -189,20 +189,6 @@ function LancamentoPage() {
                 <SectionTitle icon={<Package className="size-4" />} title="Entregas" />
               </div>
 
-              <Field label="Romaneio">
-                <TextInput
-                  value={f.romaneio ?? ""}
-                  onChange={(e) => set("romaneio", e.target.value)}
-                  maxLength={30}
-                />
-              </Field>
-              <Field label="Gaiola">
-                <TextInput
-                  value={f.gaiola ?? ""}
-                  onChange={(e) => set("gaiola", e.target.value)}
-                  maxLength={20}
-                />
-              </Field>
               <Field label="Pacotes entregues">
                 <TextInput
                   type="number"
@@ -269,6 +255,12 @@ function LancamentoPage() {
                   onChange={(e) => set("valor_dia", num(e.target.value))}
                 />
               </Field>
+            </div>
+
+            <div className="ep-card grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <SectionTitle icon={<Fuel className="size-4" />} title="KM e combustível" />
+              </div>
               <Field label="KM inicial">
                 <TextInput
                   type="number"
@@ -317,6 +309,9 @@ function LancamentoPage() {
             </div>
 
             <div className="ep-card grid grid-cols-2 gap-2">
+              <div className="col-span-2">
+                <SectionTitle icon={<Calculator className="size-4" />} title="Resumo do dia" />
+              </div>
               <Calc label="KM rodado" v={`${km.toLocaleString("pt-BR")} km`} />
               <Calc
                 label="Preço por litro"
@@ -335,6 +330,7 @@ function LancamentoPage() {
                 <div className="text-xl font-bold ep-money-pos">{BRL(lucroLiq)}</div>
               </div>
             </div>
+
           </>
         )}
 
