@@ -14,6 +14,18 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [status, setStatus] = useState<"checking" | "ok" | "denied">("checking");
+  const [pendentes, setPendentes] = useState(0);
+
+  useEffect(() => {
+    if (status !== "ok") return;
+    (async () => {
+      const { count } = await supabase
+        .from("solicitacoes_premium")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pendente");
+      setPendentes(count || 0);
+    })();
+  }, [status, pathname]);
 
   useEffect(() => {
     (async () => {
