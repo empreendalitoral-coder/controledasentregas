@@ -128,6 +128,49 @@ function Dashboard() {
         </Link>
       )}
 
+      {/* Hoje */}
+      {state.hydrated && !lancHoje && (
+        <section className="ep-card mb-3 border-warning/40 bg-warning/10">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="size-5 text-warning shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="font-semibold text-sm">Você ainda não lançou hoje</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Registre o dia em poucos toques.
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-1 gap-2">
+            <Link
+              to="/lancamento/$id"
+              params={{ id: "novo" }}
+              className="h-10 rounded-md bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center gap-1"
+            >
+              <Plus className="size-4" /> Lançar hoje
+            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              {temUltimo && (
+                <Link
+                  to="/lancamento/$id"
+                  params={{ id: "novo" }}
+                  search={{ repetir: true }}
+                  className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1"
+                >
+                  <Repeat className="size-4" /> Repetir último dia
+                </Link>
+              )}
+              <button
+                onClick={marcarFolga}
+                disabled={folgando}
+                className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1 disabled:opacity-50"
+              >
+                <Coffee className="size-4" /> {folgando ? "Salvando..." : "Marcar folga"}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Perfil */}
       <Link to="/perfil" className="ep-card flex items-center gap-3 hover:border-primary/40 transition">
         <div className="size-14 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60">
