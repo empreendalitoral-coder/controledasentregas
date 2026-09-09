@@ -224,6 +224,21 @@ function Dashboard() {
         </div>
       </section>
 
+      {/* Últimos 7 dias */}
+      <section className="ep-card mt-4">
+        <h2 className="font-semibold mb-3">Últimos 7 dias</h2>
+        <div className="grid grid-cols-2 gap-2">
+          <Stat label="Dias trabalhados" value={NUM(r7.dias_trabalhados)} />
+          <Stat label="Pacotes entregues" value={NUM(r7.pacotes)} />
+          <Stat label="Valor bruto" value={BRL(r7.valor_bruto)} />
+          <Stat label="Combustível" value={BRL(r7.combustivel)} />
+        </div>
+        <div className="mt-3 ep-stat-tile">
+          <div className="ep-label">Lucro dos últimos 7 dias</div>
+          <div className="text-xl font-bold ep-money-pos">{BRL(r7.lucro_liquido)}</div>
+        </div>
+      </section>
+
       {/* Meta do Mês */}
       <section className="ep-card mt-4">
         <div className="flex items-center justify-between mb-2">
