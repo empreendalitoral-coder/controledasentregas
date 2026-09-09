@@ -59,6 +59,35 @@ function Dashboard() {
     }
   }
 
+  // Lançamento de hoje / atalhos rápidos
+  const hojeStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  })();
+  const lancHoje = state.lancamentos.find((l) => l.data === hojeStr);
+  const temUltimo = state.lancamentos.some((l) => l.trabalhou && l.data !== hojeStr);
+  const [folgando, setFolgando] = useState(false);
+
+  async function marcarFolga() {
+    setFolgando(true);
+    try {
+      await actions.addLancamento({ data: hojeStr, trabalhou: false });
+      toast.success("Dia marcado como folga");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao salvar");
+    } finally {
+      setFolgando(false);
+    }
+  }
+
+  // Resumo dos últimos 7 dias
+  const fim7 = new Date();
+  fim7.setHours(23, 59, 59, 999);
+  const ini7 = new Date();
+  ini7.setDate(ini7.getDate() - 6);
+  ini7.setHours(0, 0, 0, 0);
+  const r7 = computeResumo(state, { inicio: ini7, fim: fim7 });
+
   // próximo recebimento pendente
   const pendentes = [...state.recebimentos]
     .filter((x) => x.status === "pendente")
