@@ -165,6 +165,15 @@ function SolicAdminPage() {
         ))}
         {items.length === 0 && <li className="text-center text-muted-foreground py-8 text-sm">Nenhuma solicitação</li>}
       </ul>
+
+      {preview && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setPreview(null)}>
+          <button className="absolute top-4 right-4 size-10 rounded-full bg-secondary grid place-items-center" onClick={() => setPreview(null)}>
+            <X className="size-5" />
+          </button>
+          <img src={preview} alt="Comprovante de pagamento" className="max-h-full max-w-full object-contain rounded-lg" />
+        </div>
+      )}
     </>
   );
 }
