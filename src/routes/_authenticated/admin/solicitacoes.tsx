@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Eye, Clock } from "lucide-react";
+import { Check, X, Eye, Clock, Copy } from "lucide-react";
 import { BRL } from "@/lib/calc";
 import { registrarLogAdmin } from "@/lib/admin-log";
 
