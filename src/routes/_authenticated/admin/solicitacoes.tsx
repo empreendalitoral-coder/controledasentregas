@@ -88,9 +88,20 @@ function SolicAdminPage() {
   }
 
   async function verComprovante(path: string) {
-    const { data, error } = await supabase.storage.from("comprovantes").createSignedUrl(path, 60);
+    const { data, error } = await supabase.storage.from("comprovantes").createSignedUrl(path, 120);
     if (error || !data) { toast.error("Não foi possível abrir"); return; }
-    window.open(data.signedUrl, "_blank");
+    setPreview(data.signedUrl);
+  }
+
+  async function copiarContato(s: Solic) {
+    const txt = s.telefone || s.email || "";
+    if (!txt) return toast.error("Sem contato cadastrado");
+    try {
+      await navigator.clipboard.writeText(txt);
+      toast.success(`Copiado: ${txt}`);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
   }
 
   return (
