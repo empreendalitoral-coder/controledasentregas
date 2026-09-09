@@ -57,7 +57,7 @@ function AdminLayout() {
 
   const tabs = [
     { to: "/admin", label: "Visão geral", icon: BarChart },
-    { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck },
+    { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck, badge: true },
     { to: "/admin/usuarios", label: "Usuários", icon: Users },
     { to: "/admin/mensagens", label: "Mensagens", icon: Megaphone },
     { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
