@@ -135,9 +135,12 @@ function SolicAdminPage() {
               {s.comprovante_path && (
                 <button onClick={() => verComprovante(s.comprovante_path!)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Eye className="size-4" /> Ver</button>
               )}
+              {(s.telefone || s.email) && (
+                <button onClick={() => copiarContato(s)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Copy className="size-4" /> Contato</button>
+              )}
               {s.status === "pendente" && (
                 <>
-                  <button disabled={busy === s.id} onClick={() => decidir(s, "aprovado")} className="flex-1 h-10 rounded-md bg-success text-success-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
+                  <button disabled={busy === s.id} onClick={() => setAprovando(aprovando === s.id ? null : s.id)} className="flex-1 h-10 rounded-md bg-success text-success-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
                     {busy === s.id ? <Clock className="size-4 animate-spin" /> : <Check className="size-4" />} Aprovar
                   </button>
                   <button disabled={busy === s.id} onClick={() => decidir(s, "recusado")} className="flex-1 h-10 rounded-md bg-destructive text-destructive-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
@@ -146,6 +149,18 @@ function SolicAdminPage() {
                 </>
               )}
             </div>
+            {aprovando === s.id && (
+              <div className="mt-2 rounded-lg bg-secondary/60 p-2">
+                <div className="text-xs text-muted-foreground mb-2">Liberar por quanto tempo?</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {([["teste", "15 dias"], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).map(([p, lbl]) => (
+                    <button key={p} onClick={() => decidir(s, "aprovado", p)} className={`h-9 rounded-md text-xs font-semibold ${p === s.plano ? "bg-primary text-primary-foreground" : "bg-background border border-border"}`}>
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </li>
         ))}
         {items.length === 0 && <li className="text-center text-muted-foreground py-8 text-sm">Nenhuma solicitação</li>}
