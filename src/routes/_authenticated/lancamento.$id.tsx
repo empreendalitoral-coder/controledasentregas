@@ -23,9 +23,8 @@ export const Route = createFileRoute("/_authenticated/lancamento/$id")({
     ],
     links: [{ rel: "canonical", href: "/lancamento/novo" }],
   }),
-  validateSearch: (search: Record<string, unknown>) => ({
-    repetir: search["repetir"] === "1" || search["repetir"] === true ? true : undefined,
-  }),
+  validateSearch: (search: { repetir?: unknown }): { repetir?: true } =>
+    search.repetir === "1" || search.repetir === true ? { repetir: true } : {},
   component: LancamentoPage,
 });
 

@@ -27,6 +27,7 @@ import { tipoPremiumVencendo } from "./tipos/premium-vencendo.server";
 import { tipoPixAprovado } from "./tipos/pix-aprovado.server";
 import { tipoNovaSolicitacaoPremium } from "./tipos/nova-solicitacao-premium.server";
 import { tipoAvisoAdmin } from "./tipos/aviso-admin.server";
+import { tipoLembreteLancamento } from "./tipos/lembrete-lancamento.server";
 
 const TIPOS: NotificationTipo[] = [
   tipoRecebimentoProximo as NotificationTipo,
@@ -35,6 +36,7 @@ const TIPOS: NotificationTipo[] = [
   tipoPixAprovado as NotificationTipo,
   tipoNovaSolicitacaoPremium as NotificationTipo,
   tipoAvisoAdmin as NotificationTipo,
+  tipoLembreteLancamento as NotificationTipo,
 ];
 
 const byCodigo = new Map(TIPOS.map((t) => [t.codigo, t]));

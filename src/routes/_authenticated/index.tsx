@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useFullStore, actions } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
-import { Plus, Pencil, ChevronRight, Calendar, Upload, X, Crown } from "lucide-react";
+import { Plus, Pencil, ChevronRight, Calendar, Upload, X, Crown, Repeat, Coffee, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePremium } from "@/lib/premium";
 import { toast } from "sonner";
@@ -59,6 +59,35 @@ function Dashboard() {
     }
   }
 
+  // Lançamento de hoje / atalhos rápidos
+  const hojeStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  })();
+  const lancHoje = state.lancamentos.find((l) => l.data === hojeStr);
+  const temUltimo = state.lancamentos.some((l) => l.trabalhou && l.data !== hojeStr);
+  const [folgando, setFolgando] = useState(false);
+
+  async function marcarFolga() {
+    setFolgando(true);
+    try {
+      await actions.addLancamento({ data: hojeStr, trabalhou: false });
+      toast.success("Dia marcado como folga");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao salvar");
+    } finally {
+      setFolgando(false);
+    }
+  }
+
+  // Resumo dos últimos 7 dias
+  const fim7 = new Date();
+  fim7.setHours(23, 59, 59, 999);
+  const ini7 = new Date();
+  ini7.setDate(ini7.getDate() - 6);
+  ini7.setHours(0, 0, 0, 0);
+  const r7 = computeResumo(state, { inicio: ini7, fim: fim7 });
+
   // próximo recebimento pendente
   const pendentes = [...state.recebimentos]
     .filter((x) => x.status === "pendente")
@@ -97,6 +126,49 @@ function Dashboard() {
           </div>
           <ChevronRight className="size-4 text-muted-foreground" />
         </Link>
+      )}
+
+      {/* Hoje */}
+      {state.hydrated && !lancHoje && (
+        <section className="ep-card mb-3 border-warning/40 bg-warning/10">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="size-5 text-warning shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="font-semibold text-sm">Você ainda não lançou hoje</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Registre o dia em poucos toques.
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-1 gap-2">
+            <Link
+              to="/lancamento/$id"
+              params={{ id: "novo" }}
+              className="h-10 rounded-md bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center gap-1"
+            >
+              <Plus className="size-4" /> Lançar hoje
+            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              {temUltimo && (
+                <Link
+                  to="/lancamento/$id"
+                  params={{ id: "novo" }}
+                  search={{ repetir: true }}
+                  className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1"
+                >
+                  <Repeat className="size-4" /> Repetir último dia
+                </Link>
+              )}
+              <button
+                onClick={marcarFolga}
+                disabled={folgando}
+                className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1 disabled:opacity-50"
+              >
+                <Coffee className="size-4" /> {folgando ? "Salvando..." : "Marcar folga"}
+              </button>
+            </div>
+          </div>
+        </section>
       )}
 
       {/* Perfil */}
@@ -149,6 +221,21 @@ function Dashboard() {
           <div className="text-2xl font-bold ep-money-pos">
             {BRL(r.lucro_liquido)}
           </div>
+        </div>
+      </section>
+
+      {/* Últimos 7 dias */}
+      <section className="ep-card mt-4">
+        <h2 className="font-semibold mb-3">Últimos 7 dias</h2>
+        <div className="grid grid-cols-2 gap-2">
+          <Stat label="Dias trabalhados" value={NUM(r7.dias_trabalhados)} />
+          <Stat label="Pacotes entregues" value={NUM(r7.pacotes)} />
+          <Stat label="Valor bruto" value={BRL(r7.valor_bruto)} />
+          <Stat label="Combustível" value={BRL(r7.combustivel)} />
+        </div>
+        <div className="mt-3 ep-stat-tile">
+          <div className="ep-label">Lucro dos últimos 7 dias</div>
+          <div className="text-xl font-bold ep-money-pos">{BRL(r7.lucro_liquido)}</div>
         </div>
       </section>
 

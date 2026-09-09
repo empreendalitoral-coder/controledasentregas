@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Eye, Clock } from "lucide-react";
+import { Check, X, Eye, Clock, Copy } from "lucide-react";
 import { BRL } from "@/lib/calc";
 import { registrarLogAdmin } from "@/lib/admin-log";
 
@@ -41,6 +41,9 @@ function SolicAdminPage() {
   const [filter, setFilter] = useState<"pendente" | "aprovado" | "recusado" | "todos">("pendente");
   const [items, setItems] = useState<Solic[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
+  const [aprovando, setAprovando] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
 
   async function load() {
     let q = supabase.from("solicitacoes_premium").select("*").order("created_at", { ascending: false });
@@ -50,12 +53,14 @@ function SolicAdminPage() {
   }
   useEffect(() => { load(); }, [filter]);
 
-  async function decidir(s: Solic, status: "aprovado" | "recusado") {
+  async function decidir(s: Solic, status: "aprovado" | "recusado", plano?: Solic["plano"]) {
     setBusy(s.id);
+    setAprovando(null);
     const obs = status === "recusado" ? prompt("Motivo (opcional)") : null;
+    const novoPlano = status === "aprovado" && plano ? plano : s.plano;
     const { error } = await supabase
       .from("solicitacoes_premium")
-      .update({ status, observacao_admin: obs })
+      .update({ status, observacao_admin: obs, plano: novoPlano })
       .eq("id", s.id);
     setBusy(null);
     if (error) return toast.error(error.message);
@@ -82,9 +87,20 @@ function SolicAdminPage() {
   }
 
   async function verComprovante(path: string) {
-    const { data, error } = await supabase.storage.from("comprovantes").createSignedUrl(path, 60);
+    const { data, error } = await supabase.storage.from("comprovantes").createSignedUrl(path, 120);
     if (error || !data) { toast.error("Não foi possível abrir"); return; }
-    window.open(data.signedUrl, "_blank");
+    setPreview(data.signedUrl);
+  }
+
+  async function copiarContato(s: Solic) {
+    const txt = s.telefone || s.email || "";
+    if (!txt) return toast.error("Sem contato cadastrado");
+    try {
+      await navigator.clipboard.writeText(txt);
+      toast.success(`Copiado: ${txt}`);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
   }
 
   return (
@@ -118,9 +134,12 @@ function SolicAdminPage() {
               {s.comprovante_path && (
                 <button onClick={() => verComprovante(s.comprovante_path!)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Eye className="size-4" /> Ver</button>
               )}
+              {(s.telefone || s.email) && (
+                <button onClick={() => copiarContato(s)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Copy className="size-4" /> Contato</button>
+              )}
               {s.status === "pendente" && (
                 <>
-                  <button disabled={busy === s.id} onClick={() => decidir(s, "aprovado")} className="flex-1 h-10 rounded-md bg-success text-success-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
+                  <button disabled={busy === s.id} onClick={() => setAprovando(aprovando === s.id ? null : s.id)} className="flex-1 h-10 rounded-md bg-success text-success-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
                     {busy === s.id ? <Clock className="size-4 animate-spin" /> : <Check className="size-4" />} Aprovar
                   </button>
                   <button disabled={busy === s.id} onClick={() => decidir(s, "recusado")} className="flex-1 h-10 rounded-md bg-destructive text-destructive-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
@@ -129,10 +148,31 @@ function SolicAdminPage() {
                 </>
               )}
             </div>
+            {aprovando === s.id && (
+              <div className="mt-2 rounded-lg bg-secondary/60 p-2">
+                <div className="text-xs text-muted-foreground mb-2">Liberar por quanto tempo?</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {([["teste", "15 dias"], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).map(([p, lbl]) => (
+                    <button key={p} onClick={() => decidir(s, "aprovado", p)} className={`h-9 rounded-md text-xs font-semibold ${p === s.plano ? "bg-primary text-primary-foreground" : "bg-background border border-border"}`}>
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </li>
         ))}
         {items.length === 0 && <li className="text-center text-muted-foreground py-8 text-sm">Nenhuma solicitação</li>}
       </ul>
+
+      {preview && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setPreview(null)}>
+          <button className="absolute top-4 right-4 size-10 rounded-full bg-secondary grid place-items-center" onClick={() => setPreview(null)}>
+            <X className="size-5" />
+          </button>
+          <img src={preview} alt="Comprovante de pagamento" className="max-h-full max-w-full object-contain rounded-lg" />
+        </div>
+      )}
     </>
   );
 }

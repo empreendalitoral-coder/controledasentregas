@@ -14,6 +14,18 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [status, setStatus] = useState<"checking" | "ok" | "denied">("checking");
+  const [pendentes, setPendentes] = useState(0);
+
+  useEffect(() => {
+    if (status !== "ok") return;
+    (async () => {
+      const { count } = await supabase
+        .from("solicitacoes_premium")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pendente");
+      setPendentes(count || 0);
+    })();
+  }, [status, pathname]);
 
   useEffect(() => {
     (async () => {
@@ -57,7 +69,7 @@ function AdminLayout() {
 
   const tabs = [
     { to: "/admin", label: "Visão geral", icon: BarChart },
-    { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck },
+    { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck, badge: true },
     { to: "/admin/usuarios", label: "Usuários", icon: Users },
     { to: "/admin/mensagens", label: "Mensagens", icon: Megaphone },
     { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
@@ -71,6 +83,9 @@ function AdminLayout() {
           return (
             <Link key={t.to} to={t.to} className={`flex-1 min-w-fit h-10 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 transition ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}>
               <Icon className="size-3.5" /> {t.label}
+              {"badge" in t && pendentes > 0 && (
+                <span className="ml-0.5 min-w-4 h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold grid place-items-center">{pendentes}</span>
+              )}
             </Link>
           );
         })}
