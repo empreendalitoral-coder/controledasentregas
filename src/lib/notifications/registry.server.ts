@@ -36,6 +36,7 @@ const TIPOS: NotificationTipo[] = [
   tipoPixAprovado as NotificationTipo,
   tipoNovaSolicitacaoPremium as NotificationTipo,
   tipoAvisoAdmin as NotificationTipo,
+  tipoLembreteLancamento as NotificationTipo,
 ];
 
 const byCodigo = new Map(TIPOS.map((t) => [t.codigo, t]));
