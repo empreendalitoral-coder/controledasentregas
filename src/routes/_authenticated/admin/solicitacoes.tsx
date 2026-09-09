@@ -57,11 +57,10 @@ function SolicAdminPage() {
     setBusy(s.id);
     setAprovando(null);
     const obs = status === "recusado" ? prompt("Motivo (opcional)") : null;
-    const patch: Record<string, unknown> = { status, observacao_admin: obs };
-    if (status === "aprovado" && plano && plano !== s.plano) patch["plano"] = plano;
+    const novoPlano = status === "aprovado" && plano ? plano : s.plano;
     const { error } = await supabase
       .from("solicitacoes_premium")
-      .update(patch)
+      .update({ status, observacao_admin: obs, plano: novoPlano })
       .eq("id", s.id);
     setBusy(null);
     if (error) return toast.error(error.message);
