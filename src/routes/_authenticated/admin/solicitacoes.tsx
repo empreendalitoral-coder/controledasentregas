@@ -41,6 +41,9 @@ function SolicAdminPage() {
   const [filter, setFilter] = useState<"pendente" | "aprovado" | "recusado" | "todos">("pendente");
   const [items, setItems] = useState<Solic[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
+  const [aprovando, setAprovando] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
 
   async function load() {
     let q = supabase.from("solicitacoes_premium").select("*").order("created_at", { ascending: false });
