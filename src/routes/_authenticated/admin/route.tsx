@@ -71,6 +71,9 @@ function AdminLayout() {
           return (
             <Link key={t.to} to={t.to} className={`flex-1 min-w-fit h-10 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-1.5 transition ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}>
               <Icon className="size-3.5" /> {t.label}
+              {"badge" in t && pendentes > 0 && (
+                <span className="ml-0.5 min-w-4 h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold grid place-items-center">{pendentes}</span>
+              )}
             </Link>
           );
         })}
