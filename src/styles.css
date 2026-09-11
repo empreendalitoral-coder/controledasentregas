@@ -40,6 +40,8 @@
   --color-warning: var(--warning);
   --color-surface: var(--surface);
   --color-surface-foreground: var(--surface-foreground);
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
