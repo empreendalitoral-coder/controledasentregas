@@ -2,8 +2,33 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useFullStore, actions } from "@/lib/store";
 import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
-import { Plus, Pencil, ChevronRight, Calendar, Upload, X, Crown, Repeat, Coffee, AlertCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Plus,
+  Pencil,
+  ChevronRight,
+  Calendar,
+  Upload,
+  X,
+  Crown,
+  Repeat,
+  Coffee,
+  AlertCircle,
+  CalendarCheck,
+  CalendarOff,
+  Clock,
+  Package,
+  PackageX,
+  Ban,
+  Route as RouteIcon,
+  Fuel,
+  Wallet,
+  Sparkles,
+  FileText,
+  PieChart,
+  CreditCard,
+  Check,
+} from "lucide-react";
+import { useEffect, useState, type ComponentType } from "react";
 import { usePremium } from "@/lib/premium";
 import { toast } from "sonner";
 
@@ -26,7 +51,6 @@ export const Route = createFileRoute("/_authenticated/")({
     ],
     links: [{ rel: "canonical", href: "https://meuentregapro.app/" }],
   }),
-
 
   component: Dashboard,
 });
@@ -97,6 +121,9 @@ function Dashboard() {
     );
   const prox = pendentes[0];
 
+  const hora = new Date().getHours();
+  const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+
   return (
     <AppShell title="Entrega Pro">
       {showImport && (
@@ -118,19 +145,60 @@ function Dashboard() {
         </div>
       )}
 
-      {premium.ativo && premium.plano === "teste" && (
-        <Link to="/premium" className="ep-card mb-3 flex items-center gap-2 bg-primary/10 border-primary/40">
-          <Crown className="size-5 text-primary shrink-0" />
-          <div className="text-xs flex-1">
-            <span className="font-semibold">Teste Premium</span> — {premium.diasRestantes} dias restantes
+      {/* Saudação + perfil */}
+      <Link to="/perfil" className="flex items-center gap-3 px-1 py-1">
+        <div className="size-12 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60 shrink-0">
+          {state.motorista.foto ? (
+            <img src={state.motorista.foto} alt={nome} className="size-full object-cover" />
+          ) : (
+            <span className="text-base font-semibold text-muted-foreground">
+              {nome.slice(0, 1).toUpperCase()}
+            </span>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[11px] text-muted-foreground">{saudacao},</div>
+          <div className="font-semibold text-base truncate leading-tight">{nome}</div>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[11px] text-muted-foreground truncate">
+              {state.motorista.transportadora || "Toque para configurar perfil"}
+            </span>
+            {state.motorista.placa && (
+              <span className="text-[10px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded border border-primary/60 text-primary shrink-0">
+                {state.motorista.placa}
+              </span>
+            )}
           </div>
-          <ChevronRight className="size-4 text-muted-foreground" />
-        </Link>
-      )}
+        </div>
+        <ChevronRight className="size-5 text-muted-foreground shrink-0" />
+      </Link>
+
+      {/* Destaque: lucro do mês + meta */}
+      <section className="ep-highlight mt-3">
+        <div className="flex items-center justify-between">
+          <div className="ep-label">Lucro líquido do mês</div>
+          <Link to="/resumo" className="text-xs text-primary">
+            Ver mais →
+          </Link>
+        </div>
+        <div className="ep-highlight-value mt-1">{BRL(r.lucro_liquido)}</div>
+        <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+          <span className="flex items-center gap-1">
+            Meta: <strong className="text-foreground/90">{BRL(meta)}</strong>
+            <Link to="/perfil" className="text-primary ml-1 inline-flex items-center">
+              <Pencil className="size-3" />
+            </Link>
+          </span>
+          <span className="font-semibold text-primary">{pct}%</span>
+        </div>
+        <div className="ep-progress mt-2">
+          <span style={{ width: `${pct}%` }} />
+        </div>
+      </section>
 
       {/* Hoje */}
       {state.hydrated && !lancHoje && (
-        <section className="ep-card mb-3 border-warning/40 bg-warning/10">
+        <section className="ep-card mt-3 border-warning/40 bg-warning/10">
           <div className="flex items-start gap-2">
             <AlertCircle className="size-5 text-warning shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -144,7 +212,7 @@ function Dashboard() {
             <Link
               to="/lancamento/$id"
               params={{ id: "novo" }}
-              className="h-10 rounded-md bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center gap-1"
+              className="h-12 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-[0.99] transition"
             >
               <Plus className="size-4" /> Lançar hoje
             </Link>
@@ -154,15 +222,15 @@ function Dashboard() {
                   to="/lancamento/$id"
                   params={{ id: "novo" }}
                   search={{ repetir: true }}
-                  className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1"
+                  className="h-11 rounded-xl bg-secondary text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.99] transition"
                 >
-                  <Repeat className="size-4" /> Repetir último dia
+                  <Repeat className="size-4" /> Repetir último
                 </Link>
               )}
               <button
                 onClick={marcarFolga}
                 disabled={folgando}
-                className="h-10 rounded-md bg-secondary text-xs font-semibold flex items-center justify-center gap-1 disabled:opacity-50"
+                className="h-11 rounded-xl bg-secondary text-xs font-semibold flex items-center justify-center gap-1.5 disabled:opacity-50 active:scale-[0.99] transition"
               >
                 <Coffee className="size-4" /> {folgando ? "Salvando..." : "Marcar folga"}
               </button>
@@ -171,98 +239,59 @@ function Dashboard() {
         </section>
       )}
 
-      {/* Perfil */}
-      <Link to="/perfil" className="ep-card flex items-center gap-3 hover:border-primary/40 transition">
-        <div className="size-14 rounded-full bg-secondary grid place-items-center overflow-hidden border-2 border-primary/60">
-          {state.motorista.foto ? (
-            <img src={state.motorista.foto} alt={nome} className="size-full object-cover" />
-          ) : (
-            <span className="text-lg font-semibold text-muted-foreground">
-              {nome.slice(0, 1).toUpperCase()}
-            </span>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-base truncate">{nome}</div>
-          <div className="text-xs text-muted-foreground truncate">
-            {state.motorista.transportadora || "Toque para configurar perfil"}
-          </div>
-          {state.motorista.placa && (
-            <div className="mt-1.5 inline-block text-[11px] font-mono font-bold tracking-wider px-2 py-0.5 rounded border border-primary/60 text-primary">
-              {state.motorista.placa}
-            </div>
-          )}
-        </div>
-        <ChevronRight className="size-5 text-muted-foreground" />
-      </Link>
+      {/* Convite Premium */}
+      {!premium.loading && !premium.ativo && <PremiumCTA />}
 
-      {/* Resumo do Mês */}
-      <section className="ep-card mt-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold">Resumo do Mês</h2>
-          <Link to="/resumo" className="text-xs text-primary">
-            Ver mais →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Stat label="Dias trabalhados" value={NUM(r.dias_trabalhados)} />
-          <Stat label="Dias de folga" value={NUM(r.dias_folga)} />
-          <Stat label="Horas trabalhadas" value={formatHoras(r.horas)} />
-          <Stat label="Pacotes entregues" value={NUM(r.pacotes)} />
-          <Stat label="Insucessos" value={NUM(r.insucessos)} />
-          <Stat label="PNR" value={NUM(r.pnr)} />
-          <Stat label="Pacotes perdidos" value={NUM(r.pacotes_perdidos)} />
-          <Stat label="KM rodados" value={`${NUM(r.km)} km`} />
-          <Stat label="Combustível gasto" value={BRL(r.combustivel)} />
-          <Stat label="Valor bruto" value={BRL(r.valor_bruto)} />
-        </div>
-        <div className="mt-3 ep-stat-tile">
-          <div className="ep-label">Valor líquido</div>
-          <div className="text-2xl font-bold ep-money-pos">
-            {BRL(r.lucro_liquido)}
+      {premium.ativo && premium.plano === "teste" && (
+        <Link to="/premium" className="ep-card mt-3 flex items-center gap-2 bg-primary/10 border-primary/40">
+          <Crown className="size-5 text-primary shrink-0" />
+          <div className="text-xs flex-1">
+            <span className="font-semibold">Teste Premium</span> — {premium.diasRestantes} dias restantes
+            <div className="ep-progress mt-1.5">
+              <span style={{ width: `${Math.min(100, (premium.diasRestantes / 7) * 100)}%` }} />
+            </div>
           </div>
-        </div>
-      </section>
+          <ChevronRight className="size-4 text-muted-foreground" />
+        </Link>
+      )}
+
+      {/* Números do mês */}
+      <div className="ep-section-title mt-4">Resumo do mês</div>
+      <div className="ep-bento">
+        <Metric icon={CalendarCheck} label="Dias trabalhados" value={NUM(r.dias_trabalhados)} />
+        <Metric icon={CalendarOff} label="Dias de folga" value={NUM(r.dias_folga)} />
+        <Metric icon={Clock} label="Horas" value={formatHoras(r.horas)} />
+        <Metric icon={Package} label="Pacotes" value={NUM(r.pacotes)} />
+        <Metric icon={Ban} label="Insucessos" value={NUM(r.insucessos)} />
+        <Metric icon={AlertCircle} label="PNR" value={NUM(r.pnr)} />
+        <Metric icon={PackageX} label="Perdidos" value={NUM(r.pacotes_perdidos)} />
+        <Metric icon={RouteIcon} label="KM rodados" value={`${NUM(r.km)} km`} />
+        <Metric icon={Fuel} label="Combustível" value={BRL(r.combustivel)} tone="neg" />
+        <Metric icon={Wallet} label="Valor bruto" value={BRL(r.valor_bruto)} />
+      </div>
 
       {/* Últimos 7 dias */}
-      <section className="ep-card mt-4">
-        <h2 className="font-semibold mb-3">Últimos 7 dias</h2>
-        <div className="grid grid-cols-2 gap-2">
-          <Stat label="Dias trabalhados" value={NUM(r7.dias_trabalhados)} />
-          <Stat label="Pacotes entregues" value={NUM(r7.pacotes)} />
-          <Stat label="Valor bruto" value={BRL(r7.valor_bruto)} />
-          <Stat label="Combustível" value={BRL(r7.combustivel)} />
+      <div className="ep-section-title mt-4">Últimos 7 dias</div>
+      <section className="ep-card">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <div className="ep-label">Lucro da semana</div>
+            <div className="text-2xl font-bold ep-money-pos leading-tight">{BRL(r7.lucro_liquido)}</div>
+          </div>
+          <div className="text-right text-[11px] text-muted-foreground leading-relaxed">
+            <div>{NUM(r7.dias_trabalhados)} dias trabalhados</div>
+            <div>{NUM(r7.pacotes)} pacotes</div>
+          </div>
         </div>
-        <div className="mt-3 ep-stat-tile">
-          <div className="ep-label">Lucro dos últimos 7 dias</div>
-          <div className="text-xl font-bold ep-money-pos">{BRL(r7.lucro_liquido)}</div>
+        <div className="ep-bento mt-3">
+          <Metric icon={Wallet} label="Valor bruto" value={BRL(r7.valor_bruto)} />
+          <Metric icon={Fuel} label="Combustível" value={BRL(r7.combustivel)} tone="neg" />
         </div>
-      </section>
-
-      {/* Meta do Mês */}
-      <section className="ep-card mt-4">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-semibold">Meta do Mês</h2>
-          <Link to="/perfil" className="text-xs text-primary flex items-center gap-1">
-            <Pencil className="size-3" /> Editar
-          </Link>
-        </div>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Meta: {BRL(meta)}</span>
-          <span>Atual: {BRL(r.lucro_liquido)}</span>
-        </div>
-        <div className="mt-2 h-2 rounded-full bg-secondary overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-        <div className="mt-1 text-right text-xs font-medium text-primary">{pct}%</div>
       </section>
 
       {/* Próximo Recebimento */}
-      <section className="ep-card mt-4">
-        <h2 className="font-semibold mb-3">Próximo Recebimento</h2>
+      <div className="ep-section-title mt-4">Próximo recebimento</div>
+      <section className="ep-card">
         {prox ? (
           <ProxRecebimento prox={prox} />
         ) : (
@@ -284,6 +313,79 @@ function Dashboard() {
         <Plus className="size-5" /> Novo Lançamento
       </Link>
     </AppShell>
+  );
+}
+
+function PremiumCTA() {
+  const beneficios: { icon: ComponentType<{ className?: string }>; texto: string }[] = [
+    { icon: FileText, texto: "Fechamento por quinzena e relatórios em PDF" },
+    { icon: PieChart, texto: "Gráficos e metas financeiras completas" },
+    { icon: CreditCard, texto: "Controle de contas fixas e cartões" },
+  ];
+  return (
+    <Link to="/premium" className="ep-premium-cta mt-3 block active:scale-[0.995] transition">
+      <div className="relative z-10">
+        <div className="flex items-center gap-2">
+          <span className="ep-icon-chip">
+            <Sparkles className="size-4" />
+          </span>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="font-bold text-base leading-tight">Desbloqueie a Central Financeira</h2>
+              <span className="ep-pro-tag">PRO</span>
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              Saiba para onde vai cada real que você ganha.
+            </div>
+          </div>
+        </div>
+
+        <ul className="mt-3 space-y-1.5">
+          {beneficios.map((b) => (
+            <li key={b.texto} className="flex items-center gap-2 text-xs">
+              <Check className="size-3.5 text-primary shrink-0" />
+              <span className="text-foreground/90">{b.texto}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="leading-tight">
+            <div className="text-xl font-extrabold text-primary">R$ 3,90</div>
+            <div className="text-[10px] text-muted-foreground">por mês · ou R$ 24,90/ano</div>
+          </div>
+          <span className="h-11 px-5 rounded-xl bg-primary text-primary-foreground text-sm font-bold flex items-center gap-1.5">
+            Começar agora <ChevronRight className="size-4" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function Metric({
+  icon: Icon,
+  label,
+  value,
+  tone,
+  wide,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  tone?: "pos" | "neg";
+  wide?: boolean;
+}) {
+  return (
+    <div className={`ep-metric${wide ? " ep-bento-wide" : ""}`}>
+      <div className="ep-metric-head">
+        <Icon className="size-3.5 text-primary/80 shrink-0" />
+        <span className="truncate">{label}</span>
+      </div>
+      <div className={`ep-metric-value ${tone === "pos" ? "ep-money-pos" : tone === "neg" ? "ep-money-neg" : ""}`}>
+        {value}
+      </div>
+    </div>
   );
 }
 
