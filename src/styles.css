@@ -232,4 +232,97 @@
   .ep-switch[data-on="true"] { background: var(--color-primary); }
   .ep-switch[data-on="true"]::after { transform: translateX(1.15rem); }
   .ep-switch[data-on="false"] { background: color-mix(in oklab, var(--color-secondary) 90%, transparent); }
+
+  /* ---- Bento / Início ---- */
+  .ep-bento {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .ep-bento-wide { grid-column: span 2; }
+  .ep-metric {
+    background:
+      linear-gradient(160deg, color-mix(in oklab, var(--color-surface) 92%, transparent),
+                              color-mix(in oklab, var(--color-card) 96%, transparent));
+    border: 1px solid color-mix(in oklab, var(--color-border) 85%, transparent);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+  .ep-metric-head {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.7rem; line-height: 1.1;
+    color: var(--color-muted-foreground);
+  }
+  .ep-metric-value {
+    font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--color-foreground);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ep-highlight {
+    position: relative;
+    overflow: hidden;
+    border-radius: calc(var(--radius) + 6px);
+    padding: 1.15rem 1.15rem 1.25rem;
+    background:
+      radial-gradient(130% 120% at 100% 0%, color-mix(in oklab, var(--color-success) 20%, transparent) 0%, transparent 60%),
+      linear-gradient(150deg, color-mix(in oklab, var(--color-card) 98%, transparent), color-mix(in oklab, var(--color-surface) 94%, transparent));
+    border: 1px solid color-mix(in oklab, var(--color-success) 22%, var(--color-border));
+    box-shadow: 0 16px 40px -26px color-mix(in oklab, var(--color-success) 60%, transparent);
+  }
+  .ep-highlight-value {
+    font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(2rem, 11vw, 2.6rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
+    color: oklch(0.86 0.2 145);
+  }
+  .ep-progress {
+    height: 0.5rem; border-radius: 999px; overflow: hidden;
+    background: color-mix(in oklab, var(--color-secondary) 85%, transparent);
+  }
+  .ep-progress > span {
+    display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-primary), oklch(0.82 0.2 145));
+    transition: width .4s ease;
+  }
+  .ep-premium-cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: calc(var(--radius) + 6px);
+    padding: 1.15rem;
+    background:
+      radial-gradient(120% 130% at 0% 0%, color-mix(in oklab, var(--color-primary) 26%, transparent) 0%, transparent 60%),
+      linear-gradient(145deg, color-mix(in oklab, var(--color-card) 96%, transparent), color-mix(in oklab, var(--color-surface) 92%, transparent));
+    border: 1px solid color-mix(in oklab, var(--color-primary) 45%, var(--color-border));
+    box-shadow: 0 18px 44px -24px color-mix(in oklab, var(--color-primary) 65%, transparent);
+    animation: ep-rise .45s ease both;
+  }
+  .ep-premium-cta::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--color-primary) 22%, transparent) 50%, transparent 65%);
+    transform: translateX(-100%);
+    animation: ep-shine 4.5s ease-in-out 1.2s infinite;
+    pointer-events: none;
+  }
+  .ep-pro-tag {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.05rem 0.4rem; border-radius: 999px;
+    background: color-mix(in oklab, var(--color-primary) 20%, transparent);
+    color: var(--color-primary);
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 0.06em;
+  }
+}
+
+@keyframes ep-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ep-shine {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
 }
