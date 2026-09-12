@@ -92,7 +92,7 @@
   }
   h1, h2, h3, .ep-display {
     font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
   input, textarea, select {
     color-scheme: dark;
@@ -259,7 +259,7 @@
   }
   .ep-metric-value {
     font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
-    font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em;
+    font-size: 1.15rem; font-weight: 700; letter-spacing: 0;
     color: var(--color-foreground);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
@@ -277,8 +277,8 @@
   .ep-highlight-value {
     font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
     font-size: clamp(2rem, 11vw, 2.6rem);
-    font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
-    color: oklch(0.86 0.2 145);
+    font-weight: 800; letter-spacing: 0; line-height: 1.05;
+    color: var(--color-success);
   }
   .ep-progress {
     height: 0.5rem; border-radius: 999px; overflow: hidden;
@@ -325,4 +325,11 @@
 @keyframes ep-shine {
   0% { transform: translateX(-100%); }
   55%, 100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-premium-cta,
+  .ep-premium-cta::after {
+    animation: none;
+  }
 }
