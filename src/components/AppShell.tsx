@@ -10,6 +10,7 @@ import {
   Bell,
   ArrowLeft,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   title?: string;
@@ -67,18 +68,16 @@ export function AppShell({ title, children, back, right }: Props) {
               >
                 <ArrowLeft className="size-5" />
               </Link>
-            ) : (
-              <button
-                type="button"
-                className="size-9 grid place-items-center rounded-md text-foreground/90 -ml-2"
-                aria-label="Menu"
-              >
-                <MenuIcon className="size-5" />
-              </button>
-            )}
+            ) : <div className="w-7" aria-hidden="true" />}
             <h1 className="text-base font-semibold flex-1 text-center">{title}</h1>
             <div className="w-9 flex justify-end items-center">
-              {right ?? <Bell className="size-5 text-foreground/80" />}
+              {right ?? (
+                <Button asChild variant="ghost" size="icon" className="size-9" aria-label="Notificações">
+                  <Link to="/perfil/notificacoes">
+                    <Bell className="size-5" />
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </header>
@@ -98,7 +97,7 @@ export function AppShell({ title, children, back, right }: Props) {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur" aria-label="Navegação principal">
         <div className="mx-auto max-w-2xl grid grid-cols-5">
           {tabs.map((t) => {
             const active = t.match(pathname);
@@ -107,10 +106,12 @@ export function AppShell({ title, children, back, right }: Props) {
               <Link
                 key={t.to}
                 to={t.to}
-                className={`flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] transition ${
-                  active ? "text-primary" : "text-muted-foreground"
+                className={`relative flex min-h-16 flex-col items-center justify-center gap-1 text-[11px] transition ${
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
+                aria-current={active ? "page" : undefined}
               >
+                {active && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-primary" />}
                 <Icon className="size-5" strokeWidth={active ? 2.4 : 1.8} />
                 <span>{t.label}</span>
               </Link>
