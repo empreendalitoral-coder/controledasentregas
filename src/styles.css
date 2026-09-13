@@ -123,6 +123,43 @@
     border-radius: var(--radius-xl);
     padding: 1rem;
   }
+  .ep-page-intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in oklab, var(--color-primary) 22%, var(--color-border));
+    background: linear-gradient(145deg, color-mix(in oklab, var(--color-primary) 9%, var(--color-card)), var(--color-card));
+  }
+  .ep-empty {
+    display: grid;
+    place-items: center;
+    min-height: 10rem;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--color-muted-foreground);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklab, var(--color-card) 72%, transparent);
+  }
+  .ep-icon-button {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    color: var(--color-muted-foreground);
+    transition: color .15s, background .15s;
+  }
+  .ep-icon-button:hover { color: var(--color-foreground); background: var(--color-secondary); }
+  .ep-segmented {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--color-secondary) 65%, transparent);
+  }
   .ep-stat-tile {
     background-color: color-mix(in oklab, var(--color-surface) 85%, transparent);
     border: 1px solid var(--color-border);
