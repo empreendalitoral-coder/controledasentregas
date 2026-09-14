@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { broadcastNotification } from "@/lib/notifications/broadcast.functions";
 import { Megaphone, Send, CheckCircle2, XCircle } from "lucide-react";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/mensagens")({
   head: () => ({
@@ -42,10 +44,8 @@ function MensagensAdminPage() {
   const [sending, setSending] = useState(false);
   const [res, setRes] = useState<Resultado | null>(null);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function submit() {
     if (!titulo.trim() || !mensagem.trim()) return toast.error("Preencha título e mensagem");
-    if (!confirm("Enviar esta mensagem para todos os usuários?")) return;
     setSending(true);
     setRes(null);
     try {
@@ -97,7 +97,7 @@ function MensagensAdminPage() {
         </div>
       </div>
 
-      <form onSubmit={submit} className="ep-card grid gap-3">
+      <div className="ep-card grid gap-3">
         <Field label="Título">
           <TextInput
             value={titulo}
@@ -115,14 +115,8 @@ function MensagensAdminPage() {
             placeholder="Escreva o aviso que os usuários vão receber…"
           />
         </Field>
-        <button
-          type="submit"
-          disabled={sending}
-          className="h-11 rounded-md bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-        >
-          <Send className="size-4" /> {sending ? "Enviando…" : "Enviar para todos"}
-        </button>
-      </form>
+        <ConfirmAction trigger={<Button disabled={sending || !titulo.trim() || !mensagem.trim()} className="h-11"><Send className="size-4" /> {sending ? "Enviando…" : "Enviar para todos"}</Button>} title="Enviar aviso para todos?" description="A mensagem ficará visível dentro do aplicativo para todos os usuários cadastrados." confirmLabel="Enviar aviso" onConfirm={submit} />
+      </div>
 
       {res && (
         <div className="ep-card grid gap-2 text-sm">

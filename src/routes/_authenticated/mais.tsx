@@ -24,6 +24,8 @@ import {
 import { toast } from "sonner";
 import { useRef } from "react";
 import { BRL, computeResumo } from "@/lib/calc";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/mais")({
   head: () => ({
@@ -108,8 +110,6 @@ function MaisPage() {
   }
 
   async function resetar() {
-    if (!confirm("Apagar TODOS os dados desta conta?")) return;
-    if (!confirm("Tem certeza absoluta?")) return;
     try { await actions.reset(); toast.success("Dados apagados"); } catch (e) { toast.error(e instanceof Error ? e.message : ""); }
   }
 
@@ -118,21 +118,12 @@ function MaisPage() {
     navigate({ to: "/auth" });
   }
 
-  const items: { icon: typeof Calendar; label: string; onClick?: () => void; to?: string; highlight?: boolean }[] = [
-    { icon: User, label: "Perfil do motorista", to: "/perfil" },
-    { icon: Wallet2, label: "Central Financeira Premium", to: "/financeiro", highlight: true },
-    { icon: Fuel, label: "Abastecimentos", to: "/abastecimentos" },
-    { icon: Wrench, label: "Manutenção", to: "/manutencao" },
-    { icon: Calendar, label: "Recebimentos", to: "/recebimentos" },
-    { icon: FileText, label: "Relatório mensal (imprimir)", onClick: gerarRelatorio },
-    { icon: TrendingUp, label: "Gráficos e Lucro Real", to: "/graficos" },
-    { icon: Download, label: "Exportar backup (JSON)", onClick: exportar },
-    { icon: Upload, label: "Importar backup", onClick: () => fileRef.current?.click() },
-    { icon: Settings, label: "Resumo mensal completo", to: "/resumo" },
-    ...(admin.isAdmin ? [{ icon: Shield, label: "Painel Administrativo", to: "/admin" as const }] : []),
-    { icon: RotateCcw, label: "Apagar todos os dados", onClick: resetar },
-    { icon: LogOut, label: "Sair da conta", onClick: sair },
-    { icon: Info, label: "Sobre o app", onClick: () => toast.info("Entrega Pro v2.0") },
+  const groups: { title: string; items: { icon: typeof Calendar; label: string; onClick?: () => void; to?: string; highlight?: boolean; destructive?: boolean }[] }[] = [
+    { title: "Conta", items: [{ icon: User, label: "Perfil do motorista", to: "/perfil" }, ...(admin.isAdmin ? [{ icon: Shield, label: "Painel Administrativo", to: "/admin" as const }] : [])] },
+    { title: "Trabalho", items: [{ icon: Fuel, label: "Abastecimentos", to: "/abastecimentos" }, { icon: Wrench, label: "Manutenção", to: "/manutencao" }, { icon: Calendar, label: "Recebimentos", to: "/recebimentos" }] },
+    { title: "Financeiro", items: [{ icon: Wallet2, label: "Central Financeira Premium", to: "/financeiro", highlight: true }, { icon: TrendingUp, label: "Gráficos e Lucro Real", to: "/graficos" }, { icon: Settings, label: "Resumo mensal completo", to: "/resumo" }, { icon: FileText, label: "Relatório mensal (imprimir)", onClick: gerarRelatorio }] },
+    { title: "Dados", items: [{ icon: Download, label: "Exportar backup (JSON)", onClick: exportar }, { icon: Upload, label: "Importar backup", onClick: () => fileRef.current?.click() }, { icon: RotateCcw, label: "Apagar todos os dados", onClick: resetar, destructive: true }] },
+    { title: "Suporte", items: [{ icon: Info, label: "Sobre o app", onClick: () => toast.info("Entrega Pro v2.0") }, { icon: LogOut, label: "Sair da conta", onClick: sair }] },
   ];
 
   return (
@@ -156,13 +147,14 @@ function MaisPage() {
         {premium.ativo && <span className="ep-badge-premium"><Crown className="size-3" /> Premium</span>}
       </Link>
 
-      <ul className="mt-4 ep-card divide-y divide-border">
-        {items.map((it) => {
+      <div className="mt-4 space-y-4">
+      {groups.map((group) => <section key={group.title}><h2 className="ep-section-title">{group.title}</h2><ul className="ep-card divide-y divide-border p-0 overflow-hidden">
+        {group.items.map((it) => {
           const Icon = it.icon;
           const inner = (
-            <div className="flex items-center gap-3 py-3 first:pt-1 last:pb-1">
-              <Icon className={`size-5 ${it.highlight ? "text-primary" : "text-foreground/80"}`} />
-              <span className={`flex-1 text-sm ${it.highlight ? "font-semibold" : ""}`}>{it.label}</span>
+            <div className="flex min-h-12 items-center gap-3 px-4 py-2.5">
+              <div className={`ep-icon-chip ${it.destructive ? "bg-destructive/15 text-destructive" : ""}`}><Icon className={`size-4 ${it.highlight ? "text-primary" : ""}`} /></div>
+              <span className={`flex-1 text-sm ${it.highlight ? "font-semibold text-primary" : it.destructive ? "text-destructive" : ""}`}>{it.label}</span>
               {it.highlight && (
                 <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
                   {!premium.ativo && <Lock className="size-3" />} PRO
@@ -174,11 +166,12 @@ function MaisPage() {
 
           return (
             <li key={it.label}>
-              {it.to ? <Link to={it.to}>{inner}</Link> : <button onClick={it.onClick} className="w-full text-left">{inner}</button>}
+              {it.to ? <Link to={it.to}>{inner}</Link> : it.destructive ? <ConfirmAction trigger={<Button variant="ghost" className="h-auto w-full justify-start rounded-none p-0 font-normal">{inner}</Button>} title="Apagar todos os dados?" description="Esta ação remove definitivamente os lançamentos e registros desta conta. Revise antes de continuar." confirmLabel="Sim, apagar tudo" destructive onConfirm={it.onClick || (() => {})} /> : <Button variant="ghost" onClick={it.onClick} className="h-auto w-full justify-start rounded-none p-0 font-normal">{inner}</Button>}
             </li>
           );
         })}
-      </ul>
+      </ul></section>)}
+      </div>
 
       {!premium.ativo && !premium.loading && (
         <Link to="/premium" className="mt-4 ep-card block bg-gradient-to-br from-primary/15 via-card to-card border-primary/40">

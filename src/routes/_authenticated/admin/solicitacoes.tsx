@@ -1,10 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Check, X, Eye, Clock, Copy } from "lucide-react";
+import { Check, X, Eye, Clock, Copy, FileCheck, LoaderCircle } from "lucide-react";
 import { BRL } from "@/lib/calc";
 import { registrarLogAdmin } from "@/lib/admin-log";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Solic = {
   id: string;
@@ -43,20 +52,27 @@ function SolicAdminPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [aprovando, setAprovando] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [rejecting, setRejecting] = useState<Solic | null>(null);
+  const [reason, setReason] = useState("");
 
 
-  async function load() {
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     let q = supabase.from("solicitacoes_premium").select("*").order("created_at", { ascending: false });
     if (filter !== "todos") q = q.eq("status", filter);
-    const { data } = await q;
+    const { data, error: loadError } = await q;
+    if (loadError) setError("Não foi possível carregar as solicitações.");
     if (data) setItems(data.map((d) => ({ ...d, valor: Number(d.valor) })) as Solic[]);
-  }
-  useEffect(() => { load(); }, [filter]);
+    setLoading(false);
+  }, [filter]);
+  useEffect(() => { void load(); }, [load]);
 
-  async function decidir(s: Solic, status: "aprovado" | "recusado", plano?: Solic["plano"]) {
+  async function decidir(s: Solic, status: "aprovado" | "recusado", plano?: Solic["plano"], obs: string | null = null) {
     setBusy(s.id);
     setAprovando(null);
-    const obs = status === "recusado" ? prompt("Motivo (opcional)") : null;
     const novoPlano = status === "aprovado" && plano ? plano : s.plano;
     const { error } = await supabase
       .from("solicitacoes_premium")
@@ -83,7 +99,9 @@ function SolicAdminPage() {
       }
     }
     toast.success(status === "aprovado" ? "Premium liberado!" : "Solicitação recusada");
-    load();
+    setRejecting(null);
+    setReason("");
+    await load();
   }
 
   async function verComprovante(path: string) {
@@ -105,12 +123,15 @@ function SolicAdminPage() {
 
   return (
     <>
+      <div className="ep-page-intro mb-4"><div className="ep-icon-chip"><FileCheck className="size-4" /></div><div><h2 className="font-semibold">Solicitações Premium</h2><p className="text-xs text-muted-foreground mt-0.5">Revise pagamentos e libere o período correto.</p></div></div>
       <div className="flex gap-1 p-1 rounded-lg bg-secondary/50 mb-3 overflow-x-auto">
         {(["pendente", "aprovado", "recusado", "todos"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`flex-1 min-w-fit h-9 px-3 rounded-md text-xs font-medium capitalize ${filter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{f}</button>
         ))}
       </div>
 
+      {loading && <div className="ep-empty"><LoaderCircle className="size-6 animate-spin text-primary" /><span className="mt-2 text-sm">Carregando solicitações…</span></div>}
+      {error && <div className="ep-empty"><span className="text-sm">{error}</span><Button className="mt-3" variant="secondary" onClick={() => void load()}>Tentar novamente</Button></div>}
       <ul className="space-y-2">
         {items.map((s) => (
           <li key={s.id} className="ep-card">
@@ -132,19 +153,19 @@ function SolicAdminPage() {
             {s.observacao_admin && <p className="text-xs text-muted-foreground mt-2 italic">{s.observacao_admin}</p>}
             <div className="mt-3 flex gap-2">
               {s.comprovante_path && (
-                <button onClick={() => verComprovante(s.comprovante_path!)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Eye className="size-4" /> Ver</button>
+                <Button onClick={() => s.comprovante_path && verComprovante(s.comprovante_path)} variant="secondary"><Eye className="size-4" /> Ver</Button>
               )}
               {(s.telefone || s.email) && (
-                <button onClick={() => copiarContato(s)} className="h-10 px-3 rounded-md bg-secondary text-sm flex items-center gap-1"><Copy className="size-4" /> Contato</button>
+                <Button onClick={() => copiarContato(s)} variant="secondary"><Copy className="size-4" /> Contato</Button>
               )}
               {s.status === "pendente" && (
                 <>
-                  <button disabled={busy === s.id} onClick={() => setAprovando(aprovando === s.id ? null : s.id)} className="flex-1 h-10 rounded-md bg-success text-success-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
+                  <Button disabled={busy === s.id} onClick={() => setAprovando(aprovando === s.id ? null : s.id)} className="flex-1 bg-success text-success-foreground hover:bg-success/90">
                     {busy === s.id ? <Clock className="size-4 animate-spin" /> : <Check className="size-4" />} Aprovar
-                  </button>
-                  <button disabled={busy === s.id} onClick={() => decidir(s, "recusado")} className="flex-1 h-10 rounded-md bg-destructive text-destructive-foreground font-semibold text-sm flex items-center justify-center gap-1 disabled:opacity-50">
+                  </Button>
+                  <Button disabled={busy === s.id} onClick={() => { setRejecting(s); setReason(""); }} variant="destructive" className="flex-1">
                     <X className="size-4" /> Recusar
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -162,7 +183,7 @@ function SolicAdminPage() {
             )}
           </li>
         ))}
-        {items.length === 0 && <li className="text-center text-muted-foreground py-8 text-sm">Nenhuma solicitação</li>}
+        {!loading && !error && items.length === 0 && <li className="ep-empty text-sm">Nenhuma solicitação nesta situação.</li>}
       </ul>
 
       {preview && (
@@ -173,6 +194,16 @@ function SolicAdminPage() {
           <img src={preview} alt="Comprovante de pagamento" className="max-h-full max-w-full object-contain rounded-lg" />
         </div>
       )}
+      <Dialog open={rejecting !== null} onOpenChange={(open) => !open && setRejecting(null)}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-xl bg-card p-5">
+          <DialogHeader><DialogTitle>Recusar solicitação?</DialogTitle><DialogDescription>Você pode informar o motivo que será registrado para esta decisão.</DialogDescription></DialogHeader>
+          <textarea className="ep-input min-h-24 py-3" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} placeholder="Motivo opcional" />
+          <DialogFooter className="grid grid-cols-2 gap-2 sm:flex sm:space-x-0">
+            <Button variant="outline" onClick={() => setRejecting(null)}>Cancelar</Button>
+            <Button variant="destructive" disabled={!rejecting || busy !== null} onClick={() => rejecting && decidir(rejecting, "recusado", undefined, reason.trim() || null)}>Recusar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
