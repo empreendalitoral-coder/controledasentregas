@@ -1,11 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput, TextArea } from "@/components/Field";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { actions, useFullStore } from "@/lib/store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { BRL } from "@/lib/calc";
-import { Plus, X, Trash2 } from "lucide-react";
+import { Fuel, Gauge, Plus, ReceiptText, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/abastecimentos")({
   head: () => ({
@@ -32,9 +41,8 @@ function AbastPage() {
   const totalValor = lista.reduce((s, a) => s + (a.valor_total ?? 0), 0);
 
   function remover(id: string) {
-    if (!confirm("Excluir abastecimento?")) return;
     actions.deleteAbastecimento(id);
-    toast.success("Excluído");
+    toast.success("Abastecimento excluído");
   }
 
   return (
@@ -42,30 +50,45 @@ function AbastPage() {
       title="Abastecimentos"
       back="/mais"
       right={
-        <button onClick={() => setOpen(true)} className="text-primary" aria-label="Novo">
+        <Button onClick={() => setOpen(true)} variant="ghost" size="icon" aria-label="Novo abastecimento">
           <Plus className="size-5" />
-        </button>
+        </Button>
       }
     >
+      <div className="ep-page-intro mb-4">
+        <div className="ep-icon-chip shrink-0"><Fuel className="size-5" /></div>
+        <div>
+          <h2 className="font-display font-semibold">Controle de combustível</h2>
+          <p className="mt-0.5 text-sm text-muted-foreground">Acompanhe litros, preço médio e o total investido.</p>
+        </div>
+      </div>
+
+      {lista.length > 0 && (
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <div className="ep-stat-tile"><div className="ep-label">Total de litros</div><div className="ep-value">{totalLitros.toFixed(2)} L</div></div>
+          <div className="ep-stat-tile"><div className="ep-label">Total gasto</div><div className="ep-value ep-money-neg">{BRL(totalValor)}</div></div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {lista.length === 0 && (
-          <div className="ep-card text-center text-sm text-muted-foreground">
-            Nenhum abastecimento cadastrado.
+          <div className="ep-empty">
+            <div><Fuel className="mx-auto mb-3 size-7 text-primary" /><p className="font-medium text-foreground">Nenhum abastecimento</p><p className="mt-1 text-sm">Registre o primeiro para acompanhar seus gastos.</p></div>
           </div>
         )}
         {lista.map((a) => {
           const preco = a.litros > 0 ? a.valor_total / a.litros : 0;
           return (
-            <div key={a.id} className="ep-card">
+            <article key={a.id} className="ep-card">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-semibold">
                     {new Date(a.data + "T00:00:00").toLocaleDateString("pt-BR")}
                   </div>
-                  <div className="text-sm text-muted-foreground">{a.posto || "—"}</div>
+                  <div className="mt-0.5 text-sm text-muted-foreground">{a.posto || "Posto não informado"}</div>
                   {a.km != null && (
-                    <div className="text-xs text-muted-foreground">
-                      KM: {a.km.toLocaleString("pt-BR")}
+                    <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Gauge className="size-3.5" /> {a.km.toLocaleString("pt-BR")} km
                     </div>
                   )}
                 </div>
@@ -80,36 +103,20 @@ function AbastPage() {
               {a.observacao && (
                 <div className="text-xs text-muted-foreground mt-2">{a.observacao}</div>
               )}
-              <button
-                onClick={() => remover(a.id)}
-                className="mt-2 text-xs flex items-center gap-1 text-destructive"
-              >
-                <Trash2 className="size-3" /> Excluir
-              </button>
-            </div>
+               <div className="mt-3 border-t border-border pt-2">
+                 <ConfirmAction title="Excluir abastecimento?" description="Esse registro será removido permanentemente." confirmLabel="Excluir" destructive onConfirm={() => remover(a.id)} trigger={<Button variant="ghost" size="sm" className="text-destructive hover:text-destructive"><Trash2 /> Excluir</Button>} />
+               </div>
+             </article>
           );
         })}
       </div>
 
-      {lista.length > 0 && (
-        <div className="ep-card mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <div className="ep-label">Total de litros</div>
-            <div className="text-lg font-bold">{totalLitros.toFixed(2)} L</div>
-          </div>
-          <div className="text-right">
-            <div className="ep-label">Total gasto</div>
-            <div className="text-lg font-bold ep-money-neg">{BRL(totalValor)}</div>
-          </div>
-        </div>
-      )}
-
-      {open && <NovoModal onClose={() => setOpen(false)} />}
+      <NovoModal open={open} onClose={() => setOpen(false)} />
     </AppShell>
   );
 }
 
-function NovoModal({ onClose }: { onClose: () => void }) {
+function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [f, setF] = useState({
     data: new Date().toISOString().slice(0, 10),
     posto: "",
@@ -140,17 +147,13 @@ function NovoModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur grid place-items-end sm:place-items-center p-0 sm:p-4">
+    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-xl bg-card p-5 max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left"><DialogTitle className="font-display flex items-center gap-2"><Fuel className="size-5 text-primary" /> Novo abastecimento</DialogTitle><DialogDescription>Informe os dados registrados na bomba.</DialogDescription></DialogHeader>
       <form
         onSubmit={save}
-        className="w-full max-w-md bg-card border border-border rounded-t-2xl sm:rounded-2xl p-4 space-y-3 max-h-[90vh] overflow-auto"
+        className="space-y-3"
       >
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Novo Abastecimento</h2>
-          <button type="button" onClick={onClose} className="text-muted-foreground">
-            <X className="size-5" />
-          </button>
-        </div>
         <Field label="Data">
           <TextInput
             type="date"
@@ -166,7 +169,7 @@ function NovoModal({ onClose }: { onClose: () => void }) {
             maxLength={60}
           />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 min-[390px]:grid-cols-2">
           <Field label="KM do veículo">
             <TextInput
               type="number"
@@ -203,10 +206,9 @@ function NovoModal({ onClose }: { onClose: () => void }) {
             maxLength={200}
           />
         </Field>
-        <button className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold">
-          Salvar
-        </button>
+        <Button className="h-11 w-full" type="submit"><ReceiptText /> Salvar abastecimento</Button>
       </form>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
