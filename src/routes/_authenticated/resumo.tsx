@@ -3,6 +3,8 @@ import { AppShell } from "@/components/AppShell";
 import { useFullStore } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { BRL, NUM, computeResumo, formatHoras } from "@/lib/calc";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, CalendarDays, PackageCheck, Route as RouteIcon, Timer, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/resumo")({
   head: () => ({
@@ -64,15 +66,25 @@ function ResumoPage() {
 
   return (
     <AppShell title="Resumo Mensal" back="/">
-      <div className="ep-card flex items-center justify-between">
-        <button onClick={prev} className="px-3 py-1 text-primary">←</button>
-        <div className="font-semibold">
+      <div className="ep-page-intro mb-4"><div className="ep-icon-chip shrink-0"><TrendingUp className="size-5" /></div><div><h2 className="font-display font-semibold">Visão completa do mês</h2><p className="mt-0.5 text-sm text-muted-foreground">Resultados, custos e médias reunidos em um só lugar.</p></div></div>
+      <div className="ep-card flex items-center justify-between gap-2">
+        <Button onClick={prev} variant="ghost" size="icon" aria-label="Mês anterior"><ArrowLeft /></Button>
+        <div className="flex min-w-0 items-center gap-2 font-semibold">
+          <CalendarDays className="size-4 shrink-0 text-primary" />
           {MESES[month]} / {year}
         </div>
-        <button onClick={next} className="px-3 py-1 text-primary">→</button>
+        <Button onClick={next} variant="ghost" size="icon" aria-label="Próximo mês"><ArrowRight /></Button>
       </div>
 
-      <div className="ep-card mt-4 space-y-2">
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Metric icon={PackageCheck} label="Pacotes" value={NUM(r.pacotes)} />
+        <Metric icon={RouteIcon} label="Distância" value={`${NUM(r.km)} km`} />
+        <Metric icon={Timer} label="Horas" value={formatHoras(r.horas)} />
+        <Metric icon={TrendingUp} label="Lucro real" value={BRL(r.lucro_real)} positive />
+      </div>
+
+      <section className="ep-card mt-4 space-y-2">
+        <h3 className="font-display font-semibold mb-3">Detalhes do período</h3>
         <Row label="Dias trabalhados" value={NUM(r.dias_trabalhados)} />
         <Row label="Dias de folga" value={NUM(r.dias_folga)} />
         <Row label="Horas trabalhadas" value={formatHoras(r.horas)} />
@@ -89,7 +101,7 @@ function ResumoPage() {
         <Row label="Total de descontos" value={`- ${BRL(r.descontos)}`} valueClass="ep-money-neg" />
         <Row label="Valor líquido" value={BRL(r.lucro_liquido)} valueClass="ep-money-pos" big />
         <Row label="Lucro real" value={BRL(r.lucro_real)} valueClass="ep-money-pos" big />
-      </div>
+      </section>
 
       <div className="ep-card mt-4">
         <h3 className="font-semibold mb-2">Médias do mês</h3>
@@ -135,4 +147,8 @@ function Tile({ label, v }: { label: string; v: string }) {
       <div className="ep-value">{v}</div>
     </div>
   );
+}
+
+function Metric({ icon: Icon, label, value, positive = false }: { icon: typeof PackageCheck; label: string; value: string; positive?: boolean }) {
+  return <div className="ep-stat-tile min-w-0"><div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Icon className="size-3.5 text-primary" />{label}</div><div className={`mt-1 truncate font-display text-base font-bold ${positive ? "ep-money-pos" : ""}`}>{value}</div></div>;
 }

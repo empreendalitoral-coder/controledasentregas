@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput, TextArea } from "@/components/Field";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { actions, useFullStore, type Recebimento } from "@/lib/store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { BRL, computeResumo, rangeFromStrings } from "@/lib/calc";
-import { Plus, X } from "lucide-react";
+import { CalendarCheck, CircleDollarSign, Plus, Trash2, WalletCards } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/recebimentos")({
   head: () => ({
@@ -32,6 +35,7 @@ function RecebimentosPage() {
   const state = useFullStore();
   const [tab, setTab] = useState<"pendentes" | "recebidos">("pendentes");
   const [open, setOpen] = useState(false);
+  const [recebendo, setRecebendo] = useState<Recebimento | null>(null);
 
   const lista = state.recebimentos
     .filter((r) => (tab === "pendentes" ? r.status === "pendente" : r.status === "recebido"))
@@ -51,72 +55,57 @@ function RecebimentosPage() {
     .filter((r) => r.status === "recebido")
     .reduce((s, r) => s + (r.valor_recebido ?? 0), 0);
 
-  function marcarRecebido(r: Recebimento) {
-    const data = prompt(
-      "Data de recebimento (YYYY-MM-DD):",
-      new Date().toISOString().slice(0, 10),
-    );
-    if (!data) return;
-    const v = prompt("Valor recebido (R$):", "0");
-    if (v == null) return;
-    const valor = Number(v.replace(",", "."));
-    if (!Number.isFinite(valor) || valor < 0) {
-      toast.error("Valor inválido");
-      return;
-    }
-    actions.updateRecebimento(r.id, {
-      status: "recebido",
-      data_recebimento: data,
-      valor_recebido: valor,
-    });
-    toast.success("Marcado como recebido");
-  }
-
   function remover(id: string) {
-    if (!confirm("Excluir período?")) return;
     actions.deleteRecebimento(id);
-    toast.success("Excluído");
+    toast.success("Período excluído");
   }
 
   return (
     <AppShell
       title="Recebimentos"
       right={
-        <button
+        <Button
           onClick={() => setOpen(true)}
           aria-label="Novo recebimento"
-          className="text-primary"
+          variant="ghost"
+          size="icon"
         >
           <Plus className="size-5" />
-        </button>
+        </Button>
       }
     >
-      <div className="ep-card">
-        <div className="grid grid-cols-2 gap-1.5 bg-secondary/40 rounded-md p-1">
-          <button
+      <div className="ep-page-intro mb-4"><div className="ep-icon-chip shrink-0"><WalletCards className="size-5" /></div><div><h2 className="font-display font-semibold">Agenda de pagamentos</h2><p className="mt-0.5 text-sm text-muted-foreground">Veja o que está pendente, atrasado ou já foi recebido.</p></div></div>
+
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <div className="ep-stat-tile"><div className="ep-label">A receber</div><div className="ep-value text-warning">{BRL(totalPend)}</div></div>
+        <div className="ep-stat-tile"><div className="ep-label">Já recebido</div><div className="ep-value ep-money-pos">{BRL(totalReceb)}</div></div>
+      </div>
+
+      <div className="ep-segmented grid-cols-2" role="tablist" aria-label="Status dos recebimentos">
+          <Button
+            variant={tab === "pendentes" ? "default" : "ghost"}
             onClick={() => setTab("pendentes")}
-            className={`h-10 rounded font-medium text-sm ${
-              tab === "pendentes" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-            }`}
+            role="tab"
+            aria-selected={tab === "pendentes"}
+            className="h-10"
           >
             Pendentes
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={tab === "recebidos" ? "default" : "ghost"}
             onClick={() => setTab("recebidos")}
-            className={`h-10 rounded font-medium text-sm ${
-              tab === "recebidos" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-            }`}
+            role="tab"
+            aria-selected={tab === "recebidos"}
+            className="h-10"
           >
             Recebidos
-          </button>
-        </div>
+          </Button>
       </div>
 
       <div className="space-y-3 mt-4">
+        {!state.hydrated && <div className="ep-empty min-h-32"><p className="text-sm">Carregando recebimentos...</p></div>}
         {lista.length === 0 && (
-          <div className="ep-card text-center text-sm text-muted-foreground">
-            Nenhum recebimento {tab === "pendentes" ? "pendente" : "recebido"}.
-          </div>
+          state.hydrated && <div className="ep-empty"><div><CircleDollarSign className="mx-auto mb-3 size-7 text-primary" /><p className="font-medium text-foreground">Nenhum recebimento {tab === "pendentes" ? "pendente" : "recebido"}</p><p className="mt-1 text-sm">Os períodos aparecerão aqui quando forem adicionados.</p></div></div>
         )}
         {lista.map((r) => {
           const resumo = computeResumo(
@@ -140,7 +129,7 @@ function RecebimentosPage() {
                   }
                 : { txt: "Pendente", cls: "text-warning" };
           return (
-            <div
+             <article
               key={r.id}
               className={`ep-card ${atrasado ? "border-destructive/50 bg-destructive/10" : ""}`}
             >
@@ -166,42 +155,31 @@ function RecebimentosPage() {
                   Recebido em: {fmt(r.data_recebimento)}
                 </div>
               )}
-              <div className="flex gap-2 mt-3">
+               <div className="flex flex-wrap gap-2 mt-3 border-t border-border pt-3">
                 {r.status === "pendente" && (
-                  <button
-                    onClick={() => marcarRecebido(r)}
-                    className="flex-1 h-9 rounded-md bg-success/20 border border-success/40 text-success text-sm font-medium"
+                   <Button
+                     onClick={() => setRecebendo(r)}
+                     variant="outline"
+                     className="min-w-0 flex-1 border-success/40 text-success hover:text-success"
                   >
+                     <CalendarCheck />
                     Marcar como recebido
-                  </button>
+                   </Button>
                 )}
-                <button
-                  onClick={() => remover(r.id)}
-                  className="px-3 h-9 rounded-md border border-destructive/40 text-destructive text-sm"
-                >
-                  Excluir
-                </button>
+                 <ConfirmAction title="Excluir período?" description="Esse recebimento será removido permanentemente." confirmLabel="Excluir" destructive onConfirm={() => remover(r.id)} trigger={<Button variant="outline" size="icon" className="border-destructive/40 text-destructive hover:text-destructive" aria-label="Excluir período"><Trash2 /></Button>} />
               </div>
-            </div>
+             </article>
           );
         })}
       </div>
 
-      <div className="ep-card mt-4 text-center">
-        <div className="ep-label">
-          {tab === "pendentes" ? "Total pendente" : "Total recebido"}
-        </div>
-        <div className="text-2xl font-bold ep-money-pos">
-          {BRL(tab === "pendentes" ? totalPend : totalReceb)}
-        </div>
-      </div>
-
-      {open && <NovoModal onClose={() => setOpen(false)} />}
+      <NovoModal open={open} onClose={() => setOpen(false)} />
+      <RecebidoModal recebimento={recebendo} onClose={() => setRecebendo(null)} />
     </AppShell>
   );
 }
 
-function NovoModal({ onClose }: { onClose: () => void }) {
+function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [f, setF] = useState({
     nome_periodo: "",
     data_inicial: "",
@@ -232,17 +210,13 @@ function NovoModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur grid place-items-end sm:place-items-center p-0 sm:p-4">
+    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-xl bg-card p-5 max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-left"><DialogTitle className="font-display flex items-center gap-2"><CircleDollarSign className="size-5 text-primary" /> Novo recebimento</DialogTitle><DialogDescription>Crie um período e informe quando ele deve ser pago.</DialogDescription></DialogHeader>
       <form
         onSubmit={save}
-        className="w-full max-w-md bg-card border border-border rounded-t-2xl sm:rounded-2xl p-4 space-y-3 max-h-[90vh] overflow-auto"
+        className="space-y-3"
       >
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Novo Recebimento</h2>
-          <button type="button" onClick={onClose} className="text-muted-foreground">
-            <X className="size-5" />
-          </button>
-        </div>
         <Field label="Nome do período">
           <TextInput
             value={f.nome_periodo}
@@ -252,7 +226,7 @@ function NovoModal({ onClose }: { onClose: () => void }) {
             required
           />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 min-[390px]:grid-cols-2">
           <Field label="Data inicial">
             <TextInput
               type="date"
@@ -285,10 +259,41 @@ function NovoModal({ onClose }: { onClose: () => void }) {
             maxLength={300}
           />
         </Field>
-        <button className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold">
-          Salvar
-        </button>
+        <Button className="h-11 w-full" type="submit"><Plus /> Criar período</Button>
       </form>
-    </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | null; onClose: () => void }) {
+  const [data, setData] = useState(new Date().toISOString().slice(0, 10));
+  const [valor, setValor] = useState("");
+
+  function save(e: React.FormEvent) {
+    e.preventDefault();
+    if (!recebimento) return;
+    const numero = Number(valor.replace(",", "."));
+    if (!data || !Number.isFinite(numero) || numero < 0) {
+      toast.error("Informe uma data e um valor válidos");
+      return;
+    }
+    actions.updateRecebimento(recebimento.id, { status: "recebido", data_recebimento: data, valor_recebido: numero });
+    toast.success("Marcado como recebido");
+    setValor("");
+    onClose();
+  }
+
+  return (
+    <Dialog open={recebimento !== null} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent className="w-[calc(100%-1.5rem)] max-w-sm rounded-xl bg-card p-5">
+        <DialogHeader className="text-left"><DialogTitle className="font-display">Confirmar recebimento</DialogTitle><DialogDescription>Registre a data e o valor que entrou.</DialogDescription></DialogHeader>
+        <form onSubmit={save} className="space-y-3">
+          <Field label="Data do recebimento"><TextInput type="date" value={data} onChange={(e) => setData(e.target.value)} required /></Field>
+          <Field label="Valor recebido (R$)"><TextInput type="number" inputMode="decimal" step="0.01" min="0" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="0,00" required /></Field>
+          <Button type="submit" className="h-11 w-full"><CalendarCheck /> Confirmar recebimento</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
