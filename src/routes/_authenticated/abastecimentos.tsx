@@ -40,9 +40,13 @@ function AbastPage() {
   const totalLitros = lista.reduce((s, a) => s + (a.litros ?? 0), 0);
   const totalValor = lista.reduce((s, a) => s + (a.valor_total ?? 0), 0);
 
-  function remover(id: string) {
-    actions.deleteAbastecimento(id);
-    toast.success("Abastecimento excluído");
+  async function remover(id: string) {
+    try {
+      await actions.deleteAbastecimento(id);
+      toast.success("Abastecimento excluído");
+    } catch {
+      toast.error("Não foi possível excluir o abastecimento");
+    }
   }
 
   return (
@@ -71,8 +75,9 @@ function AbastPage() {
       )}
 
       <div className="space-y-3">
+        {!state.hydrated && <div className="ep-empty min-h-32"><p className="text-sm">Carregando abastecimentos...</p></div>}
         {lista.length === 0 && (
-          <div className="ep-empty">
+          state.hydrated && <div className="ep-empty">
             <div><Fuel className="mx-auto mb-3 size-7 text-primary" /><p className="font-medium text-foreground">Nenhum abastecimento</p><p className="mt-1 text-sm">Registre o primeiro para acompanhar seus gastos.</p></div>
           </div>
         )}
@@ -117,6 +122,7 @@ function AbastPage() {
 }
 
 function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [saving, setSaving] = useState(false);
   const [f, setF] = useState({
     data: new Date().toISOString().slice(0, 10),
     posto: "",
@@ -126,7 +132,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     observacao: "",
   });
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     const litros = Number(f.litros.replace(",", "."));
     const valor = Number(f.valor_total.replace(",", "."));
@@ -134,16 +140,23 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
       toast.error("Preencha data, litros e valor");
       return;
     }
-    actions.addAbastecimento({
-      data: f.data,
-      posto: f.posto.trim().slice(0, 60),
-      km: f.km ? Number(f.km) : undefined,
-      litros,
-      valor_total: valor,
-      observacao: f.observacao.slice(0, 200),
-    });
-    toast.success("Abastecimento salvo");
-    onClose();
+    setSaving(true);
+    try {
+      await actions.addAbastecimento({
+        data: f.data,
+        posto: f.posto.trim().slice(0, 60),
+        km: f.km ? Number(f.km) : undefined,
+        litros,
+        valor_total: valor,
+        observacao: f.observacao.slice(0, 200),
+      });
+      toast.success("Abastecimento salvo");
+      onClose();
+    } catch {
+      toast.error("Não foi possível salvar o abastecimento");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -206,7 +219,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             maxLength={200}
           />
         </Field>
-        <Button className="h-11 w-full" type="submit"><ReceiptText /> Salvar abastecimento</Button>
+        <Button className="h-11 w-full" type="submit" disabled={saving}><ReceiptText /> {saving ? "Salvando…" : "Salvar abastecimento"}</Button>
       </form>
       </DialogContent>
     </Dialog>

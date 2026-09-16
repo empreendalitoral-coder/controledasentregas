@@ -43,9 +43,13 @@ function ManutPage() {
   const lista = [...state.manutencoes].sort((a, b) => (a.data > b.data ? -1 : 1));
   const total = lista.reduce((s, m) => s + (m.valor ?? 0), 0);
 
-  function remover(id: string) {
-    actions.deleteManutencao(id);
-    toast.success("Manutenção excluída");
+  async function remover(id: string) {
+    try {
+      await actions.deleteManutencao(id);
+      toast.success("Manutenção excluída");
+    } catch {
+      toast.error("Não foi possível excluir a manutenção");
+    }
   }
 
   return (
@@ -61,8 +65,9 @@ function ManutPage() {
       <div className="ep-page-intro mb-4"><div className="ep-icon-chip shrink-0"><Wrench className="size-5" /></div><div><h2 className="font-display font-semibold">Cuidados com o veículo</h2><p className="mt-0.5 text-sm text-muted-foreground">Organize serviços, quilometragem e custos.</p></div></div>
       {lista.length > 0 && <div className="ep-stat-tile mb-4"><div className="ep-label">Total investido em manutenção</div><div className="ep-value ep-money-neg">{BRL(total)}</div></div>}
       <div className="space-y-3">
+        {!state.hydrated && <div className="ep-empty min-h-32"><p className="text-sm">Carregando manutenções...</p></div>}
         {lista.length === 0 && (
-          <div className="ep-empty"><div><Wrench className="mx-auto mb-3 size-7 text-primary" /><p className="font-medium text-foreground">Nenhuma manutenção</p><p className="mt-1 text-sm">Adicione um serviço para manter o histórico organizado.</p></div></div>
+          state.hydrated && <div className="ep-empty"><div><Wrench className="mx-auto mb-3 size-7 text-primary" /><p className="font-medium text-foreground">Nenhuma manutenção</p><p className="mt-1 text-sm">Adicione um serviço para manter o histórico organizado.</p></div></div>
         )}
         {lista.map((m) => (
           <article key={m.id} className="ep-card">
@@ -94,6 +99,7 @@ function ManutPage() {
 }
 
 function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [saving, setSaving] = useState(false);
   const [f, setF] = useState({
     data: new Date().toISOString().slice(0, 10),
     tipo: "Troca de óleo" as TipoManutencao,
@@ -102,22 +108,29 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     observacao: "",
   });
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     const v = Number(f.valor.replace(",", "."));
     if (!f.data || !Number.isFinite(v) || v < 0) {
       toast.error("Preencha data e valor");
       return;
     }
-    actions.addManutencao({
-      data: f.data,
-      tipo: f.tipo,
-      valor: v,
-      km: f.km ? Number(f.km) : undefined,
-      observacao: f.observacao.slice(0, 300),
-    });
-    toast.success("Salvo");
-    onClose();
+    setSaving(true);
+    try {
+      await actions.addManutencao({
+        data: f.data,
+        tipo: f.tipo,
+        valor: v,
+        km: f.km ? Number(f.km) : undefined,
+        observacao: f.observacao.slice(0, 300),
+      });
+      toast.success("Manutenção salva");
+      onClose();
+    } catch {
+      toast.error("Não foi possível salvar a manutenção");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -176,7 +189,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             maxLength={300}
           />
         </Field>
-        <Button className="h-11 w-full" type="submit"><ReceiptText /> Salvar manutenção</Button>
+        <Button className="h-11 w-full" type="submit" disabled={saving}><ReceiptText /> {saving ? "Salvando…" : "Salvar manutenção"}</Button>
       </form>
       </DialogContent>
     </Dialog>

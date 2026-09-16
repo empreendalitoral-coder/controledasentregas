@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,8 +31,21 @@ export function ConfirmAction({
   disabled = false,
   onConfirm,
 }: ConfirmActionProps) {
+  const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+
+  async function confirm() {
+    setConfirming(true);
+    try {
+      await onConfirm();
+      setOpen(false);
+    } finally {
+      setConfirming(false);
+    }
+  }
+
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={(next) => { if (!confirming) setOpen(next); }}>
       <AlertDialogTrigger asChild disabled={disabled}>
         {trigger}
       </AlertDialogTrigger>
@@ -42,15 +55,19 @@ export function ConfirmAction({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:space-x-0">
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={confirming}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(event) => {
+              event.preventDefault();
+              void confirm();
+            }}
+            disabled={confirming}
             className={cn(
               destructive &&
                 "bg-destructive text-destructive-foreground hover:bg-destructive/90",
             )}
           >
-            {confirmLabel}
+            {confirming ? "Aguarde…" : confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

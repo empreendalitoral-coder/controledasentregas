@@ -55,9 +55,13 @@ function RecebimentosPage() {
     .filter((r) => r.status === "recebido")
     .reduce((s, r) => s + (r.valor_recebido ?? 0), 0);
 
-  function remover(id: string) {
-    actions.deleteRecebimento(id);
-    toast.success("Período excluído");
+  async function remover(id: string) {
+    try {
+      await actions.deleteRecebimento(id);
+      toast.success("Período excluído");
+    } catch {
+      toast.error("Não foi possível excluir o período");
+    }
   }
 
   return (
@@ -180,6 +184,7 @@ function RecebimentosPage() {
 }
 
 function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [saving, setSaving] = useState(false);
   const [f, setF] = useState({
     nome_periodo: "",
     data_inicial: "",
@@ -188,7 +193,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
     observacao: "",
   });
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!f.nome_periodo.trim() || !f.data_inicial || !f.data_final || !f.data_pagamento) {
       toast.error("Preencha os campos obrigatórios");
@@ -198,15 +203,22 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
       toast.error("Data final antes da inicial");
       return;
     }
-    actions.addRecebimento({
-      nome_periodo: f.nome_periodo.trim().slice(0, 60),
-      data_inicial: f.data_inicial,
-      data_final: f.data_final,
-      data_pagamento: f.data_pagamento,
-      observacao: f.observacao.slice(0, 300),
-    });
-    toast.success("Período criado");
-    onClose();
+    setSaving(true);
+    try {
+      await actions.addRecebimento({
+        nome_periodo: f.nome_periodo.trim().slice(0, 60),
+        data_inicial: f.data_inicial,
+        data_final: f.data_final,
+        data_pagamento: f.data_pagamento,
+        observacao: f.observacao.slice(0, 300),
+      });
+      toast.success("Período criado");
+      onClose();
+    } catch {
+      toast.error("Não foi possível criar o período");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -259,7 +271,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             maxLength={300}
           />
         </Field>
-        <Button className="h-11 w-full" type="submit"><Plus /> Criar período</Button>
+        <Button className="h-11 w-full" type="submit" disabled={saving}><Plus /> {saving ? "Criando…" : "Criar período"}</Button>
       </form>
       </DialogContent>
     </Dialog>
@@ -269,8 +281,9 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | null; onClose: () => void }) {
   const [data, setData] = useState(new Date().toISOString().slice(0, 10));
   const [valor, setValor] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!recebimento) return;
     const numero = Number(valor.replace(",", "."));
@@ -278,10 +291,17 @@ function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | nu
       toast.error("Informe uma data e um valor válidos");
       return;
     }
-    actions.updateRecebimento(recebimento.id, { status: "recebido", data_recebimento: data, valor_recebido: numero });
-    toast.success("Marcado como recebido");
-    setValor("");
-    onClose();
+    setSaving(true);
+    try {
+      await actions.updateRecebimento(recebimento.id, { status: "recebido", data_recebimento: data, valor_recebido: numero });
+      toast.success("Marcado como recebido");
+      setValor("");
+      onClose();
+    } catch {
+      toast.error("Não foi possível confirmar o recebimento");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -291,7 +311,7 @@ function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | nu
         <form onSubmit={save} className="space-y-3">
           <Field label="Data do recebimento"><TextInput type="date" value={data} onChange={(e) => setData(e.target.value)} required /></Field>
           <Field label="Valor recebido (R$)"><TextInput type="number" inputMode="decimal" step="0.01" min="0" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="0,00" required /></Field>
-          <Button type="submit" className="h-11 w-full"><CalendarCheck /> Confirmar recebimento</Button>
+          <Button type="submit" className="h-11 w-full" disabled={saving}><CalendarCheck /> {saving ? "Confirmando…" : "Confirmar recebimento"}</Button>
         </form>
       </DialogContent>
     </Dialog>
