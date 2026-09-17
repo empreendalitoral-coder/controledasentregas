@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, Trash2, CreditCard } from "lucide-react";
 import { BRL } from "@/lib/calc";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 type Cartao = { id: string; nome: string; limite: number; dia_fechamento: number; dia_vencimento: number };
 type Lanc = { id: string; cartao_id: string; descricao: string; valor_total: number; parcelas: number; data_compra: string };
@@ -83,7 +84,6 @@ function CartoesPage() {
     load();
   }
   async function delCartao(id: string) {
-    if (!confirm("Excluir cartão e todos seus lançamentos?")) return;
     await supabase.from("cartoes_credito").delete().eq("id", id);
     load();
   }
@@ -116,7 +116,14 @@ function CartoesPage() {
                   <div className="font-semibold">{c.nome}</div>
                   <div className="text-xs text-muted-foreground">Fech {c.dia_fechamento} • Venc {c.dia_vencimento}</div>
                 </div>
-                <button onClick={() => delCartao(c.id)} className="text-destructive text-xs"><Trash2 className="size-4" /></button>
+                <ConfirmAction
+                  trigger={<button className="text-xs text-destructive" aria-label={`Excluir cartão ${c.nome}`}><Trash2 className="size-4" /></button>}
+                  title="Excluir cartão?"
+                  description={`O cartão ${c.nome} e todos os seus lançamentos serão removidos.`}
+                  confirmLabel="Excluir cartão"
+                  destructive
+                  onConfirm={async () => { await delCartao(c.id); }}
+                />
               </div>
               <div className="mt-2 text-xs text-muted-foreground flex justify-between">
                 <span>Usado {BRL(u)}</span><span>Limite {BRL(c.limite)}</span>

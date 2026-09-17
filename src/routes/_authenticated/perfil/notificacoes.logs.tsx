@@ -9,6 +9,7 @@ import {
 import { toast } from "sonner";
 import { Trash2, CheckCircle2, XCircle, Inbox } from "lucide-react";
 import { useState } from "react";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes/logs")({
   head: () => ({
@@ -39,7 +40,6 @@ function LogsPage() {
   const falhas = logs.length - enviadas;
 
   async function limpar() {
-    if (!confirm("Apagar todo o histórico de notificações?")) return;
     setBusy(true);
     try {
       await clear();
@@ -64,13 +64,15 @@ function LogsPage() {
                 {logs.length} registro(s) totais
               </p>
             </div>
-            <button
-              onClick={limpar}
+            <ConfirmAction
+              trigger={<button disabled={busy || logs.length === 0} className="flex h-9 items-center gap-2 rounded-lg bg-destructive/15 px-3 text-sm font-medium text-destructive transition hover:bg-destructive/25 disabled:opacity-40"><Trash2 className="size-4" /> Limpar</button>}
+              title="Apagar histórico?"
+              description="Todos os registros de notificações serão apagados permanentemente."
+              confirmLabel="Apagar tudo"
+              destructive
               disabled={busy || logs.length === 0}
-              className="h-9 px-3 rounded-lg bg-destructive/15 text-destructive text-sm font-medium flex items-center gap-2 disabled:opacity-40 hover:bg-destructive/25 transition"
-            >
-              <Trash2 className="size-4" /> Limpar
-            </button>
+              onConfirm={limpar}
+            />
           </div>
 
           <div className="relative z-10 mt-4 grid grid-cols-2 gap-2">

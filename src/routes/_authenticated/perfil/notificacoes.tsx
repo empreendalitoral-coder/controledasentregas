@@ -26,6 +26,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
   head: () => ({
@@ -80,8 +81,6 @@ function NotifPrefsPage() {
   }
 
   async function removerDispositivo(id: string) {
-    if (!confirm("Remover este dispositivo? Ele deixará de receber notificações."))
-      return;
     setBusy(id);
     try {
       await removeDev({ data: { id } });
@@ -267,14 +266,15 @@ function NotifPrefsPage() {
                         {new Date(d.ultimo_uso).toLocaleString("pt-BR")}
                       </div>
                     </div>
-                    <button
+                    <ConfirmAction
+                      trigger={<button disabled={busy === d.id} className="rounded-md p-2 text-destructive hover:bg-destructive/10 disabled:opacity-50" aria-label="Remover"><Trash2 className="size-4" /></button>}
+                      title="Remover dispositivo?"
+                      description="Este aparelho deixará de receber notificações do Entrega Pro."
+                      confirmLabel="Remover"
+                      destructive
                       disabled={busy === d.id}
-                      onClick={() => removerDispositivo(d.id)}
-                      className="p-2 text-destructive hover:bg-destructive/10 rounded-md disabled:opacity-50"
-                      aria-label="Remover"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
+                      onConfirm={async () => { await removerDispositivo(d.id); }}
+                    />
                   </li>
                 ))}
               </ul>

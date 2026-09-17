@@ -18,18 +18,22 @@ function AdminLayout() {
 
   useEffect(() => {
     if (status !== "ok") return;
+    let alive = true;
     (async () => {
       const { count } = await supabase
         .from("solicitacoes_premium")
         .select("id", { count: "exact", head: true })
         .eq("status", "pendente");
-      setPendentes(count || 0);
+      if (alive) setPendentes(count || 0);
     })();
+    return () => { alive = false; };
   }, [status, pathname]);
 
   useEffect(() => {
+    let alive = true;
     (async () => {
       const { data: u } = await supabase.auth.getUser();
+      if (!alive) return;
       if (!u.user) {
         navigate({ to: "/auth" });
         return;
@@ -40,6 +44,7 @@ function AdminLayout() {
         .eq("user_id", u.user.id)
         .eq("ativo", true)
         .maybeSingle();
+      if (!alive) return;
       if (data) {
         setStatus("ok");
       } else {
@@ -47,7 +52,8 @@ function AdminLayout() {
         registrarLogAdmin("acesso_nao_autorizado", { rota: pathname }).catch(() => {});
       }
     })();
-  }, []);
+    return () => { alive = false; };
+  }, [navigate, pathname]);
 
   if (status === "checking") {
     return <AppShell title="Admin" back="/mais"><div className="text-center text-sm text-muted-foreground py-12">Verificando acesso…</div></AppShell>;
@@ -99,6 +105,7 @@ function AdminIndex() {
   const [stats, setStats] = useState({ usuarios: 0, premium: 0, pendentes: 0, teste: 0 });
 
   useEffect(() => {
+    let alive = true;
     (async () => {
       const [u, p, s, t] = await Promise.all([
         supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -106,8 +113,9 @@ function AdminIndex() {
         supabase.from("solicitacoes_premium").select("id", { count: "exact", head: true }).eq("status", "pendente"),
         supabase.from("usuarios_premium").select("user_id", { count: "exact", head: true }).eq("plano", "teste").gte("data_validade", new Date().toISOString()),
       ]);
-      setStats({ usuarios: u.count || 0, premium: p.count || 0, pendentes: s.count || 0, teste: t.count || 0 });
+      if (alive) setStats({ usuarios: u.count || 0, premium: p.count || 0, pendentes: s.count || 0, teste: t.count || 0 });
     })();
+    return () => { alive = false; };
   }, []);
 
   return (
