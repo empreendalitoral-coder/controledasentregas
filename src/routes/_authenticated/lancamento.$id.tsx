@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
 import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
@@ -131,7 +132,6 @@ function LancamentoPage() {
 
   function remove() {
     if (isNew) return;
-    if (!confirm("Excluir este lançamento?")) return;
     actions.deleteLancamento(id);
     toast.success("Excluído");
     nav({ to: "/historico" });
@@ -382,13 +382,14 @@ function LancamentoPage() {
         </button>
 
         {!isNew && (
-          <button
-            type="button"
-            onClick={remove}
-            className="w-full h-11 rounded-xl border border-destructive/40 text-destructive font-medium"
-          >
-            Excluir lançamento
-          </button>
+          <ConfirmAction
+            trigger={<button type="button" className="h-11 w-full rounded-xl border border-destructive/40 font-medium text-destructive">Excluir lançamento</button>}
+            title="Excluir lançamento?"
+            description="Este registro será removido do histórico e não poderá ser recuperado."
+            confirmLabel="Excluir"
+            destructive
+            onConfirm={remove}
+          />
         )}
       </form>
     </AppShell>

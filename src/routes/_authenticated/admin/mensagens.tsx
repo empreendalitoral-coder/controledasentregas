@@ -115,7 +115,7 @@ function MensagensAdminPage() {
             placeholder="Escreva o aviso que os usuários vão receber…"
           />
         </Field>
-        <ConfirmAction trigger={<Button disabled={sending || !titulo.trim() || !mensagem.trim()} className="h-11"><Send className="size-4" /> {sending ? "Enviando…" : "Enviar para todos"}</Button>} title="Enviar aviso para todos?" description="A mensagem ficará visível dentro do aplicativo para todos os usuários cadastrados." confirmLabel="Enviar aviso" onConfirm={submit} />
+        <ConfirmAction trigger={<Button disabled={sending || !titulo.trim() || !mensagem.trim()} className="h-11"><Send className="size-4" /> {sending ? "Enviando…" : "Enviar para todos"}</Button>} title="Enviar aviso para todos?" description="A mensagem ficará visível dentro do aplicativo para todos os usuários cadastrados." confirmLabel="Enviar aviso" onConfirm={async () => { await submit(); }} />
       </div>
 
       {res && (

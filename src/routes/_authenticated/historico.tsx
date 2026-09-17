@@ -15,6 +15,7 @@ import {
 } from "@/lib/calc";
 import { Eye, Pencil, Trash2, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
@@ -82,7 +83,6 @@ function HistoricoPage() {
 
   function removeSelected() {
     if (!selected) return;
-    if (!confirm("Excluir este lançamento?")) return;
     actions.deleteLancamento(selected);
     setSelected(null);
     toast.success("Excluído");
@@ -235,12 +235,22 @@ function HistoricoPage() {
             tone="primary"
             onClick={() => selected && nav({ to: "/lancamento/$id", params: { id: selected } })}
           />
-          <ActionBtn
-            icon={<Trash2 className="size-5" />}
-            label="Excluir"
+          <ConfirmAction
+            trigger={
+              <button
+                disabled={!selected}
+                className="flex flex-col items-center justify-center gap-1 rounded-md py-2 text-destructive transition hover:bg-secondary/40 disabled:opacity-40"
+              >
+                <Trash2 className="size-5" />
+                <span className="text-xs font-medium">Excluir</span>
+              </button>
+            }
+            title="Excluir lançamento?"
+            description="Este registro será removido do histórico e não poderá ser recuperado."
+            confirmLabel="Excluir"
+            destructive
             disabled={!selected}
-            tone="destructive"
-            onClick={removeSelected}
+            onConfirm={removeSelected}
           />
         </div>
         {!selected && (

@@ -156,7 +156,7 @@ function UsuariosPage() {
                 <Button disabled={busy === u.id} onClick={() => liberar(u.id, "mensal")} variant="secondary" size="sm" className="text-primary">+ 30 dias</Button>
                 <Button disabled={busy === u.id} onClick={() => liberar(u.id, "anual")} variant="secondary" size="sm" className="text-primary">+ 1 ano</Button>
                 <Button disabled={busy === u.id} onClick={() => { setEditingDate(u.id); setNewDate(u.premium?.data_validade?.slice(0, 10) || new Date().toISOString().slice(0, 10)); }} variant="secondary" size="sm"><Calendar className="size-3" /> Alterar data</Button>
-                <ConfirmAction trigger={<Button disabled={busy === u.id || !u.premium} variant="outline" size="sm" className="text-destructive">Desativar</Button>} title="Desativar Premium?" description={`O acesso Premium de ${u.nome || "este usuário"} será encerrado.`} confirmLabel="Desativar" destructive onConfirm={() => desativar(u.id)} />
+                <ConfirmAction trigger={<Button disabled={busy === u.id || !u.premium} variant="outline" size="sm" className="text-destructive">Desativar</Button>} title="Desativar Premium?" description={`O acesso Premium de ${u.nome || "este usuário"} será encerrado.`} confirmLabel="Desativar" destructive onConfirm={async () => { await desativar(u.id); }} />
               </div>
             </li>
           );

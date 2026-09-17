@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Megaphone, X } from "lucide-react";
 
@@ -7,8 +7,10 @@ type Aviso = { id: string; titulo: string; mensagem: string; created_at: string 
 export function AvisosBanner() {
   const [avisos, setAvisos] = useState<Aviso[]>([]);
   const [fechado, setFechado] = useState(false);
+  const mounted = useRef(true);
 
   useEffect(() => {
+    mounted.current = true;
     let cancelado = false;
     (async () => {
       const { data: u } = await supabase.auth.getUser();
@@ -28,6 +30,7 @@ export function AvisosBanner() {
     })();
     return () => {
       cancelado = true;
+      mounted.current = false;
     };
   }, []);
 
@@ -41,6 +44,7 @@ export function AvisosBanner() {
     await supabase
       .from("avisos_lidos")
       .upsert({ aviso_id: aviso.id, user_id: u.user.id });
+    if (!mounted.current) return;
     setAvisos((prev) => prev.slice(1));
     setFechado(false);
   }
