@@ -26,6 +26,7 @@ import { Route as AuthenticatedManutencaoRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMaisRouteImport } from './routes/_authenticated/mais'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
+import { Route as AuthenticatedDiagnosticoRouteImport } from './routes/_authenticated/diagnostico'
 import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authenticated/conta-excluida'
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
@@ -135,6 +136,12 @@ const AuthenticatedGraficosRoute = AuthenticatedGraficosRouteImport.update({
   path: '/graficos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDiagnosticoRoute =
+  AuthenticatedDiagnosticoRouteImport.update({
+    id: '/diagnostico',
+    path: '/diagnostico',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedContaExcluidaRoute =
   AuthenticatedContaExcluidaRouteImport.update({
     id: '/conta-excluida',
@@ -280,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
+  '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
@@ -319,6 +327,7 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
+  '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
@@ -361,6 +370,7 @@ export interface FileRoutesById {
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
   '/_authenticated/conta-excluida': typeof AuthenticatedContaExcluidaRoute
+  '/_authenticated/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/mais': typeof AuthenticatedMaisRoute
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/abastecimentos'
     | '/conta-excluida'
+    | '/diagnostico'
     | '/graficos'
     | '/historico'
     | '/mais'
@@ -443,6 +454,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/abastecimentos'
     | '/conta-excluida'
+    | '/diagnostico'
     | '/graficos'
     | '/historico'
     | '/mais'
@@ -484,6 +496,7 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro'
     | '/_authenticated/abastecimentos'
     | '/_authenticated/conta-excluida'
+    | '/_authenticated/diagnostico'
     | '/_authenticated/graficos'
     | '/_authenticated/historico'
     | '/_authenticated/mais'
@@ -645,6 +658,13 @@ declare module '@tanstack/react-router' {
       path: '/graficos'
       fullPath: '/graficos'
       preLoaderRoute: typeof AuthenticatedGraficosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/diagnostico': {
+      id: '/_authenticated/diagnostico'
+      path: '/diagnostico'
+      fullPath: '/diagnostico'
+      preLoaderRoute: typeof AuthenticatedDiagnosticoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/conta-excluida': {
@@ -888,6 +908,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
   AuthenticatedContaExcluidaRoute: typeof AuthenticatedContaExcluidaRoute
+  AuthenticatedDiagnosticoRoute: typeof AuthenticatedDiagnosticoRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
@@ -906,6 +927,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedFinanceiroRouteRouteWithChildren,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
   AuthenticatedContaExcluidaRoute: AuthenticatedContaExcluidaRoute,
+  AuthenticatedDiagnosticoRoute: AuthenticatedDiagnosticoRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedMaisRoute: AuthenticatedMaisRoute,

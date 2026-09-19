@@ -1,6 +1,6 @@
-# Visual e experiência
+# Diagnóstico e análise inteligente
 
-- [x] Padronizar estrutura, navegação e confirmações compartilhadas
-- [x] Modernizar Mais e telas administrativas
-- [x] Modernizar Abastecimentos, Manutenção, Recebimentos e Resumo
-- [x] Revisar telas no celular e no computador
+- [ ] Criar diagnóstico seguro de cálculos, dados locais e backups
+- [ ] Adicionar acesso ao diagnóstico na tela Mais
+- [ ] Integrar análise inteligente às observações dos lançamentos
+- [ ] Validar compilação, resposta da análise e visual no celular

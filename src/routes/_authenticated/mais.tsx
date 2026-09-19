@@ -19,6 +19,7 @@ import {
   Shield,
   Wallet2,
   Lock,
+  Stethoscope,
 
 } from "lucide-react";
 import { toast } from "sonner";
@@ -122,7 +123,7 @@ function MaisPage() {
     { title: "Conta", items: [{ icon: User, label: "Perfil do motorista", to: "/perfil" }, ...(admin.isAdmin ? [{ icon: Shield, label: "Painel Administrativo", to: "/admin" as const }] : [])] },
     { title: "Trabalho", items: [{ icon: Fuel, label: "Abastecimentos", to: "/abastecimentos" }, { icon: Wrench, label: "Manutenção", to: "/manutencao" }, { icon: Calendar, label: "Recebimentos", to: "/recebimentos" }] },
     { title: "Financeiro", items: [{ icon: Wallet2, label: "Central Financeira Premium", to: "/financeiro", highlight: true }, { icon: TrendingUp, label: "Gráficos e Lucro Real", to: "/graficos" }, { icon: Settings, label: "Resumo mensal completo", to: "/resumo" }, { icon: FileText, label: "Relatório mensal (imprimir)", onClick: gerarRelatorio }] },
-    { title: "Dados", items: [{ icon: Download, label: "Exportar backup (JSON)", onClick: exportar }, { icon: Upload, label: "Importar backup", onClick: () => fileRef.current?.click() }, { icon: RotateCcw, label: "Apagar todos os dados", onClick: resetar, destructive: true }] },
+    { title: "Dados", items: [{ icon: Stethoscope, label: "Diagnóstico do aplicativo", to: "/diagnostico" }, { icon: Download, label: "Exportar backup (JSON)", onClick: exportar }, { icon: Upload, label: "Importar backup", onClick: () => fileRef.current?.click() }, { icon: RotateCcw, label: "Apagar todos os dados", onClick: resetar, destructive: true }] },
     { title: "Suporte", items: [{ icon: Info, label: "Sobre o app", onClick: () => toast.info("Entrega Pro v2.0") }, { icon: LogOut, label: "Sair da conta", onClick: sair }] },
   ];
 
