@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createLovableResponsesProvider } from "@/lib/ai-gateway.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { NoObjectGeneratedError, Output, streamText } from "ai";
 import { z } from "zod";
@@ -53,6 +52,7 @@ export const analyzeObservation = createServerFn({ method: "POST" })
     if (!apiKey) throw new Error("A análise inteligente ainda não está configurada.");
 
     try {
+      const { createLovableResponsesProvider } = await import("@/lib/ai-gateway.server");
       const result = streamText({
         model: createLovableResponsesProvider(apiKey),
         maxRetries: 0,
