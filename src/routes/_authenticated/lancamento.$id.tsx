@@ -1,16 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput, TextArea } from "@/components/Field";
 import { actions, useFullStore, type Lancamento } from "@/lib/store";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
-import { AlertTriangle, CalendarDays, CheckCircle2, Clock, Package, Fuel, Calculator, Sparkles } from "lucide-react";
+import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
 import { ConfirmAction } from "@/components/ConfirmAction";
-import { Button } from "@/components/ui/button";
-import { analyzeObservation, type ObservationAnalysis } from "@/lib/observation-analysis.functions";
 
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
@@ -43,9 +40,6 @@ function LancamentoPage() {
   const isNew = id === "novo";
   const nav = useNavigate();
   const state = useFullStore();
-  const analyze = useServerFn(analyzeObservation);
-  const [analysis, setAnalysis] = useState<ObservationAnalysis | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
   const existing = useMemo(
     () => (isNew ? null : state.lancamentos.find((l) => l.id === id) || null),
     [id, isNew, state.lancamentos],
@@ -100,25 +94,6 @@ function LancamentoPage() {
   const consumo = litros > 0 ? km / litros : 0;
   const custoKM = km > 0 ? valorAbast / km : 0;
   const lucroLiq = lucroLiquido(f);
-
-  async function analyzeNotes() {
-    const observacao = f.observacao?.trim();
-    if (!observacao || observacao.length < 3) {
-      toast.error("Escreva uma observação antes de analisar");
-      return;
-    }
-    setAnalyzing(true);
-    setAnalysis(null);
-    try {
-      const result = await analyze({ data: { observacao } });
-      setAnalysis(result);
-      toast.success("Observação analisada");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível analisar a observação agora.");
-    } finally {
-      setAnalyzing(false);
-    }
-  }
 
   function save(e: React.FormEvent) {
     e.preventDefault();
@@ -367,27 +342,10 @@ function LancamentoPage() {
               <Field label="Observação" className="col-span-2">
                 <TextArea
                   value={f.observacao ?? ""}
-                  onChange={(e) => {
-                    set("observacao", e.target.value);
-                    setAnalysis(null);
-                  }}
+                  onChange={(e) => set("observacao", e.target.value)}
                   maxLength={500}
                 />
               </Field>
-              <div className="col-span-2 space-y-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-11 w-full border-primary/40 text-primary"
-                  disabled={analyzing || (f.observacao?.trim().length ?? 0) < 3}
-                  onClick={analyzeNotes}
-                >
-                  <Sparkles className={analyzing ? "animate-pulse" : ""} />
-                  {analyzing ? "Analisando observação…" : "Analisar observação"}
-                </Button>
-
-                {analysis && <AnalysisResult result={analysis} />}
-              </div>
             </div>
 
             <div className="ep-card grid grid-cols-2 gap-2">
@@ -435,42 +393,6 @@ function LancamentoPage() {
         )}
       </form>
     </AppShell>
-  );
-}
-
-function AnalysisResult({ result }: { result: ObservationAnalysis }) {
-  const highPriority = result.prioridade === "alta";
-  return (
-    <div className="rounded-lg border border-primary/30 bg-primary/5 p-3" aria-live="polite">
-      <div className="flex items-start gap-2">
-        {highPriority ? <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" /> : <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />}
-        <div className="min-w-0">
-          <div className="text-sm font-semibold">Análise da observação</div>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{result.resumo}</p>
-        </div>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {result.categorias.map((categoria) => <span key={categoria} className="rounded-full bg-secondary px-2 py-1 text-[11px] text-secondary-foreground">{categoria}</span>)}
-        <span className={`rounded-full px-2 py-1 text-[11px] font-semibold ${highPriority ? "bg-warning/15 text-warning" : "bg-success/15 text-success"}`}>Prioridade {result.prioridade}</span>
-      </div>
-
-      {result.problemas.length > 0 && (
-        <div className="mt-3">
-          <div className="ep-label">Problemas identificados</div>
-          <ul className="mt-1 space-y-1 text-xs text-foreground">
-            {result.problemas.map((item) => <li key={item}>• {item}</li>)}
-          </ul>
-        </div>
-      )}
-
-      <div className="mt-3">
-        <div className="ep-label">Ações recomendadas</div>
-        <ul className="mt-1 space-y-1 text-xs text-foreground">
-          {result.acoesRecomendadas.map((item) => <li key={item}>• {item}</li>)}
-        </ul>
-      </div>
-    </div>
   );
 }
 
