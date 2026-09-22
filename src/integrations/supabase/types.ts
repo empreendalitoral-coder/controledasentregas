@@ -210,6 +210,199 @@ export type Database = {
         }
         Relationships: []
       }
+      community_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_members: {
+        Row: {
+          created_at: string
+          rules_accepted_at: string | null
+          suspended_reason: string | null
+          suspended_until: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          rules_accepted_at?: string | null
+          suspended_reason?: string | null
+          suspended_until?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          rules_accepted_at?: string | null
+          suspended_reason?: string | null
+          suspended_until?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_messages: {
+        Row: {
+          author_id: string
+          author_name: string
+          author_photo: string | null
+          content: string
+          created_at: string
+          id: string
+          removal_reason: string | null
+          removed_at: string | null
+          removed_by: string | null
+          reply_author_name: string | null
+          reply_preview: string | null
+          reply_to: string | null
+        }
+        Insert: {
+          author_id: string
+          author_name: string
+          author_photo?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          removal_reason?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
+          reply_author_name?: string | null
+          reply_preview?: string | null
+          reply_to?: string | null
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          author_photo?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          removal_reason?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
+          reply_author_name?: string | null
+          reply_preview?: string | null
+          reply_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_messages_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_messages_removed_by_fkey"
+            columns: ["removed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_messages_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "community_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          message_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          message_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          message_id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_reports_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "community_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       configuracoes: {
         Row: {
           chave_pix: string
