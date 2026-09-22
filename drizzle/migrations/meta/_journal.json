@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790043557237,
+      "tag": "0000_create_entrega_pro_community",
+      "breakpoints": true
+    }
+  ]
+}
