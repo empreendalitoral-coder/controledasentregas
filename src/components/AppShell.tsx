@@ -49,6 +49,7 @@ export function AppShell({ title, children, back, right }: Props) {
       match: (p: string) =>
         p.startsWith("/mais") ||
         p.startsWith("/perfil") ||
+        p.startsWith("/comunidade") ||
         p.startsWith("/abastecimentos") ||
         p.startsWith("/manutencao") ||
         p.startsWith("/backup"),
