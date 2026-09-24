@@ -28,6 +28,7 @@ import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authentica
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
 import { Route as AuthenticatedDiagnosticoRouteImport } from './routes/_authenticated/diagnostico'
 import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authenticated/conta-excluida'
+import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated/comunidade'
 import { Route as AuthenticatedAbastecimentosRouteImport } from './routes/_authenticated/abastecimentos'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
@@ -44,6 +45,7 @@ import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
 import { Route as AuthenticatedAdminMensagensRouteImport } from './routes/_authenticated/admin/mensagens'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
+import { Route as AuthenticatedAdminComunidadeRouteImport } from './routes/_authenticated/admin/comunidade'
 import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
 import { Route as ApiPublicHooksNotificacoesDiariasRouteImport } from './routes/api/public/hooks/notificacoes-diarias'
 import { Route as AuthenticatedPerfilNotificacoesTesteRouteImport } from './routes/_authenticated/perfil/notificacoes.teste'
@@ -148,6 +150,11 @@ const AuthenticatedContaExcluidaRoute =
     path: '/conta-excluida',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedComunidadeRoute = AuthenticatedComunidadeRouteImport.update({
+  id: '/comunidade',
+  path: '/comunidade',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAbastecimentosRoute =
   AuthenticatedAbastecimentosRouteImport.update({
     id: '/abastecimentos',
@@ -243,6 +250,12 @@ const AuthenticatedAdminConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminComunidadeRoute =
+  AuthenticatedAdminComunidadeRouteImport.update({
+    id: '/comunidade',
+    path: '/comunidade',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const ApiPublicHooksPurgeContasRoute =
   ApiPublicHooksPurgeContasRouteImport.update({
     id: '/api/public/hooks/purge-contas',
@@ -286,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/graficos': typeof AuthenticatedGraficosRoute
@@ -296,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
+  '/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -326,6 +341,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/graficos': typeof AuthenticatedGraficosRoute
@@ -337,6 +353,7 @@ export interface FileRoutesByTo {
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/resumo': typeof AuthenticatedResumoRoute
   '/': typeof AuthenticatedIndexRoute
+  '/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -369,6 +386,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteRouteWithChildren
   '/_authenticated/abastecimentos': typeof AuthenticatedAbastecimentosRoute
+  '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
   '/_authenticated/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/_authenticated/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
@@ -380,6 +398,7 @@ export interface FileRoutesById {
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
   '/_authenticated/resumo': typeof AuthenticatedResumoRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
@@ -413,6 +432,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/financeiro'
     | '/abastecimentos'
+    | '/comunidade'
     | '/conta-excluida'
     | '/diagnostico'
     | '/graficos'
@@ -423,6 +443,7 @@ export interface FileRouteTypes {
     | '/premium'
     | '/recebimentos'
     | '/resumo'
+    | '/admin/comunidade'
     | '/admin/configuracoes'
     | '/admin/mensagens'
     | '/admin/solicitacoes'
@@ -453,6 +474,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/financeiro'
     | '/abastecimentos'
+    | '/comunidade'
     | '/conta-excluida'
     | '/diagnostico'
     | '/graficos'
@@ -464,6 +486,7 @@ export interface FileRouteTypes {
     | '/recebimentos'
     | '/resumo'
     | '/'
+    | '/admin/comunidade'
     | '/admin/configuracoes'
     | '/admin/mensagens'
     | '/admin/solicitacoes'
@@ -495,6 +518,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/financeiro'
     | '/_authenticated/abastecimentos'
+    | '/_authenticated/comunidade'
     | '/_authenticated/conta-excluida'
     | '/_authenticated/diagnostico'
     | '/_authenticated/graficos'
@@ -506,6 +530,7 @@ export interface FileRouteTypes {
     | '/_authenticated/recebimentos'
     | '/_authenticated/resumo'
     | '/_authenticated/'
+    | '/_authenticated/admin/comunidade'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/mensagens'
     | '/_authenticated/admin/solicitacoes'
@@ -674,6 +699,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedContaExcluidaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comunidade': {
+      id: '/_authenticated/comunidade'
+      path: '/comunidade'
+      fullPath: '/comunidade'
+      preLoaderRoute: typeof AuthenticatedComunidadeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/abastecimentos': {
       id: '/_authenticated/abastecimentos'
       path: '/abastecimentos'
@@ -786,6 +818,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/comunidade': {
+      id: '/_authenticated/admin/comunidade'
+      path: '/comunidade'
+      fullPath: '/admin/comunidade'
+      preLoaderRoute: typeof AuthenticatedAdminComunidadeRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/api/public/hooks/purge-contas': {
       id: '/api/public/hooks/purge-contas'
       path: '/api/public/hooks/purge-contas'
@@ -825,6 +864,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminComunidadeRoute: typeof AuthenticatedAdminComunidadeRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminMensagensRoute: typeof AuthenticatedAdminMensagensRoute
   AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
@@ -833,6 +873,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminComunidadeRoute: AuthenticatedAdminComunidadeRoute,
     AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
     AuthenticatedAdminMensagensRoute: AuthenticatedAdminMensagensRoute,
     AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,
@@ -907,6 +948,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedFinanceiroRouteRoute: typeof AuthenticatedFinanceiroRouteRouteWithChildren
   AuthenticatedAbastecimentosRoute: typeof AuthenticatedAbastecimentosRoute
+  AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
   AuthenticatedContaExcluidaRoute: typeof AuthenticatedContaExcluidaRoute
   AuthenticatedDiagnosticoRoute: typeof AuthenticatedDiagnosticoRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
@@ -926,6 +968,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFinanceiroRouteRoute:
     AuthenticatedFinanceiroRouteRouteWithChildren,
   AuthenticatedAbastecimentosRoute: AuthenticatedAbastecimentosRoute,
+  AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
   AuthenticatedContaExcluidaRoute: AuthenticatedContaExcluidaRoute,
   AuthenticatedDiagnosticoRoute: AuthenticatedDiagnosticoRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
