@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Truck, Mail, Phone, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Phone, Lock, User, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -38,6 +39,7 @@ function AuthPage() {
   const [senha, setSenha] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -68,16 +70,19 @@ function AuthPage() {
 
       if (channel === "email") {
         if (mode === "signup") {
-          const { error } = await supabase.auth.signUp({
+          const { data, error } = await supabase.auth.signUp({
             email,
             password: senha,
             options: {
-              emailRedirectTo: window.location.origin,
+              emailRedirectTo: window.location.origin + "/auth",
               data: { nome },
             },
           });
           if (error) throw error;
-          toast.success("Conta criada! 15 dias Premium liberados.");
+          if (!data.session) {
+            setConfirmationEmail(email);
+            return;
+          }
           navigate({ to: "/" });
         } else {
           const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
@@ -104,6 +109,19 @@ function AuthPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function resendConfirmation() {
+    if (!confirmationEmail) return;
+    setLoading(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email: confirmationEmail, options: { emailRedirectTo: window.location.origin + "/auth" } });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success("Novo link enviado. Verifique também a caixa de spam.");
+  }
+
+  if (confirmationEmail) {
+    return <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4"><div className="ep-card w-full max-w-md text-center"><div className="mx-auto grid size-14 place-items-center rounded-full bg-success/15 text-success"><CheckCircle2 className="size-7" /></div><h1 className="mt-4 text-xl font-bold">Verifique seu e-mail</h1><p className="mt-2 text-sm text-muted-foreground">Enviamos um link para <strong className="text-foreground">{confirmationEmail}</strong>. Confirme para ativar sua conta e depois volte para entrar.</p><Button className="mt-5 w-full h-11" variant="secondary" disabled={loading} onClick={() => void resendConfirmation()}>{loading ? <Loader2 className="animate-spin" /> : <Mail />}Reenviar e-mail de confirmação</Button><Button className="mt-2" variant="ghost" onClick={() => { setConfirmationEmail(null); setMode("login"); }}>Voltar para entrar</Button></div></div>;
   }
 
   return (
