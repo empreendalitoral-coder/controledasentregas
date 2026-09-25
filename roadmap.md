@@ -12,4 +12,4 @@
 - [x] Bloquear links e limitar spam nas mensagens
 - [x] Adicionar regras, respostas, denúncias e bloqueio de participantes
 - [x] Adicionar moderação administrativa
-- [ ] Validar funcionamento no celular e no computador
+- [x] Validar funcionamento no celular e no computador
