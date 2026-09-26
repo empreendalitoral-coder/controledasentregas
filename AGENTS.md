@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Community Premium access is enforced by database policies and `get_community_access_status`; UI checks only present the resulting state, preventing client bypass.

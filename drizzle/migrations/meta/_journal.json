@@ -8,6 +8,13 @@
       "when": 1790043557237,
       "tag": "0000_create_entrega_pro_community",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790389879067,
+      "tag": "0001_add_future_community_premium_gate",
+      "breakpoints": true
     }
   ]
 }

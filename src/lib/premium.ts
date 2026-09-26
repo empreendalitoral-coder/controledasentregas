@@ -9,6 +9,16 @@ export type PremiumStatus = {
   diasRestantes: number;
 };
 
+export type CommunityAccessStatus = {
+  loading: boolean;
+  premiumRequired: boolean;
+  hasAccess: boolean;
+  isAdmin: boolean;
+  premiumValid: boolean;
+  transitionDaysRemaining: number;
+  transitionEndsAt: Date | null;
+};
+
 export function usePremium(): PremiumStatus {
   const [s, set] = useState<PremiumStatus>({
     loading: true, ativo: false, plano: null, dataValidade: null, diasRestantes: 0,
@@ -55,4 +65,42 @@ export function useIsAdmin() {
     return () => { alive = false; };
   }, []);
   return admin;
+}
+
+export function useCommunityAccess(): CommunityAccessStatus {
+  const [status, setStatus] = useState<CommunityAccessStatus>({
+    loading: true,
+    premiumRequired: false,
+    hasAccess: true,
+    isAdmin: false,
+    premiumValid: false,
+    transitionDaysRemaining: 0,
+    transitionEndsAt: null,
+  });
+
+  useEffect(() => {
+    let alive = true;
+    async function load() {
+      const { data, error } = await supabase.rpc("get_community_access_status");
+      if (!alive) return;
+      const row = data?.[0];
+      if (error || !row) {
+        setStatus((current) => ({ ...current, loading: false }));
+        return;
+      }
+      setStatus({
+        loading: false,
+        premiumRequired: row.premium_required,
+        hasAccess: row.has_access,
+        isAdmin: row.is_admin,
+        premiumValid: row.premium_valid,
+        transitionDaysRemaining: row.transition_days_remaining,
+        transitionEndsAt: row.transition_ends_at ? new Date(row.transition_ends_at) : null,
+      });
+    }
+    void load();
+    return () => { alive = false; };
+  }, []);
+
+  return status;
 }

@@ -2,9 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Save, CreditCard, BadgeDollarSign, MessageSquare, LoaderCircle, TriangleAlert } from "lucide-react";
+import { Save, CreditCard, BadgeDollarSign, MessageSquare, LoaderCircle, TriangleAlert, MessagesSquare, ShieldCheck } from "lucide-react";
 import { Field } from "@/components/Field";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { ConfirmAction } from "@/components/ConfirmAction";
 
 type Config = {
   nome_recebedor: string;
@@ -15,6 +17,8 @@ type Config = {
   dias_teste_gratis: number;
   mensagem_pagamento: string;
   whatsapp_suporte: string | null;
+  comunidade_premium_ativa: boolean;
+  comunidade_premium_ativada_em: string | null;
 };
 
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({
@@ -53,6 +57,8 @@ function ConfigAdminPage() {
         dias_teste_gratis: data.dias_teste_gratis,
         mensagem_pagamento: data.mensagem_pagamento,
         whatsapp_suporte: data.whatsapp_suporte,
+        comunidade_premium_ativa: data.comunidade_premium_ativa,
+        comunidade_premium_ativada_em: data.comunidade_premium_ativada_em,
       });
     });
   }, []);
@@ -65,6 +71,21 @@ function ConfigAdminPage() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Configurações salvas — aplica para todos os usuários");
+  }
+
+  async function setCommunityPremium(active: boolean) {
+    if (!c) return;
+    setSaving(true);
+    const { data, error } = await supabase
+      .from("configuracoes")
+      .update({ comunidade_premium_ativa: active })
+      .eq("id", 1)
+      .select("comunidade_premium_ativa, comunidade_premium_ativada_em")
+      .single();
+    setSaving(false);
+    if (error) return toast.error("Não foi possível alterar o acesso da Comunidade.");
+    setC({ ...c, comunidade_premium_ativa: data.comunidade_premium_ativa, comunidade_premium_ativada_em: data.comunidade_premium_ativada_em });
+    toast.success(active ? "Comunidade incluída no Premium." : "Comunidade liberada gratuitamente.");
   }
 
   if (loading) return <div className="ep-empty"><LoaderCircle className="size-6 animate-spin text-primary" /><span className="mt-2 text-sm">Carregando configurações…</span></div>;
@@ -89,6 +110,34 @@ function ConfigAdminPage() {
       <Field label="Chave PIX">
         <input className="ep-input" value={c.chave_pix} onChange={(e) => setC({ ...c, chave_pix: e.target.value })} />
       </Field>
+      </section>
+      <section className="ep-card space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="ep-icon-chip"><MessagesSquare className="size-4" /></div>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold">Comunidade no Premium</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {c.comunidade_premium_ativa ? "Premium obrigatório. Participantes antigos têm 30 dias de transição." : "A Comunidade está gratuita para contas com e-mail confirmado."}
+            </p>
+          </div>
+          {c.comunidade_premium_ativa ? (
+            <Switch checked disabled={saving} aria-label="Comunidade no Premium" onCheckedChange={() => void setCommunityPremium(false)} />
+          ) : (
+            <ConfirmAction
+              trigger={<Switch checked={false} disabled={saving} aria-label="Ativar Comunidade no Premium" />}
+              title="Incluir a Comunidade no Premium?"
+              description="Novos participantes precisarão do Premium imediatamente. Quem já aceitou as regras terá 30 dias gratuitos. Uma nova ativação não reiniciará esse prazo."
+              confirmLabel="Ativar cobrança"
+              onConfirm={() => setCommunityPremium(true)}
+            />
+          )}
+        </div>
+        <div className="flex items-center gap-2 rounded-md border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+          <ShieldCheck className="size-4 shrink-0 text-primary" />
+          {c.comunidade_premium_ativada_em
+            ? `Primeira ativação: ${new Date(c.comunidade_premium_ativada_em).toLocaleString("pt-BR")}. Esta data permanece registrada.`
+            : "O prazo de transição começa na primeira ativação."}
+        </div>
       </section>
       <section className="ep-card space-y-3">
       <div className="flex items-center gap-2"><div className="ep-icon-chip"><BadgeDollarSign className="size-4" /></div><div><h3 className="font-semibold">Valores dos planos</h3><p className="text-xs text-muted-foreground">Preços e período de teste.</p></div></div>

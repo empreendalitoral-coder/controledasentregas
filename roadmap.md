@@ -13,3 +13,12 @@
 - [x] Adicionar regras, respostas, denúncias e bloqueio de participantes
 - [x] Adicionar moderação administrativa
 - [x] Validar funcionamento no celular e no computador
+
+# Comunidade Premium com ativação futura
+
+- [ ] Adicionar ativação manual sem reiniciar o prazo de transição
+- [ ] Aplicar acesso gratuito, Premium, administrador e transição de 30 dias no banco
+- [ ] Adicionar controle administrativo com confirmação
+- [ ] Mostrar transição, bloqueio e acesso aos planos na Comunidade
+- [ ] Exibir a etiqueta PRO na tela Mais somente após a ativação
+- [ ] Validar os estados de acesso no banco, celular e computador

@@ -406,6 +406,8 @@ export type Database = {
       configuracoes: {
         Row: {
           chave_pix: string
+          comunidade_premium_ativa: boolean
+          comunidade_premium_ativada_em: string | null
           dias_teste_gratis: number
           id: number
           mensagem_pagamento: string
@@ -418,6 +420,8 @@ export type Database = {
         }
         Insert: {
           chave_pix?: string
+          comunidade_premium_ativa?: boolean
+          comunidade_premium_ativada_em?: string | null
           dias_teste_gratis?: number
           id?: number
           mensagem_pagamento?: string
@@ -430,6 +434,8 @@ export type Database = {
         }
         Update: {
           chave_pix?: string
+          comunidade_premium_ativa?: boolean
+          comunidade_premium_ativada_em?: string | null
           dias_teste_gratis?: number
           id?: number
           mensagem_pagamento?: string
@@ -1105,6 +1111,18 @@ export type Database = {
     Functions: {
       cancelar_exclusao_conta: { Args: never; Returns: undefined }
       cron_token_valido: { Args: { _token: string }; Returns: boolean }
+      get_community_access_status: {
+        Args: never
+        Returns: {
+          activated_at: string
+          has_access: boolean
+          is_admin: boolean
+          premium_required: boolean
+          premium_valid: boolean
+          transition_days_remaining: number
+          transition_ends_at: string
+        }[]
+      }
       get_payment_info: {
         Args: never
         Returns: {
