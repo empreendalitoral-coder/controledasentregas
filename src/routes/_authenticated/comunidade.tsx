@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,19 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { Ban, Flag, LoaderCircle, MessageCircle, MoreVertical, Reply, Send, ShieldCheck } from "lucide-react";
+import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 type Message = Database["public"]["Tables"]["community_messages"]["Row"];
 type ReportReason = "spam" | "ofensa" | "golpe" | "dados_pessoais" | "outro";
+type AccessStatus = {
+  premium_required: boolean;
+  has_access: boolean;
+  is_admin: boolean;
+  premium_valid: boolean;
+  transition_days_remaining: number;
+  transition_ends_at: string | null;
+};
 
 const RULES = [
   "Trate todos com respeito. Ofensas, ameaças e discriminação não são permitidas.",
@@ -69,6 +77,7 @@ function CommunityPage() {
   const [reporting, setReporting] = useState<Message | null>(null);
   const [reportReason, setReportReason] = useState<ReportReason>("spam");
   const [reportDetails, setReportDetails] = useState("");
+  const [access, setAccess] = useState<AccessStatus | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
@@ -77,6 +86,18 @@ function CommunityPage() {
     if (!user) return;
     setUserId(user.id);
     if (!user.email_confirmed_at) {
+      setLoading(false);
+      return;
+    }
+    const { data: accessRows, error: accessError } = await supabase.rpc("get_community_access_status");
+    const accessStatus = accessRows?.[0] as AccessStatus | undefined;
+    if (accessError || !accessStatus) {
+      toast.error("Não foi possível verificar seu acesso à Comunidade.");
+      setLoading(false);
+      return;
+    }
+    setAccess(accessStatus);
+    if (!accessStatus.has_access) {
       setLoading(false);
       return;
     }
@@ -157,6 +178,21 @@ function CommunityPage() {
     return <AppShell title="Comunidade" back="/mais"><div className="ep-empty"><LoaderCircle className="size-6 animate-spin text-primary" /><span className="mt-2 text-sm">Entrando na Comunidade…</span></div></AppShell>;
   }
 
+
+  if (access?.premium_required && !access.has_access) {
+    return (
+      <AppShell title="Comunidade" back="/mais">
+        <section className="ep-premium-cta text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-full bg-primary/20 text-primary"><Lock className="size-7" /></div>
+          <span className="ep-pro-tag mt-4"><Crown className="size-3" /> PRO</span>
+          <h2 className="mt-3 text-xl font-bold">Comunidade no Premium</h2>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">Converse com outros motoristas, compartilhe experiências e participe do canal geral com um plano Premium ativo.</p>
+          <Button asChild className="mt-5 w-full"><Link to="/premium"><Crown />Ver planos Premium</Link></Button>
+        </section>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell
       title="Comunidade"
@@ -166,6 +202,14 @@ function CommunityPage() {
       <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
         <span className="size-2 rounded-full bg-success" /> Canal geral · ao vivo
       </div>
+
+      {access?.premium_required && access.transition_days_remaining > 0 && !access.premium_valid && !access.is_admin && (
+        <Link to="/premium" className="mb-3 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 p-3">
+          <Crown className="size-5 shrink-0 text-primary" />
+          <div className="min-w-0 flex-1"><div className="text-sm font-semibold">Acesso gratuito por mais {access.transition_days_remaining} dias</div><div className="text-xs text-muted-foreground">Depois, a Comunidade fará parte do Premium.</div></div>
+          <span className="text-primary">›</span>
+        </Link>
+      )}
 
       {messages.length === 0 ? (
         <div className="ep-empty"><MessageCircle className="size-8 text-primary" /><strong className="mt-3 text-foreground">Comece a conversa</strong><span className="mt-1 text-sm">Compartilhe uma dica ou tire uma dúvida com outros motoristas.</span></div>
@@ -254,5 +298,6 @@ function readCommunityError(message: string) {
   if (message.includes("limite de mensagens")) return "Você atingiu o limite de mensagens desta hora.";
   if (message.includes("suspensa")) return "Sua participação na Comunidade está suspensa temporariamente.";
   if (message.includes("Confirme seu e-mail")) return "Confirme seu e-mail antes de participar da Comunidade.";
+  if (message.includes("faz parte do Premium")) return "A Comunidade agora faz parte do Premium.";
   return "Não foi possível concluir esta ação.";
 }
