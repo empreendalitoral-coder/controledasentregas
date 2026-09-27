@@ -45,7 +45,9 @@ function ConfigAdminPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let alive = true;
     supabase.from("configuracoes").select("*").eq("id", 1).maybeSingle().then(({ data, error: loadError }) => {
+      if (!alive) return;
       setLoading(false);
       if (loadError || !data) { setError("Não foi possível carregar as configurações."); return; }
       if (data) setC({
@@ -61,6 +63,7 @@ function ConfigAdminPage() {
         comunidade_premium_ativada_em: data.comunidade_premium_ativada_em,
       });
     });
+    return () => { alive = false; };
   }, []);
 
   async function save(e: React.FormEvent) {
@@ -83,7 +86,10 @@ function ConfigAdminPage() {
       .select("comunidade_premium_ativa, comunidade_premium_ativada_em")
       .single();
     setSaving(false);
-    if (error) return toast.error("Não foi possível alterar o acesso da Comunidade.");
+    if (error) {
+      toast.error("Não foi possível alterar o acesso da Comunidade.");
+      return;
+    }
     setC({ ...c, comunidade_premium_ativa: data.comunidade_premium_ativa, comunidade_premium_ativada_em: data.comunidade_premium_ativada_em });
     toast.success(active ? "Comunidade incluída no Premium." : "Comunidade liberada gratuitamente.");
   }

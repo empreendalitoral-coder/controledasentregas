@@ -16,9 +16,9 @@
 
 # Comunidade Premium com ativação futura
 
-- [ ] Adicionar ativação manual sem reiniciar o prazo de transição
-- [ ] Aplicar acesso gratuito, Premium, administrador e transição de 30 dias no banco
-- [ ] Adicionar controle administrativo com confirmação
-- [ ] Mostrar transição, bloqueio e acesso aos planos na Comunidade
-- [ ] Exibir a etiqueta PRO na tela Mais somente após a ativação
-- [ ] Validar os estados de acesso no banco, celular e computador
+- [x] Adicionar ativação manual sem reiniciar o prazo de transição
+- [x] Aplicar acesso gratuito, Premium, administrador e transição de 30 dias no banco
+- [x] Adicionar controle administrativo com confirmação
+- [x] Mostrar transição, bloqueio e acesso aos planos na Comunidade
+- [x] Exibir a etiqueta PRO na tela Mais somente após a ativação
+- [x] Validar os estados de acesso no banco, celular e computador
