@@ -45,16 +45,16 @@ function CommunityModerationPage() {
     if (!reviewer) { setBusy(null); return; }
     if ((action === "remove" || action === "suspend") && report.message) {
       const { error } = await supabase.from("community_messages").update({ removed_at: new Date().toISOString(), removed_by: reviewer, removal_reason: report.reason }).eq("id", report.message.id);
-      if (error) { setBusy(null); return toast.error("Não foi possível remover a mensagem."); }
+      if (error) { setBusy(null); toast.error("Não foi possível remover a mensagem."); return; }
     }
     if (action === "suspend" && report.message) {
       const until = new Date(Date.now() + 7 * 86400000).toISOString();
       const { error } = await supabase.from("community_members").upsert({ user_id: report.message.author_id, suspended_until: until, suspended_reason: report.reason });
-      if (error) { setBusy(null); return toast.error("Não foi possível suspender o participante."); }
+      if (error) { setBusy(null); toast.error("Não foi possível suspender o participante."); return; }
     }
     const { error } = await supabase.from("community_reports").update({ status: action === "dismiss" ? "dismissed" : "reviewed", reviewed_by: reviewer, reviewed_at: new Date().toISOString() }).eq("id", report.id);
     setBusy(null);
-    if (error) return toast.error("Não foi possível concluir a revisão.");
+    if (error) { toast.error("Não foi possível concluir a revisão."); return; }
     toast.success(action === "dismiss" ? "Denúncia arquivada." : action === "suspend" ? "Mensagem removida e participante suspenso por 7 dias." : "Mensagem removida.");
     await load();
   }

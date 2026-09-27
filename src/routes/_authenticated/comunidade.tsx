@@ -79,18 +79,20 @@ function CommunityPage() {
   const [reportDetails, setReportDetails] = useState("");
   const [access, setAccess] = useState<AccessStatus | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(false);
 
   const load = useCallback(async () => {
     const { data: authData } = await supabase.auth.getUser();
     const user = authData.user;
-    if (!user) return;
+    if (!user || !mountedRef.current) return;
     setUserId(user.id);
     if (!user.email_confirmed_at) {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
       return;
     }
     const { data: accessRows, error: accessError } = await supabase.rpc("get_community_access_status");
     const accessStatus = accessRows?.[0] as AccessStatus | undefined;
+    if (!mountedRef.current) return;
     if (accessError || !accessStatus) {
       toast.error("Não foi possível verificar seu acesso à Comunidade.");
       setLoading(false);
@@ -105,6 +107,7 @@ function CommunityPage() {
       supabase.from("community_members").select("rules_accepted_at").eq("user_id", user.id).maybeSingle(),
       supabase.from("community_messages").select("*").order("created_at", { ascending: true }).limit(200),
     ]);
+    if (!mountedRef.current) return;
     if (error) toast.error("Não foi possível carregar a Comunidade.");
     setAccepted(Boolean(member?.rules_accepted_at));
     setRulesOpen(!member?.rules_accepted_at);
@@ -113,12 +116,13 @@ function CommunityPage() {
   }, []);
 
   useEffect(() => {
+    mountedRef.current = true;
     void load();
     const channel = supabase
       .channel("community-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "community_messages" }, () => void load())
       .subscribe();
-    return () => { void supabase.removeChannel(channel); };
+    return () => { mountedRef.current = false; void supabase.removeChannel(channel); };
   }, [load]);
 
   useEffect(() => {
@@ -129,7 +133,10 @@ function CommunityPage() {
     if (!userId) return;
     const now = new Date().toISOString();
     const { error } = await supabase.from("community_members").upsert({ user_id: userId, rules_accepted_at: now });
-    if (error) return toast.error("Não foi possível registrar o aceite das regras.");
+    if (error) {
+      toast.error("Não foi possível registrar o aceite das regras.");
+      return;
+    }
     setAccepted(true);
     setRulesOpen(false);
     toast.success("Regras aceitas. Bem-vindo à Comunidade!");
