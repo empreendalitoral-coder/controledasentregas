@@ -345,6 +345,42 @@ export type Database = {
           },
         ]
       }
+      community_moderation_logs: {
+        Row: {
+          action: string
+          author_id: string
+          author_name: string
+          created_at: string
+          id: string
+          message_id: string | null
+          moderated_by: string
+          original_content: string
+          reason: string
+        }
+        Insert: {
+          action: string
+          author_id: string
+          author_name: string
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          moderated_by: string
+          original_content: string
+          reason: string
+        }
+        Update: {
+          action?: string
+          author_id?: string
+          author_name?: string
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          moderated_by?: string
+          original_content?: string
+          reason?: string
+        }
+        Relationships: []
+      }
       community_reports: {
         Row: {
           created_at: string
@@ -1134,6 +1170,10 @@ export type Database = {
           valor_anual: number
           valor_mensal: number
         }[]
+      }
+      moderate_community_message: {
+        Args: { _action: string; _message_id: string; _reason: string }
+        Returns: undefined
       }
       registrar_acesso_nao_autorizado: {
         Args: { _detalhes?: Json }
