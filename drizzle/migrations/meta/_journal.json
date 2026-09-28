@@ -15,6 +15,13 @@
       "when": 1790389879067,
       "tag": "0001_add_future_community_premium_gate",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790563451518,
+      "tag": "0002_add_direct_community_message_moderation",
+      "breakpoints": true
     }
   ]
 }

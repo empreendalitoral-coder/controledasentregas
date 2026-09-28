@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { CommunityModerationDialog, type CommunityModerationAction } from "@/components/CommunityModerationDialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -26,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck } from "lucide-react";
+import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type Message = Database["public"]["Tables"]["community_messages"]["Row"];
@@ -78,6 +79,7 @@ function CommunityPage() {
   const [reportReason, setReportReason] = useState<ReportReason>("spam");
   const [reportDetails, setReportDetails] = useState("");
   const [access, setAccess] = useState<AccessStatus | null>(null);
+  const [moderating, setModerating] = useState<{ id: string; action: CommunityModerationAction } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
 
@@ -233,13 +235,15 @@ function CommunityPage() {
                       <div className="truncate text-xs font-semibold">{own ? "Você" : message.author_name}</div>
                       <time className="text-[10px] text-muted-foreground">{formatTime(message.created_at)}</time>
                     </div>
-                    {!own && !message.removed_at && (
+                    {!message.removed_at && (!own || access?.is_admin) && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="-mr-2 -mt-1 size-8" aria-label="Opções da mensagem"><MoreVertical className="size-4" /></Button></DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onSelect={() => setReplying(message)}><Reply />Responder</DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => setReporting(message)}><Flag />Denunciar</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive" onSelect={() => void block(message.author_id, message.author_name)}><Ban />Bloquear participante</DropdownMenuItem>
+                          {!own && <DropdownMenuItem onSelect={() => setReplying(message)}><Reply />Responder</DropdownMenuItem>}
+                          {!own && <DropdownMenuItem onSelect={() => setReporting(message)}><Flag />Denunciar</DropdownMenuItem>}
+                          {!own && <DropdownMenuItem className="text-destructive" onSelect={() => void block(message.author_id, message.author_name)}><Ban />Bloquear participante</DropdownMenuItem>}
+                          {access?.is_admin && <DropdownMenuItem onSelect={() => setModerating({ id: message.id, action: "hide" })}><ShieldX />Ocultar pela moderação</DropdownMenuItem>}
+                          {access?.is_admin && <DropdownMenuItem className="text-destructive" onSelect={() => setModerating({ id: message.id, action: "delete" })}><Trash2 />Excluir definitivamente</DropdownMenuItem>}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}
@@ -281,6 +285,12 @@ function CommunityPage() {
           <DialogFooter className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setReporting(null)}>Cancelar</Button><Button onClick={() => void submitReport()}>Enviar denúncia</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+      <CommunityModerationDialog
+        messageId={moderating?.id ?? null}
+        action={moderating?.action ?? "hide"}
+        onOpenChange={(open) => { if (!open) setModerating(null); }}
+        onCompleted={load}
+      />
     </AppShell>
   );
 }

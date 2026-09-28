@@ -22,3 +22,10 @@
 - [x] Mostrar transição, bloqueio e acesso aos planos na Comunidade
 - [x] Exibir a etiqueta PRO na tela Mais somente após a ativação
 - [x] Validar os estados de acesso no banco, celular e computador
+
+# Moderação direta da Comunidade
+
+- [x] Criar ocultação com motivo e histórico administrativo
+- [x] Criar exclusão definitiva com confirmação reforçada
+- [x] Adicionar ações diretas no chat e na área administrativa
+- [ ] Validar permissões, histórico, celular e computador
