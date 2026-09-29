@@ -289,7 +289,14 @@ function CommunityPage() {
         messageId={moderating?.id ?? null}
         action={moderating?.action ?? "hide"}
         onOpenChange={(open) => { if (!open) setModerating(null); }}
-        onCompleted={load}
+        onCompleted={async (messageId, action) => {
+          setMessages((current) => action === "delete"
+            ? current.filter((message) => message.id !== messageId)
+            : current.map((message) => message.id === messageId
+              ? { ...message, content: "Conteúdo removido pela moderação.", removed_at: new Date().toISOString() }
+              : message));
+          await load();
+        }}
       />
     </AppShell>
   );

@@ -19,7 +19,7 @@ type CommunityModerationDialogProps = {
   messageId: string | null;
   action: CommunityModerationAction;
   onOpenChange: (open: boolean) => void;
-  onCompleted: () => void | Promise<void>;
+  onCompleted: (messageId: string, action: CommunityModerationAction) => void | Promise<void>;
 };
 
 export function CommunityModerationDialog({
@@ -54,11 +54,11 @@ export function CommunityModerationDialog({
       toast.error(error.message.includes("administradores") ? "Acesso restrito aos administradores." : "Não foi possível moderar a mensagem.");
       return;
     }
+    await onCompleted(messageId, action);
     toast.success(permanent ? "Mensagem excluída definitivamente." : "Mensagem ocultada pela moderação.");
     setReason("");
     setConfirmation("");
     onOpenChange(false);
-    await onCompleted();
   }
 
   return (
