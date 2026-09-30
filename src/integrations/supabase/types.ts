@@ -243,8 +243,27 @@ export type Database = {
           },
         ]
       }
+      community_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: never
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: never
+        }
+        Relationships: []
+      }
       community_members: {
         Row: {
+          anonymous_enabled: boolean
           created_at: string
           rules_accepted_at: string | null
           suspended_reason: string | null
@@ -253,6 +272,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          anonymous_enabled?: boolean
           created_at?: string
           rules_accepted_at?: string | null
           suspended_reason?: string | null
@@ -261,6 +281,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          anonymous_enabled?: boolean
           created_at?: string
           rules_accepted_at?: string | null
           suspended_reason?: string | null
@@ -286,6 +307,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_anonymous: boolean
           removal_reason: string | null
           removed_at: string | null
           removed_by: string | null
@@ -300,6 +322,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_anonymous?: boolean
           removal_reason?: string | null
           removed_at?: string | null
           removed_by?: string | null
@@ -314,6 +337,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_anonymous?: boolean
           removal_reason?: string | null
           removed_at?: string | null
           removed_by?: string | null
@@ -1145,6 +1169,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      block_community_message: {
+        Args: { _message_id: string }
+        Returns: undefined
+      }
       cancelar_exclusao_conta: { Args: never; Returns: undefined }
       cron_token_valido: { Args: { _token: string }; Returns: boolean }
       get_community_access_status: {
@@ -1157,6 +1185,22 @@ export type Database = {
           premium_valid: boolean
           transition_days_remaining: number
           transition_ends_at: string
+        }[]
+      }
+      get_community_messages: {
+        Args: never
+        Returns: {
+          author_name: string
+          author_photo: string
+          content: string
+          created_at: string
+          id: string
+          is_anonymous: boolean
+          is_own: boolean
+          removed_at: string
+          reply_author_name: string
+          reply_preview: string
+          reply_to: string
         }[]
       }
       get_payment_info: {
@@ -1179,6 +1223,7 @@ export type Database = {
         Args: { _detalhes?: Json }
         Returns: undefined
       }
+      set_community_anonymous: { Args: { _enabled: boolean }; Returns: boolean }
       solicitar_exclusao_conta: { Args: { _motivo?: string }; Returns: string }
     }
     Enums: {
