@@ -28,4 +28,4 @@
 - [x] Criar ocultação com motivo e histórico administrativo
 - [x] Criar exclusão definitiva com confirmação reforçada
 - [x] Adicionar ações diretas no chat e na área administrativa
-- [ ] Validar permissões, histórico, celular e computador
+- [x] Validar permissões, histórico, celular e computador
