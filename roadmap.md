@@ -29,3 +29,10 @@
 - [x] Criar exclusão definitiva com confirmação reforçada
 - [x] Adicionar ações diretas no chat e na área administrativa
 - [x] Validar permissões, histórico, celular e computador
+
+# Anonimato Premium na Comunidade
+
+- [x] Proteger a identidade pública e preservar a identificação administrativa
+- [x] Adicionar a preferência fixa de anonimato para assinantes Premium
+- [x] Adaptar respostas, bloqueios e atualizações ao vivo para mensagens anônimas
+- [x] Validar no celular e computador e publicar

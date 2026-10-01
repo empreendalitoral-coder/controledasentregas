@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { CommunityModerationDialog, type CommunityModerationAction } from "@/components/CommunityModerationDialog";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -27,10 +28,10 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2 } from "lucide-react";
+import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
-type Message = Database["public"]["Tables"]["community_messages"]["Row"];
+type Message = Database["public"]["Functions"]["get_community_messages"]["Returns"][number];
 type ReportReason = "spam" | "ofensa" | "golpe" | "dados_pessoais" | "outro";
 type AccessStatus = {
   premium_required: boolean;
@@ -79,6 +80,8 @@ function CommunityPage() {
   const [reportReason, setReportReason] = useState<ReportReason>("spam");
   const [reportDetails, setReportDetails] = useState("");
   const [access, setAccess] = useState<AccessStatus | null>(null);
+  const [anonymousEnabled, setAnonymousEnabled] = useState(false);
+  const [changingAnonymous, setChangingAnonymous] = useState(false);
   const [moderating, setModerating] = useState<{ id: string; action: CommunityModerationAction } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
@@ -106,12 +109,13 @@ function CommunityPage() {
       return;
     }
     const [{ data: member }, { data: rows, error }] = await Promise.all([
-      supabase.from("community_members").select("rules_accepted_at").eq("user_id", user.id).maybeSingle(),
-      supabase.from("community_messages").select("*").order("created_at", { ascending: true }).limit(200),
+      supabase.from("community_members").select("rules_accepted_at, anonymous_enabled").eq("user_id", user.id).maybeSingle(),
+      supabase.rpc("get_community_messages"),
     ]);
     if (!mountedRef.current) return;
     if (error) toast.error("Não foi possível carregar a Comunidade.");
     setAccepted(Boolean(member?.rules_accepted_at));
+    setAnonymousEnabled(Boolean(member?.anonymous_enabled) && accessStatus.premium_valid);
     setRulesOpen(!member?.rules_accepted_at);
     setMessages(rows ?? []);
     setLoading(false);
@@ -122,7 +126,7 @@ function CommunityPage() {
     void load();
     const channel = supabase
       .channel("community-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "community_messages" }, () => void load())
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "community_events" }, () => void load())
       .subscribe();
     return () => { mountedRef.current = false; void supabase.removeChannel(channel); };
   }, [load]);
@@ -175,12 +179,21 @@ function CommunityPage() {
     toast.success("Denúncia enviada para análise.");
   }
 
-  async function block(authorId: string, authorName: string) {
-    if (!userId) return;
-    const { error } = await supabase.from("community_blocks").insert({ blocker_id: userId, blocked_id: authorId });
-    if (error && error.code !== "23505") return toast.error("Não foi possível bloquear este participante.");
-    toast.success(`${authorName} foi bloqueado.`);
+  async function block(message: Message) {
+    const { error } = await supabase.rpc("block_community_message", { _message_id: message.id });
+    if (error) return toast.error(readCommunityError(error.message));
+    toast.success(`${message.is_anonymous ? "O participante" : message.author_name} foi bloqueado.`);
     await load();
+  }
+
+  async function changeAnonymous(enabled: boolean) {
+    if (!access?.premium_valid) return;
+    setChangingAnonymous(true);
+    const { error } = await supabase.rpc("set_community_anonymous", { _enabled: enabled });
+    setChangingAnonymous(false);
+    if (error) return toast.error(readCommunityError(error.message));
+    setAnonymousEnabled(enabled);
+    toast.success(enabled ? "Suas próximas mensagens serão anônimas." : "Suas próximas mensagens mostrarão seu perfil.");
   }
 
   if (loading) {
@@ -220,12 +233,22 @@ function CommunityPage() {
         </Link>
       )}
 
+      <section className="mb-3 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+        <div className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-muted-foreground"><UserRound className="size-4" /></div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold">Falar como anônimo</span><span className="ep-pro-tag"><Crown className="size-3" /> PRO</span></div>
+          <p className="mt-0.5 text-xs text-muted-foreground">Oculta seu nome e sua foto nas próximas mensagens.</p>
+          {!access?.premium_valid && <Link to="/premium" className="mt-1 inline-block text-xs font-semibold text-primary">Ver planos Premium</Link>}
+        </div>
+        <Switch aria-label="Falar como anônimo" checked={anonymousEnabled} disabled={!accepted || !access?.premium_valid || changingAnonymous} onCheckedChange={(checked) => void changeAnonymous(checked)} />
+      </section>
+
       {messages.length === 0 ? (
         <div className="ep-empty"><MessageCircle className="size-8 text-primary" /><strong className="mt-3 text-foreground">Comece a conversa</strong><span className="mt-1 text-sm">Compartilhe uma dica ou tire uma dúvida com outros motoristas.</span></div>
       ) : (
         <ol className="space-y-3" aria-live="polite">
           {messages.map((message) => {
-            const own = message.author_id === userId;
+            const own = message.is_own;
             return (
               <li key={message.id} className={`flex gap-2 ${own ? "flex-row-reverse" : ""}`}>
                 <Avatar name={message.author_name} photo={message.author_photo} />
@@ -241,7 +264,7 @@ function CommunityPage() {
                         <DropdownMenuContent align="end">
                           {!own && <DropdownMenuItem onSelect={() => setReplying(message)}><Reply />Responder</DropdownMenuItem>}
                           {!own && <DropdownMenuItem onSelect={() => setReporting(message)}><Flag />Denunciar</DropdownMenuItem>}
-                          {!own && <DropdownMenuItem className="text-destructive" onSelect={() => void block(message.author_id, message.author_name)}><Ban />Bloquear participante</DropdownMenuItem>}
+                           {!own && <DropdownMenuItem className="text-destructive" onSelect={() => void block(message)}><Ban />Bloquear participante</DropdownMenuItem>}
                           {access?.is_admin && <DropdownMenuItem onSelect={() => setModerating({ id: message.id, action: "hide" })}><ShieldX />Ocultar pela moderação</DropdownMenuItem>}
                           {access?.is_admin && <DropdownMenuItem className="text-destructive" onSelect={() => setModerating({ id: message.id, action: "delete" })}><Trash2 />Excluir definitivamente</DropdownMenuItem>}
                         </DropdownMenuContent>
@@ -264,7 +287,7 @@ function CommunityPage() {
 
       {accepted && (
         <div className="sticky bottom-16 z-20 -mx-4 mt-4 border-t border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur">
-          {replying && <div className="mb-2 flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-xs"><Reply className="size-3.5 text-primary" /><span className="min-w-0 flex-1 truncate">Respondendo a {replying.author_name}: {replying.content}</span><Button variant="ghost" size="sm" onClick={() => setReplying(null)}>Cancelar</Button></div>}
+          {replying && <div className="mb-2 flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-xs"><Reply className="size-3.5 text-primary" /><span className="min-w-0 flex-1 truncate">Respondendo a {replying.is_anonymous ? "Anônimo" : replying.author_name}: {replying.content}</span><Button variant="ghost" size="sm" onClick={() => setReplying(null)}>Cancelar</Button></div>}
           <div className="flex items-end gap-2">
             <Textarea aria-label="Mensagem" value={content} onChange={(event) => setContent(event.target.value)} maxLength={500} rows={2} placeholder="Escreva uma mensagem…" className="max-h-32 min-h-11 resize-none bg-card text-sm" />
             <Button size="icon" className="size-11 shrink-0" disabled={sending || !content.trim()} onClick={() => void sendMessage()} aria-label="Enviar mensagem">{sending ? <LoaderCircle className="animate-spin" /> : <Send />}</Button>
@@ -323,5 +346,7 @@ function readCommunityError(message: string) {
   if (message.includes("suspensa")) return "Sua participação na Comunidade está suspensa temporariamente.";
   if (message.includes("Confirme seu e-mail")) return "Confirme seu e-mail antes de participar da Comunidade.";
   if (message.includes("faz parte do Premium")) return "A Comunidade agora faz parte do Premium.";
+  if (message.includes("modo anônimo é exclusivo")) return "O modo anônimo é exclusivo do Premium.";
+  if (message.includes("não pode bloquear a si mesmo")) return "Você não pode bloquear sua própria mensagem.";
   return "Não foi possível concluir esta ação.";
 }
