@@ -11,3 +11,4 @@
 
 - Community Premium access is enforced by database policies and `get_community_access_status`; UI checks only present the resulting state, preventing client bypass.
 - Community message moderation runs through `moderate_community_message`, which derives the moderator from the authenticated session and preserves an admin-only audit record.
+- Community participants read sanitized messages through `get_community_messages`; anonymous author IDs remain server-side and are exposed only to administrators for moderation.
