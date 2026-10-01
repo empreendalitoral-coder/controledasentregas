@@ -35,4 +35,4 @@
 - [x] Proteger a identidade pública e preservar a identificação administrativa
 - [x] Adicionar a preferência fixa de anonimato para assinantes Premium
 - [x] Adaptar respostas, bloqueios e atualizações ao vivo para mensagens anônimas
-- [ ] Validar no celular e computador e publicar
+- [x] Validar no celular e computador e publicar
