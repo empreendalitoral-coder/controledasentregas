@@ -36,3 +36,9 @@
 - [x] Adicionar a preferência fixa de anonimato para assinantes Premium
 - [x] Adaptar respostas, bloqueios e atualizações ao vivo para mensagens anônimas
 - [x] Validar no celular e computador e publicar
+
+# Preços do Premium
+
+- [x] Corrigir o valor mensal para R$ 9,90 na tela inicial e nos Termos
+- [x] Corrigir o valor anual para R$ 69,90 na tela inicial e nos Termos
+- [ ] Validar e publicar os valores corrigidos
