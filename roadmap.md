@@ -41,4 +41,4 @@
 
 - [x] Corrigir o valor mensal para R$ 9,90 na tela inicial e nos Termos
 - [x] Corrigir o valor anual para R$ 69,90 na tela inicial e nos Termos
-- [ ] Validar e publicar os valores corrigidos
+- [x] Validar e publicar os valores corrigidos
