@@ -61,10 +61,10 @@ function TermosPage() {
           recursos Premium liberados.
         </li>
         <li>
-          <strong>Assinatura mensal:</strong> R$ 3,90 por mês, renovação a cada 30 dias.
+          <strong>Assinatura mensal:</strong> R$ 9,90 por mês, renovação a cada 30 dias.
         </li>
         <li>
-          <strong>Assinatura anual:</strong> R$ 24,90 por ano, renovação a cada 365 dias.
+          <strong>Assinatura anual:</strong> R$ 69,90 por ano, renovação a cada 365 dias.
         </li>
         <li>
           <strong>Pagamento:</strong> feito por PIX para a chave indicada no app. A

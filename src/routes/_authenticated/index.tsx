@@ -351,8 +351,8 @@ function PremiumCTA() {
 
         <div className="mt-4 flex items-center justify-between gap-3">
           <div className="leading-tight">
-            <div className="text-xl font-extrabold text-primary">R$ 3,90</div>
-            <div className="text-[10px] text-muted-foreground">por mês · ou R$ 24,90/ano</div>
+            <div className="text-xl font-extrabold text-primary">R$ 9,90</div>
+            <div className="text-[10px] text-muted-foreground">por mês · ou R$ 69,90/ano</div>
           </div>
           <span className="h-11 px-5 rounded-xl bg-primary text-primary-foreground text-sm font-bold flex items-center gap-1.5">
             Começar agora <ChevronRight className="size-4" />
