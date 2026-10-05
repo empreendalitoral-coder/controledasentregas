@@ -1223,6 +1223,7 @@ export type Database = {
         Args: { _detalhes?: Json }
         Returns: undefined
       }
+      restore_entrega_pro_backup: { Args: { _backup: Json }; Returns: Json }
       set_community_anonymous: { Args: { _enabled: boolean }; Returns: boolean }
       solicitar_exclusao_conta: { Args: { _motivo?: string }; Returns: string }
     }
