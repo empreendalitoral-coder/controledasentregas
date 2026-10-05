@@ -1,11 +1,13 @@
 import type { NotificationTipo } from "../registry.server";
 
-type Ctx = { id: string; origem: string; valor: number; data_prevista: string };
+type Ctx = { id: string; nome_periodo: string; valor_recebido?: number; data_pagamento: string };
 
 export const tipoRecebimentoProximo: NotificationTipo<Ctx> = {
   codigo: "recebimento_proximo",
-  titulo: (c) => `Recebimento amanhã: R$ ${c.valor.toFixed(2)}`,
-  corpo: (c) => `${c.origem} — vence em ${new Date(c.data_prevista).toLocaleDateString("pt-BR")}`,
+  titulo: (c) => c.valor_recebido == null
+    ? "Recebimento previsto para amanhã"
+    : `Recebimento amanhã: ${c.valor_recebido.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
+  corpo: (c) => `${c.nome_periodo} — pagamento em ${new Date(`${c.data_pagamento}T00:00:00`).toLocaleDateString("pt-BR")}`,
   clickPath: () => "/recebimentos",
   scan: async (admin) => {
     const amanha = new Date();
@@ -13,8 +15,8 @@ export const tipoRecebimentoProximo: NotificationTipo<Ctx> = {
     const ymd = amanha.toISOString().slice(0, 10);
     const { data, error } = await admin
       .from("recebimentos")
-      .select("id, user_id, origem, valor, data_prevista, status")
-      .eq("data_prevista", ymd)
+      .select("id, user_id, nome_periodo, valor_recebido, data_pagamento, status")
+      .eq("data_pagamento", ymd)
       .neq("status", "recebido");
     if (error) {
       console.error("[notif recebimento_proximo] scan erro", error);
@@ -25,9 +27,9 @@ export const tipoRecebimentoProximo: NotificationTipo<Ctx> = {
       dedupKey: `recebimento:${r.id}:${ymd}`,
       contexto: {
         id: r.id,
-        origem: (r.origem as string) ?? "Recebimento",
-        valor: Number(r.valor) || 0,
-        data_prevista: r.data_prevista as string,
+        nome_periodo: r.nome_periodo as string,
+        valor_recebido: r.valor_recebido == null ? undefined : Number(r.valor_recebido),
+        data_pagamento: r.data_pagamento as string,
       },
     }));
   },

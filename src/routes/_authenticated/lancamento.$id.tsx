@@ -8,6 +8,7 @@ import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
 import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
 import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/_authenticated/lancamento/$id")({
@@ -52,6 +53,7 @@ function LancamentoPage() {
       trabalhou: true,
     },
   );
+  const [saving, setSaving] = useState(false);
 
   // Copia os dados do último dia trabalhado (cidade, diária, valores) quando vier de "Repetir último dia".
   const jaCopiou = useRef(false);
@@ -95,7 +97,7 @@ function LancamentoPage() {
   const custoKM = km > 0 ? valorAbast / km : 0;
   const lucroLiq = lucroLiquido(f);
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!f.data) {
       toast.error("Informe a data");
@@ -118,23 +120,35 @@ function LancamentoPage() {
       gaiola: f.gaiola?.slice(0, 20),
       observacao: f.observacao?.slice(0, 500),
     };
-    if (isNew) {
-      const { id: _omit, ...rest } = payload;
-      void _omit;
-      actions.addLancamento(rest);
-      toast.success("Lançamento salvo");
-    } else {
-      actions.updateLancamento(id, payload);
-      toast.success("Lançamento atualizado");
+    setSaving(true);
+    try {
+      if (isNew) {
+        const { id: _omit, ...rest } = payload;
+        void _omit;
+        await actions.addLancamento(rest);
+        toast.success("Lançamento salvo");
+      } else {
+        await actions.updateLancamento(id, payload);
+        toast.success("Lançamento atualizado");
+      }
+      nav({ to: "/historico" });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSaving(false);
     }
-    nav({ to: "/historico" });
   }
 
-  function remove() {
+  async function remove() {
     if (isNew) return;
-    actions.deleteLancamento(id);
-    toast.success("Excluído");
-    nav({ to: "/historico" });
+    try {
+      await actions.deleteLancamento(id);
+      toast.success("Excluído");
+      nav({ to: "/historico" });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível excluir. Tente novamente.");
+      throw error;
+    }
   }
 
   return (
@@ -374,12 +388,13 @@ function LancamentoPage() {
           </>
         )}
 
-        <button
+        <Button
           type="submit"
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold"
+          disabled={saving}
+          className="h-12 w-full rounded-xl font-semibold"
         >
-          Salvar lançamento
-        </button>
+          {saving ? "Salvando…" : "Salvar lançamento"}
+        </Button>
 
         {!isNew && (
           <ConfirmAction

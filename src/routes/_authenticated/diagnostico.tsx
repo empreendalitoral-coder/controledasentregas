@@ -5,6 +5,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { computeResumo, horasTrabalhadas, kmRodado, lucroLiquido } from "@/lib/calc";
 import { actions, type State, useFullStore } from "@/lib/store";
+import { validateBackup } from "@/lib/backup";
 
 export const Route = createFileRoute("/_authenticated/diagnostico")({
   head: () => ({
@@ -24,19 +25,6 @@ export const Route = createFileRoute("/_authenticated/diagnostico")({
 });
 
 type Check = { name: string; detail: string; ok: boolean };
-
-function validateBackup(value: unknown): value is Partial<State> {
-  if (!value || typeof value !== "object") return false;
-  const data = value as Partial<State>;
-  return (
-    typeof data.motorista === "object" &&
-    typeof data.meta_mensal === "number" &&
-    Array.isArray(data.lancamentos) &&
-    Array.isArray(data.recebimentos) &&
-    Array.isArray(data.abastecimentos) &&
-    Array.isArray(data.manutencoes)
-  );
-}
 
 function runChecks(state: State): Check[] {
   const sample = {
@@ -61,10 +49,9 @@ function runChecks(state: State): Check[] {
   try {
     const json = actions.exportJSON();
     const parsed: unknown = JSON.parse(json);
-    backupOk = validateBackup(parsed);
-    if (backupOk) {
-      backupDetail = `Estrutura válida (${new Blob([json]).size.toLocaleString("pt-BR")} bytes), sem restaurar dados.`;
-    }
+    validateBackup(parsed);
+    backupOk = true;
+    backupDetail = `Estrutura válida (${new Blob([json]).size.toLocaleString("pt-BR")} bytes), sem restaurar dados.`;
   } catch {
     backupOk = false;
   }

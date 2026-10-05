@@ -24,7 +24,7 @@ import {
 
 } from "lucide-react";
 import { toast } from "sonner";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { BRL, computeResumo } from "@/lib/calc";
 import { ConfirmAction } from "@/components/ConfirmAction";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/mais")({
 });
 
 function MaisPage() {
+  const [importing, setImporting] = useState(false);
   const state = useFullStore();
   const premium = usePremium();
   const admin = useIsAdmin();
@@ -72,15 +73,22 @@ function MaisPage() {
 
   function importar(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || importing) return;
+    setImporting(true);
     const reader = new FileReader();
     reader.onload = async () => {
       try {
-        await actions.importJSON(String(reader.result));
-        toast.success("Backup restaurado");
+        const counts = await actions.importJSON(String(reader.result));
+        toast.success(`${counts.total} registro(s) restaurado(s) com segurança`);
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Arquivo inválido");
+      } finally {
+        setImporting(false);
       }
+    };
+    reader.onerror = () => {
+      setImporting(false);
+      toast.error("Não foi possível ler o arquivo");
     };
     reader.readAsText(file);
     e.target.value = "";
@@ -132,7 +140,7 @@ function MaisPage() {
 
   return (
     <AppShell title="Mais">
-      <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={importar} />
+      <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={importar} disabled={importing} />
 
       <Link to="/perfil" className="ep-card flex items-center gap-3">
         <div className="size-12 rounded-full bg-secondary grid place-items-center overflow-hidden border border-border">
