@@ -29,6 +29,13 @@
       "when": 1790731750249,
       "tag": "0003_add_premium_community_anonymity",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791162558502,
+      "tag": "0004_restore_entrega_pro_backup_atomically",
+      "breakpoints": true
     }
   ]
 }

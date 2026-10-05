@@ -81,11 +81,16 @@ function HistoricoPage() {
     return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
   }
 
-  function removeSelected() {
+  async function removeSelected() {
     if (!selected) return;
-    actions.deleteLancamento(selected);
-    setSelected(null);
-    toast.success("Excluído");
+    try {
+      await actions.deleteLancamento(selected);
+      setSelected(null);
+      toast.success("Excluído");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível excluir. Tente novamente.");
+      throw error;
+    }
   }
 
   const filtros: { id: Filtro; label: string }[] = [

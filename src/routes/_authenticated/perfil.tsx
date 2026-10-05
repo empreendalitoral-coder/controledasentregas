@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
@@ -53,6 +54,7 @@ function PerfilPage() {
 
   const [m, setM] = useState(() => draftMotorista ?? state.motorista);
   const [meta, setMeta] = useState(() => draftMeta ?? state.meta_mensal);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     draftMotorista = m;
@@ -77,18 +79,25 @@ function PerfilPage() {
     reader.readAsDataURL(f);
   }
 
-  function save(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!m.nome.trim()) {
       toast.error("Informe seu nome");
       return;
     }
-    actions.setMotorista({ ...m, nome: m.nome.trim().slice(0, 80) });
-    actions.setMeta(Math.max(0, Number(meta) || 0));
-    draftMotorista = null;
-    draftMeta = null;
-    toast.success("Perfil salvo");
-    nav({ to: "/" });
+    setSaving(true);
+    try {
+      await actions.setMotorista({ ...m, nome: m.nome.trim().slice(0, 80) });
+      await actions.setMeta(Math.max(0, Number(meta) || 0));
+      draftMotorista = null;
+      draftMeta = null;
+      toast.success("Perfil salvo");
+      nav({ to: "/" });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar. Tente novamente.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -213,12 +222,13 @@ function PerfilPage() {
           </div>
         </section>
 
-        <button
+        <Button
           type="submit"
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 hover:brightness-110 transition"
+          disabled={saving}
+          className="h-12 w-full rounded-xl font-semibold shadow-lg shadow-primary/20"
         >
-          Salvar alterações
-        </button>
+          {saving ? "Salvando…" : "Salvar alterações"}
+        </Button>
       </form>
 
       <Link

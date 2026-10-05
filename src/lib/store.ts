@@ -1,5 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { backupCounts, parseBackupJSON, validateBackup, type BackupCounts } from "@/lib/backup";
+import type { Json } from "@/integrations/supabase/types";
 
 // ============================================================
 // Types — kept as before for backward compatibility with pages
@@ -465,10 +467,10 @@ export const actions = {
     return JSON.stringify(state, null, 2);
   },
 
-  async importJSON(json: string) {
-    const parsed = JSON.parse(json);
-    if (typeof parsed !== "object" || parsed === null) throw new Error("Backup inválido");
+  async importJSON(json: string): Promise<BackupCounts> {
+    const parsed = parseBackupJSON(json);
     await actions.importFromObject(parsed);
+    return backupCounts(parsed);
   },
 
   hasLegacyData(): boolean {
@@ -480,72 +482,18 @@ export const actions = {
     if (typeof window === "undefined") return;
     const raw = window.localStorage.getItem(LEGACY_KEY);
     if (!raw) throw new Error("Nenhum dado local encontrado");
-    await actions.importFromObject(JSON.parse(raw));
+    const parsed = parseBackupJSON(raw);
+    await actions.importFromObject(parsed);
     window.localStorage.removeItem(LEGACY_KEY);
   },
 
   async importFromObject(data: Partial<State>) {
     const uid = uidOrThrow();
-    if (data.motorista) {
-      await supabase
-        .from("profiles")
-        .update({
-          nome: data.motorista.nome ?? "",
-          foto: data.motorista.foto ?? null,
-          telefone: data.motorista.telefone ?? null,
-          transportadora: data.motorista.transportadora ?? null,
-          veiculo: data.motorista.veiculo ?? null,
-          modelo: data.motorista.modelo ?? null,
-          placa: data.motorista.placa ?? null,
-          meta_mensal: data.meta_mensal ?? 5000,
-        })
-        .eq("id", uid);
-    }
-    if (data.lancamentos?.length) {
-      await supabase.from("lancamentos").insert(
-        data.lancamentos.map((l) => ({ ...lancToDb(l), user_id: uid })),
-      );
-    }
-    if (data.recebimentos?.length) {
-      await supabase.from("recebimentos").insert(
-        data.recebimentos.map((r) => ({
-          user_id: uid,
-          nome_periodo: r.nome_periodo,
-          data_inicial: r.data_inicial,
-          data_final: r.data_final,
-          data_pagamento: r.data_pagamento,
-          valor_recebido: r.valor_recebido ?? null,
-          data_recebimento: r.data_recebimento || null,
-          status: r.status,
-          observacao: r.observacao || null,
-        })),
-      );
-    }
-    if (data.abastecimentos?.length) {
-      await supabase.from("abastecimentos").insert(
-        data.abastecimentos.map((a) => ({
-          user_id: uid,
-          data: a.data,
-          posto: a.posto || null,
-          km: a.km ?? null,
-          litros: a.litros,
-          valor_total: a.valor_total,
-          observacao: a.observacao || null,
-        })),
-      );
-    }
-    if (data.manutencoes?.length) {
-      await supabase.from("manutencoes").insert(
-        data.manutencoes.map((m) => ({
-          user_id: uid,
-          data: m.data,
-          tipo: m.tipo,
-          valor: m.valor,
-          km: m.km ?? null,
-          observacao: m.observacao || null,
-        })),
-      );
-    }
+    const valid = validateBackup(data);
+    const { error } = await supabase.rpc("restore_entrega_pro_backup", {
+      _backup: valid as unknown as Json,
+    });
+    if (error) throw error;
     if (userId) await hydrate(userId);
   },
 
@@ -561,6 +509,16 @@ export const actions = {
   },
 
   async signOut() {
+    try {
+      const [{ getPushStatus }, { unregisterDeviceToken }] = await Promise.all([
+        import("@/lib/push-notifications"),
+        import("@/lib/notifications/send.functions"),
+      ]);
+      const token = getPushStatus().token;
+      if (token) await unregisterDeviceToken({ data: { token } });
+    } catch (error) {
+      console.warn("[push] não foi possível remover o token deste aparelho", error);
+    }
     await supabase.auth.signOut();
   },
 };

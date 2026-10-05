@@ -42,3 +42,13 @@
 - [x] Corrigir o valor mensal para R$ 9,90 na tela inicial e nos Termos
 - [x] Corrigir o valor anual para R$ 69,90 na tela inicial e nos Termos
 - [x] Validar e publicar os valores corrigidos
+
+# Reforço de confiabilidade
+
+- [x] Corrigir notificações de recebimento com os campos reais
+- [x] Aguardar confirmação antes de mostrar sucesso em lançamentos, perfil e exclusões financeiras
+- [x] Avisar quando a conexão cair e quando voltar
+- [x] Validar backups e restaurar todos os registros em uma única operação
+- [x] Remover o token de notificações deste aparelho antes de sair
+- [ ] Criar e executar os testes essenciais
+- [ ] Validar os fluxos principais no celular e computador
