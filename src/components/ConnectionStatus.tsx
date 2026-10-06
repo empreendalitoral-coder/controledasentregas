@@ -5,13 +5,15 @@ export function ConnectionStatus() {
   const [online, setOnline] = useState(true);
   const [reconnected, setReconnected] = useState(false);
   const wasOffline = useRef(false);
+  const reconnectTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
       const next = navigator.onLine;
       if (next && wasOffline.current) {
         setReconnected(true);
-        window.setTimeout(() => setReconnected(false), 3500);
+        if (reconnectTimer.current != null) window.clearTimeout(reconnectTimer.current);
+        reconnectTimer.current = window.setTimeout(() => setReconnected(false), 3500);
       }
       if (!next) wasOffline.current = true;
       setOnline(next);
@@ -22,6 +24,7 @@ export function ConnectionStatus() {
     return () => {
       window.removeEventListener("online", sync);
       window.removeEventListener("offline", sync);
+      if (reconnectTimer.current != null) window.clearTimeout(reconnectTimer.current);
     };
   }, []);
 
