@@ -16,3 +16,4 @@
 
 - Multas are standalone user-owned records in the shared store and atomic backup RPC; never include them in profit calculations without explicit approval.
 - AppShell conversation mode omits legal footer links so the community composer can remain adjacent to the transcript.
+- Fiscal classification is stored as owner-scoped annotations keyed by unified movement ID; it affects only fiscal summaries, never operational profit, and unannotated records remain unclassified.
