@@ -28,6 +28,7 @@ import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedMaisRouteImport } from './routes/_authenticated/mais'
 import { Route as AuthenticatedManutencaoRouteImport } from './routes/_authenticated/manutencao'
+import { Route as AuthenticatedMultasRouteImport } from './routes/_authenticated/multas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedPremiumRouteImport } from './routes/_authenticated/premium'
 import { Route as AuthenticatedRecebimentosRouteImport } from './routes/_authenticated/recebimentos'
@@ -149,6 +150,11 @@ const AuthenticatedMaisRoute = AuthenticatedMaisRouteImport.update({
 const AuthenticatedManutencaoRoute = AuthenticatedManutencaoRouteImport.update({
   id: '/manutencao',
   path: '/manutencao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMultasRoute = AuthenticatedMultasRouteImport.update({
+  id: '/multas',
+  path: '/multas',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
@@ -306,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
+  '/multas': typeof AuthenticatedMultasRoute
   '/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
@@ -348,6 +355,7 @@ export interface FileRoutesByTo {
   '/historico': typeof AuthenticatedHistoricoRoute
   '/mais': typeof AuthenticatedMaisRoute
   '/manutencao': typeof AuthenticatedManutencaoRoute
+  '/multas': typeof AuthenticatedMultasRoute
   '/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/premium': typeof AuthenticatedPremiumRoute
   '/recebimentos': typeof AuthenticatedRecebimentosRoute
@@ -393,6 +401,7 @@ export interface FileRoutesById {
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/mais': typeof AuthenticatedMaisRoute
   '/_authenticated/manutencao': typeof AuthenticatedManutencaoRoute
+  '/_authenticated/multas': typeof AuthenticatedMultasRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRouteWithChildren
   '/_authenticated/premium': typeof AuthenticatedPremiumRoute
   '/_authenticated/recebimentos': typeof AuthenticatedRecebimentosRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/mais'
     | '/manutencao'
+    | '/multas'
     | '/perfil'
     | '/premium'
     | '/recebimentos'
@@ -481,6 +491,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/mais'
     | '/manutencao'
+    | '/multas'
     | '/perfil'
     | '/premium'
     | '/recebimentos'
@@ -525,6 +536,7 @@ export interface FileRouteTypes {
     | '/_authenticated/historico'
     | '/_authenticated/mais'
     | '/_authenticated/manutencao'
+    | '/_authenticated/multas'
     | '/_authenticated/perfil'
     | '/_authenticated/premium'
     | '/_authenticated/recebimentos'
@@ -697,6 +709,13 @@ declare module '@tanstack/react-router' {
       path: '/manutencao'
       fullPath: '/manutencao'
       preLoaderRoute: typeof AuthenticatedManutencaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/multas': {
+      id: '/_authenticated/multas'
+      path: '/multas'
+      fullPath: '/multas'
+      preLoaderRoute: typeof AuthenticatedMultasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil': {
@@ -955,6 +974,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedMaisRoute: typeof AuthenticatedMaisRoute
   AuthenticatedManutencaoRoute: typeof AuthenticatedManutencaoRoute
+  AuthenticatedMultasRoute: typeof AuthenticatedMultasRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRouteWithChildren
   AuthenticatedPremiumRoute: typeof AuthenticatedPremiumRoute
   AuthenticatedRecebimentosRoute: typeof AuthenticatedRecebimentosRoute
@@ -975,6 +995,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedMaisRoute: AuthenticatedMaisRoute,
   AuthenticatedManutencaoRoute: AuthenticatedManutencaoRoute,
+  AuthenticatedMultasRoute: AuthenticatedMultasRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRouteWithChildren,
   AuthenticatedPremiumRoute: AuthenticatedPremiumRoute,
   AuthenticatedRecebimentosRoute: AuthenticatedRecebimentosRoute,
