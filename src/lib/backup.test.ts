@@ -16,6 +16,7 @@ describe("validação de backup", () => {
       recebimentos: 1,
       abastecimentos: 0,
       manutencoes: 1,
+      multas: 0,
       total: 3,
     });
   });
@@ -38,4 +39,8 @@ describe("validação de backup", () => {
     const oversized = JSON.stringify({ motorista: { nome: "x".repeat(5_000_001) } });
     expect(() => parseBackupJSON(oversized)).toThrow("Arquivo muito grande");
   });
+});
+it("inclui multas e rejeita valores inválidos", () => {
+  expect(backupCounts(validateBackup({ multas: [{ data: "2026-10-08", valor: 150, status: "paga" }] })).total).toBe(1);
+  expect(() => validateBackup({ multas: [{ data: "2026-10-08", valor: -1, status: "paga" }] })).toThrow("Dados de multa inválidos");
 });

@@ -52,3 +52,10 @@
 - [x] Remover o token de notificações deste aparelho antes de sair
 - [ ] Criar e executar os testes essenciais
 - [ ] Validar os fluxos principais no celular e computador
+
+# Multas e chat moderno
+
+- [x] Criar multas com acesso individual e restauração atômica
+- [x] Integrar multas aos registros, menus e backups
+- [x] Renovar conversa e destacar Chat na navegação
+- [x] Testar multas e backup de ponta a ponta; envio, links e moderação; telas no celular e computador

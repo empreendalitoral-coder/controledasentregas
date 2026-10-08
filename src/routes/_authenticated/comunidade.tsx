@@ -217,13 +217,12 @@ function CommunityPage() {
 
   return (
     <AppShell
+      conversation
       title="Comunidade"
       back="/mais"
       right={<Button variant="ghost" size="icon" aria-label="Ver regras" onClick={() => setRulesOpen(true)}><ShieldCheck className="size-5" /></Button>}
     >
-      <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
-        <span className="size-2 rounded-full bg-success" /> Canal geral · ao vivo
-      </div>
+      <div className="mb-4 flex items-center gap-3 border-b border-border pb-4"><div className="grid size-11 place-items-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-6" /></div><div><h2 className="font-display text-lg font-semibold">Motoristas Entrega Pro</h2><p className="text-xs text-muted-foreground">Canal geral</p></div></div>
 
       {access?.premium_required && access.transition_days_remaining > 0 && !access.premium_valid && !access.is_admin && (
         <Link to="/premium" className="mb-3 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 p-3">
@@ -233,11 +232,11 @@ function CommunityPage() {
         </Link>
       )}
 
-      <section className="mb-3 flex items-center gap-3 rounded-lg border border-border bg-card p-3">
-        <div className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-muted-foreground"><UserRound className="size-4" /></div>
+      <section className="mb-4 flex items-center gap-3 border-b border-border pb-3">
+        <div className="grid size-8 shrink-0 place-items-center rounded-full bg-secondary text-muted-foreground"><UserRound className="size-4" /></div>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold">Falar como anônimo</span><span className="ep-pro-tag"><Crown className="size-3" /> PRO</span></div>
-          <p className="mt-0.5 text-xs text-muted-foreground">Oculta seu nome e sua foto nas próximas mensagens.</p>
+          <div className="flex flex-wrap items-center gap-2"><span className="text-xs font-semibold">Falar como anônimo</span><span className="ep-pro-tag"><Crown className="size-3" /> PRO</span></div>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">Nome e foto ocultos nas próximas mensagens.</p>
           {!access?.premium_valid && <Link to="/premium" className="mt-1 inline-block text-xs font-semibold text-primary">Ver planos Premium</Link>}
         </div>
         <Switch aria-label="Falar como anônimo" checked={anonymousEnabled} disabled={!accepted || !access?.premium_valid || changingAnonymous} onCheckedChange={(checked) => void changeAnonymous(checked)} />
@@ -247,16 +246,19 @@ function CommunityPage() {
         <div className="ep-empty"><MessageCircle className="size-8 text-primary" /><strong className="mt-3 text-foreground">Comece a conversa</strong><span className="mt-1 text-sm">Compartilhe uma dica ou tire uma dúvida com outros motoristas.</span></div>
       ) : (
         <ol className="space-y-3" aria-live="polite">
-          {messages.map((message) => {
+          {messages.map((message, index) => {
             const own = message.is_own;
             return (
-              <li key={message.id} className={`flex gap-2 ${own ? "flex-row-reverse" : ""}`}>
+              <li key={message.id}>
+                {(index === 0 || new Date(messages[index - 1].created_at).toDateString() !== new Date(message.created_at).toDateString()) && <div className="my-5 text-center"><time className="rounded-full bg-secondary px-3 py-1 text-[11px] font-medium text-muted-foreground">{formatDay(message.created_at)}</time></div>}
+                <div className={`flex items-end gap-2 ${own ? "flex-row-reverse" : ""}`}>
+
                 <Avatar name={message.author_name} photo={message.author_photo} />
-                <article className={`min-w-0 max-w-[82%] rounded-lg border px-3 py-2 ${own ? "border-primary/30 bg-primary/10" : "border-border bg-card"}`}>
+                <article className={`min-w-0 max-w-[82%] rounded-lg px-3 py-2.5 ${own ? "rounded-br-sm bg-chat-own text-chat-own-foreground" : "rounded-bl-sm border border-border bg-card text-card-foreground"}`}>
                   <div className="flex items-start gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-xs font-semibold">{own ? "Você" : message.author_name}</div>
-                      <time className="text-[10px] text-muted-foreground">{formatTime(message.created_at)}</time>
+                      
                     </div>
                     {!message.removed_at && (!own || access?.is_admin) && (
                       <DropdownMenu>
@@ -272,12 +274,14 @@ function CommunityPage() {
                     )}
                   </div>
                   {message.reply_preview && (
-                    <div className="mt-1.5 border-l-2 border-primary/50 pl-2 text-[11px] text-muted-foreground">
+                    <div className={`mt-2 rounded-sm border-l-2 border-current px-2 py-1.5 text-[11px] ${own ? "bg-chat-own-foreground/10" : "bg-secondary"}`}>
                       <strong>{message.reply_author_name}</strong><div className="truncate">{message.reply_preview}</div>
                     </div>
                   )}
-                  {message.removed_at ? <p className="mt-2 text-sm italic text-muted-foreground">Mensagem removida pela moderação.</p> : <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
+                  {message.removed_at ? <p className={`mt-2 text-sm italic ${own ? "text-chat-own-foreground/80" : "text-muted-foreground"}`}>Mensagem removida pela moderação.</p> : <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
+                <div className="mt-1 text-right text-[10px] opacity-70"><time>{formatTime(message.created_at)}</time></div>
                 </article>
+                </div>
               </li>
             );
           })}
@@ -286,10 +290,10 @@ function CommunityPage() {
       <div ref={bottomRef} />
 
       {accepted && (
-        <div className="sticky bottom-16 z-20 -mx-4 mt-4 border-t border-border bg-background/95 px-4 pb-3 pt-3 backdrop-blur">
+        <div className="community-composer sticky bottom-16 z-20 -mx-4 mt-4 border-t border-border bg-background/95 px-4 pb-2 pt-3 backdrop-blur">
           {replying && <div className="mb-2 flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-xs"><Reply className="size-3.5 text-primary" /><span className="min-w-0 flex-1 truncate">Respondendo a {replying.is_anonymous ? "Anônimo" : replying.author_name}: {replying.content}</span><Button variant="ghost" size="sm" onClick={() => setReplying(null)}>Cancelar</Button></div>}
           <div className="flex items-end gap-2">
-            <Textarea aria-label="Mensagem" value={content} onChange={(event) => setContent(event.target.value)} maxLength={500} rows={2} placeholder="Escreva uma mensagem…" className="max-h-32 min-h-11 resize-none bg-card text-sm" />
+            <Textarea aria-label="Mensagem" value={content} onChange={(event) => setContent(event.target.value)} maxLength={500} rows={1} placeholder="Escreva uma mensagem…" className="max-h-32 min-h-11 resize-none rounded-lg bg-card text-sm" />
             <Button size="icon" className="size-11 shrink-0" disabled={sending || !content.trim()} onClick={() => void sendMessage()} aria-label="Enviar mensagem">{sending ? <LoaderCircle className="animate-spin" /> : <Send />}</Button>
           </div>
           <div className="mt-1 text-right text-[10px] text-muted-foreground">{content.length}/500</div>
@@ -335,8 +339,16 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
 
 function formatTime(value: string) {
   const date = new Date(value);
+  return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatDay(value: string) {
+  const date = new Date(value);
   const today = new Date();
-  return date.toDateString() === today.toDateString() ? date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  if (date.toDateString() === today.toDateString()) return "Hoje";
+  today.setDate(today.getDate() - 1);
+  if (date.toDateString() === today.toDateString()) return "Ontem";
+  return date.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
 }
 
 function readCommunityError(message: string) {
