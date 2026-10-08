@@ -57,5 +57,5 @@
 
 - [x] Criar multas com acesso individual e restauração atômica
 - [x] Integrar multas aos registros, menus e backups
-- [ ] Renovar conversa e destacar Chat na navegação
-- [ ] Testar multas, backup e chat no celular e computador
+- [x] Renovar conversa e destacar Chat na navegação
+- [x] Testar multas e backup de ponta a ponta; envio, links e moderação; telas no celular e computador
