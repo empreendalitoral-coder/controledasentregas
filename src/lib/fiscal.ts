@@ -1,14 +1,24 @@
 import type { UnifiedRow } from "./financeiro-aggregate";
 
 export const fiscalLabels = {
-  nao_classificado: "Não classificado",
-  cnpj: "CNPJ · Empresa",
+  cnpj: "CNPJ · MEI",
   cpf: "CPF · Pessoal",
-  transferencia: "Transferência própria",
-  duplicado: "Já contabilizado",
 } as const;
 export type FiscalClass = keyof typeof fiscalLabels;
 export type FiscalRow = UnifiedRow & { classification: FiscalClass };
+
+export function automaticFiscalClass(row: UnifiedRow): FiscalClass {
+  switch (row.origem) {
+    case "pix_recebido":
+    case "pix_enviado":
+    case "conta_fixa":
+    case "cartao":
+    case "fluxo_manual":
+      return "cpf";
+    default:
+      return "cnpj";
+  }
+}
 
 export function fiscalSummary(rows: FiscalRow[], classification: FiscalClass) {
   const selected = rows.filter((row) => row.classification === classification);

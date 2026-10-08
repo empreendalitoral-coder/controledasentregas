@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Building2, UserRound, FileDown, Download, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppShell } from "@/components/AppShell";
 import { BRL } from "@/lib/calc";
-import { fiscalQuery, saveFiscalClass } from "@/lib/fiscal-data";
+import { fiscalQuery } from "@/lib/fiscal-data";
 import { fiscalCSV, fiscalLabels, fiscalSummary, type FiscalClass } from "@/lib/fiscal";
 
 const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -22,29 +22,15 @@ export function FiscalReport() {
 
 function FiscalPeriod({ year, setYear }: { year: number; setYear: (year: number) => void }) {
   const { data: rows } = useSuspenseQuery(fiscalQuery(year));
-  const queryClient = useQueryClient();
   const [month, setMonth] = useState("todos");
   const [filter, setFilter] = useState("todos");
   const [search, setSearch] = useState("");
-  const [saving, setSaving] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [page, setPage] = useState(1);
   const periodRows = useMemo(() => rows.filter((row) => month === "todos" || Number(row.data.slice(5, 7)) === Number(month)), [rows, month]);
   const shown = useMemo(() => periodRows.filter((row) => (filter === "todos" || row.classification === filter) && `${row.descricao} ${row.categoria}`.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR"))), [periodRows, filter, search]);
-  const pending = fiscalSummary(periodRows, "nao_classificado");
   const period = month === "todos" ? `Ano ${year}` : `${months[Number(month) - 1]} de ${year}`;
   const visible = shown.slice(0, page * 30);
-
-  async function classify(id: string, classification: FiscalClass) {
-    setSaving(id);
-    try {
-      await saveFiscalClass(id, classification);
-      queryClient.setQueryData(fiscalQuery(year).queryKey, rows.map((row) => row.id === id ? { ...row, classification } : row));
-      toast.success("Classificação salva");
-    } catch {
-      toast.error("Não foi possível salvar. A classificação anterior foi mantida.");
-    } finally { setSaving(null); }
-  }
 
   function downloadCSV() {
     const url = URL.createObjectURL(new Blob([fiscalCSV(shown)], { type: "text/csv;charset=utf-8;" }));
@@ -59,9 +45,8 @@ function FiscalPeriod({ year, setYear }: { year: number; setYear: (year: number)
       const [{ jsPDF }, { default: autoTable }] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
       const doc = new jsPDF();
       doc.setFontSize(17); doc.text("Entrega Pro - CNPJ e CPF", 14, 18);
-      doc.setFontSize(10); doc.text(`${period} | ${filter === "todos" ? "Todas as classificações" : fiscalLabels[filter as FiscalClass]}`, 14, 26);
+      doc.setFontSize(10); doc.text(`${period} | ${filter === "todos" ? "CNPJ e CPF" : fiscalLabels[filter as FiscalClass]}`, 14, 26);
       doc.text("Organização financeira. Não calcula imposto nem substitui declarações oficiais.", 14, 33);
-      doc.text(`Pendentes de classificação no período: ${pending.count}`, 14, 40);
       const groups = filter === "todos" ? ["cnpj", "cpf"] as const : filter === "cnpj" || filter === "cpf" ? [filter] as const : [];
       let y = 48;
       for (const group of groups) {
@@ -101,8 +86,6 @@ function FiscalPeriod({ year, setYear }: { year: number; setYear: (year: number)
       })}
     </div>
     <div className="border-l-2 border-primary pl-3 text-sm text-muted-foreground space-y-2">
-      {pending.count > 0 && <p className="font-medium text-foreground">{pending.count} registro(s) não classificado(s): receitas {BRL(pending.receitas)} e despesas {BRL(pending.despesas)}.</p>}
-      <p>Transferências próprias e valores já contabilizados ficam fora dos totais CNPJ e CPF. Confira recebimentos, PIX e diárias para não contar o mesmo valor duas vezes.</p>
       <p>Saldo não é renda tributável. Este relatório não calcula impostos nem substitui a DASN-SIMEI ou a declaração de IRPF.</p>
     </div>
     <div className="flex flex-wrap gap-2">
@@ -112,8 +95,8 @@ function FiscalPeriod({ year, setYear }: { year: number; setYear: (year: number)
     <section className="border-t border-border pt-4 space-y-3">
       <h2 className="font-semibold">Registros · {period}</h2>
       <Select value={filter} onValueChange={(value) => { setFilter(value); setPage(1); }}>
-        <SelectTrigger aria-label="Filtrar classificação"><SelectValue /></SelectTrigger>
-        <SelectContent><SelectItem value="todos">Todas as classificações</SelectItem>{classEntries.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+        <SelectTrigger aria-label="Filtrar CNPJ ou CPF"><SelectValue /></SelectTrigger>
+        <SelectContent><SelectItem value="todos">CNPJ e CPF</SelectItem>{classEntries.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
       </Select>
       <div className="relative"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input aria-label="Buscar registro" placeholder="Buscar registro" className="pl-9" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></div>
       {visible.length === 0 ? <p className="py-8 text-center text-muted-foreground">Nenhum registro neste período ou filtro.</p> : <ul className="divide-y divide-border">
@@ -122,10 +105,7 @@ function FiscalPeriod({ year, setYear }: { year: number; setYear: (year: number)
             <div className="min-w-0"><p className="font-medium break-words">{row.descricao || row.categoria}</p><p className="text-xs text-muted-foreground mt-1">{row.data.split("-").reverse().join("/")} · {row.categoria} · {row.origem}</p></div>
             <div className="shrink-0 text-right"><p className="font-semibold">{BRL(row.valor)}</p><p className="text-xs text-muted-foreground">{row.tipo === "entrada" ? "Receita" : "Despesa"}</p></div>
           </div>
-          <Select value={row.classification} disabled={saving !== null} onValueChange={(value) => void classify(row.id, value as FiscalClass)}>
-            <SelectTrigger aria-label={`Classificação de ${row.descricao || row.categoria}`}><SelectValue />{saving === row.id && <Loader2 className="size-4 animate-spin" />}</SelectTrigger>
-            <SelectContent>{classEntries.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
-          </Select>
+          <p className="text-xs font-medium text-muted-foreground">{fiscalLabels[row.classification]}</p>
         </li>)}
       </ul>}
       {shown.length > visible.length && <Button variant="outline" className="w-full" onClick={() => setPage((value) => value + 1)}>Carregar mais</Button>}

@@ -62,7 +62,7 @@
 
 # Separação CNPJ e CPF
 
-- [x] Salvar classificação individual de receitas e despesas sem alterar os cálculos existentes
+- [ ] Substituir classificação manual por separação automática: trabalho no CNPJ/MEI, contas e Pix no CPF
 - [x] Separar totais mensais/anuais e exportação por CNPJ e CPF no Relatório MEI
 - [x] Permitir excluir transferências e registros duplicados dos totais fiscais
 - [x] Validar classificação persistida e exclusão de transferências dos totais com gravação real e limpeza dos testes
