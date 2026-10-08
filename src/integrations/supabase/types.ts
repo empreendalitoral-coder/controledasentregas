@@ -580,6 +580,35 @@ export type Database = {
         }
         Relationships: []
       }
+      fiscal_classifications: {
+        Row: {
+          classification: string
+          movement_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          classification: string
+          movement_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          classification?: string
+          movement_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_classifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fluxo_caixa: {
         Row: {
           categoria: string

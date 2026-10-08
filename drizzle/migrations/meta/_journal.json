@@ -43,6 +43,13 @@
       "when": 1791423017476,
       "tag": "0005_add_multas_with_atomic_backup",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791502884670,
+      "tag": "0006_add_fiscal_classifications",
+      "breakpoints": true
     }
   ]
 }

@@ -55,6 +55,10 @@ export async function loadFinanceiroUnificado(opt: AggregateOptions = {}): Promi
     supabase.from("fluxo_caixa").select("id,data,tipo,categoria,descricao,valor").eq("user_id", uid),
   ]);
 
+  for (const result of [lanc, rec, pixR, pixE, abast, man, contas, cart, fluxo]) {
+    if (result.error) throw result.error;
+  }
+
   const rows: UnifiedRow[] = [];
 
   // Entregas (lancamentos)
