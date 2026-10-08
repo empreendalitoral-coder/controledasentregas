@@ -784,6 +784,44 @@ export type Database = {
         }
         Relationships: []
       }
+      multas: {
+        Row: {
+          created_at: string
+          data: string
+          descricao: string | null
+          id: string
+          status: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "multas_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_envios: {
         Row: {
           chave_dedup: string
