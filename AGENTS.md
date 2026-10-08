@@ -13,3 +13,6 @@
 - Community message moderation runs through `moderate_community_message`, which derives the moderator from the authenticated session and preserves an admin-only audit record.
 - Community participants read sanitized messages through `get_community_messages`; anonymous author IDs remain server-side and are exposed only to administrators for moderation.
 - Backup restoration must use the authenticated `restore_entrega_pro_backup` database function so all imported records commit or roll back together.
+
+- Multas are standalone user-owned records in the shared store and atomic backup RPC; never include them in profit calculations without explicit approval.
+- AppShell conversation mode omits legal footer links so the community composer can remain adjacent to the transcript.

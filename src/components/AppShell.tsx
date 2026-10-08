@@ -5,7 +5,7 @@ import {
   Home,
   ListChecks,
   Wallet,
-  BarChart3,
+  MessageCircle,
   Menu as MenuIcon,
   Bell,
   ArrowLeft,
@@ -17,9 +17,10 @@ type Props = {
   children: ReactNode;
   back?: string;
   right?: ReactNode;
+  conversation?: boolean;
 };
 
-export function AppShell({ title, children, back, right }: Props) {
+export function AppShell({ title, children, back, right, conversation = false }: Props) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const tabs = [
@@ -37,10 +38,10 @@ export function AppShell({ title, children, back, right }: Props) {
       match: (p: string) => p.startsWith("/recebimentos"),
     },
     {
-      to: "/graficos",
-      label: "Gráficos",
-      icon: BarChart3,
-      match: (p: string) => p.startsWith("/graficos") || p.startsWith("/resumo"),
+      to: "/comunidade",
+      label: "Chat",
+      icon: MessageCircle,
+      match: (p: string) => p.startsWith("/comunidade"),
     },
     {
       to: "/mais",
@@ -49,7 +50,9 @@ export function AppShell({ title, children, back, right }: Props) {
       match: (p: string) =>
         p.startsWith("/mais") ||
         p.startsWith("/perfil") ||
-        p.startsWith("/comunidade") ||
+        p.startsWith("/multas") ||
+        p.startsWith("/graficos") ||
+        p.startsWith("/resumo") ||
         p.startsWith("/abastecimentos") ||
         p.startsWith("/manutencao") ||
         p.startsWith("/backup"),
@@ -87,7 +90,7 @@ export function AppShell({ title, children, back, right }: Props) {
       <main className="flex-1 mx-auto w-full max-w-2xl px-4 pt-4 pb-28">
         <AvisosBanner />
         {children}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+        {!conversation && <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
           <Link to="/privacidade" className="hover:text-primary">Privacidade</Link>
           <span>·</span>
           <Link to="/termos" className="hover:text-primary">Termos</Link>
@@ -95,7 +98,7 @@ export function AppShell({ title, children, back, right }: Props) {
           <Link to="/sobre" className="hover:text-primary">Sobre</Link>
           <span>·</span>
           <Link to="/suporte" className="hover:text-primary">Suporte</Link>
-        </div>
+        </div>}
       </main>
 
       <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur" aria-label="Navegação principal">

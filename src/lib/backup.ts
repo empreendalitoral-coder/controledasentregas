@@ -6,6 +6,7 @@ const MAX_ITEMS = {
   recebimentos: 5_000,
   abastecimentos: 10_000,
   manutencoes: 10_000,
+  multas: 5_000,
 } as const;
 
 export type BackupCounts = Record<keyof typeof MAX_ITEMS, number> & { total: number };
@@ -16,7 +17,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export function validateBackup(value: unknown): Partial<State> {
   if (!isRecord(value)) throw new Error("Estrutura do backup inválida");
-  if (!("motorista" in value || "lancamentos" in value || "recebimentos" in value)) {
+  if (!("motorista" in value || "lancamentos" in value || "recebimentos" in value || "multas" in value)) {
     throw new Error("Este arquivo não é um backup do Entrega Pro");
   }
   if ("motorista" in value && !isRecord(value.motorista)) {
@@ -30,6 +31,11 @@ export function validateBackup(value: unknown): Partial<State> {
     const items = value[key];
     if (items != null && !Array.isArray(items)) throw new Error(`Lista de ${key} inválida`);
     if (Array.isArray(items) && items.length > limit) throw new Error(`Backup excede o limite de ${key}`);
+  }
+  if (Array.isArray(value.multas)) {
+    for (const m of value.multas) {
+      if (!isRecord(m) || typeof m.data !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(m.data) || !Number.isFinite(Date.parse(m.data)) || typeof m.valor !== "number" || !Number.isFinite(m.valor) || m.valor <= 0 || !["pendente", "paga"].includes(String(m.status)) || (m.descricao != null && (typeof m.descricao !== "string" || m.descricao.length > 500))) throw new Error("Dados de multa inválidos");
+    }
   }
   return value as Partial<State>;
 }
@@ -50,6 +56,7 @@ export function backupCounts(value: Partial<State>): BackupCounts {
     recebimentos: value.recebimentos?.length ?? 0,
     abastecimentos: value.abastecimentos?.length ?? 0,
     manutencoes: value.manutencoes?.length ?? 0,
+    multas: value.multas?.length ?? 0,
   };
   return { ...counts, total: Object.values(counts).reduce((sum, count) => sum + count, 0) };
 }

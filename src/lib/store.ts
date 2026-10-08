@@ -80,6 +80,8 @@ export type Manutencao = {
   observacao?: string;
 };
 
+export type Multa = { id: string; data: string; valor: number; descricao?: string; status: "pendente" | "paga" };
+
 export type State = {
   motorista: Motorista;
   meta_mensal: number;
@@ -87,6 +89,7 @@ export type State = {
   recebimentos: Recebimento[];
   abastecimentos: Abastecimento[];
   manutencoes: Manutencao[];
+  multas: Multa[];
   hydrated: boolean;
 };
 
@@ -99,6 +102,7 @@ const defaultState: State = {
   recebimentos: [],
   abastecimentos: [],
   manutencoes: [],
+  multas: [],
   hydrated: false,
 };
 
@@ -140,14 +144,16 @@ async function hydrate(uid: string) {
   if (loading) return;
   loading = true;
   try {
-    const [prof, lanc, rec, abast, man] = await Promise.all([
+    const [prof, lanc, rec, abast, man, multas] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
       supabase.from("lancamentos").select("*").eq("user_id", uid).order("data", { ascending: false }),
       supabase.from("recebimentos").select("*").eq("user_id", uid).order("data_pagamento", { ascending: true }),
       supabase.from("abastecimentos").select("*").eq("user_id", uid).order("data", { ascending: false }),
       supabase.from("manutencoes").select("*").eq("user_id", uid).order("data", { ascending: false }),
+      supabase.from("multas").select("*").eq("user_id", uid).order("data", { ascending: false }),
     ]);
 
+    if (multas.error) throw multas.error;
     const p = prof.data;
     const motorista: Motorista = p
       ? {
@@ -214,6 +220,7 @@ async function hydrate(uid: string) {
         km: num(m.km),
         observacao: m.observacao ?? undefined,
       })),
+      multas: (multas.data ?? []).map((m) => ({ id: m.id, data: m.data, valor: Number(m.valor), descricao: m.descricao ?? undefined, status: m.status as Multa["status"] })),
       hydrated: true,
     }));
   } finally {
@@ -463,6 +470,22 @@ export const actions = {
     setState((s) => ({ ...s, manutencoes: s.manutencoes.filter((m) => m.id !== id) }));
   },
 
+  async saveMulta(m: Omit<Multa, "id">, id?: string): Promise<Multa> {
+    const row = { user_id: uidOrThrow(), data: m.data, valor: m.valor, descricao: m.descricao || null, status: m.status };
+    const query = id ? supabase.from("multas").update(row).eq("id", id) : supabase.from("multas").insert(row);
+    const { data, error } = await query.select().single();
+    if (error) throw error;
+    const item: Multa = { ...m, id: data.id };
+    setState((s) => ({ ...s, multas: [item, ...s.multas.filter((v) => v.id !== item.id)] }));
+    return item;
+  },
+
+  async deleteMulta(id: string) {
+    const { error } = await supabase.from("multas").delete().eq("id", id).select("id").single();
+    if (error) throw error;
+    setState((s) => ({ ...s, multas: s.multas.filter((m) => m.id !== id) }));
+  },
+
   exportJSON(): string {
     return JSON.stringify(state, null, 2);
   },
@@ -504,8 +527,9 @@ export const actions = {
       supabase.from("recebimentos").delete().eq("user_id", uid),
       supabase.from("abastecimentos").delete().eq("user_id", uid),
       supabase.from("manutencoes").delete().eq("user_id", uid),
+      supabase.from("multas").delete().eq("user_id", uid),
     ]);
-    setState((s) => ({ ...s, lancamentos: [], recebimentos: [], abastecimentos: [], manutencoes: [] }));
+    setState((s) => ({ ...s, lancamentos: [], recebimentos: [], abastecimentos: [], manutencoes: [], multas: [] }));
   },
 
   async signOut() {

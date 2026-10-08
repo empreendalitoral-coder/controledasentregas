@@ -77,6 +77,7 @@ describe("períodos e totais", () => {
         { id: "manutencao-1", data: "2026-10-05", tipo: "Pneus", valor: 40 },
       ],
       recebimentos: [],
+      multas: [],
     };
 
     expect(computeResumo(state, rangeFromStrings("2026-10-01", "2026-10-31"))).toEqual({
