@@ -57,7 +57,7 @@ function MultasPage() {
   async function remove(id: string) {
     try { await actions.deleteMulta(id); toast.success("Multa excluída"); } catch { toast.error("Não foi possível excluir a multa"); throw new Error("Falha na exclusão"); }
   }
-  return <AppShell title="Multas" back="/mais" right={<Button variant="ghost" size="icon" aria-label="Nova multa" onClick={() => edit()}><Plus /></Button>}>
+  return <AppShell title="Multas" back="/mais" right={<Button variant="ghost" size="icon" aria-label="Nova multa" disabled={!state.hydrated} onClick={() => edit()}><Plus /></Button>}>
     <div className="ep-page-intro mb-5"><div className="ep-icon-chip"><ReceiptText className="size-5" /></div><h2 className="font-display text-lg font-semibold">Multas do veículo</h2></div>
     <div className="mb-5 grid grid-cols-2 gap-3">{(["pendente", "paga"] as const).map(s => <div className="ep-stat-tile min-w-0" key={s}><div className="ep-label">{s === "paga" ? "Pagas" : "Pendentes"}</div><div className={`mt-2 break-words text-lg font-semibold ${s === "paga" ? "text-success" : "text-warning"}`}>{BRL(state.multas.filter(m => m.status === s).reduce((sum,m) => sum+m.valor,0))}</div></div>)}</div>
     <div className="mb-5 grid grid-cols-3 gap-1 rounded-lg bg-secondary p-1" role="group" aria-label="Filtrar multas">{[["todas","Todas"],["pendente","Pendentes"],["paga","Pagas"]].map(([value,label]) => <Button key={value} size="sm" variant={filter === value ? "default" : "ghost"} onClick={() => setFilter(value)} aria-pressed={filter === value}>{label}</Button>)}</div>

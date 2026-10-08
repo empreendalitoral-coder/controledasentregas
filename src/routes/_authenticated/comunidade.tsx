@@ -278,7 +278,7 @@ function CommunityPage() {
                       <strong>{message.reply_author_name}</strong><div className="truncate">{message.reply_preview}</div>
                     </div>
                   )}
-                  {message.removed_at ? <p className="mt-2 text-sm italic text-muted-foreground">Mensagem removida pela moderação.</p> : <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
+                  {message.removed_at ? <p className={`mt-2 text-sm italic ${own ? "text-chat-own-foreground/80" : "text-muted-foreground"}`}>Mensagem removida pela moderação.</p> : <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
                 <div className="mt-1 text-right text-[10px] opacity-70"><time>{formatTime(message.created_at)}</time></div>
                 </article>
                 </div>
