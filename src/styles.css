@@ -376,3 +376,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) { .community-composer { scroll-behavior: auto; } }
+
+.community-shell .app-bottom-nav { bottom: var(--keyboard-inset, 0px); }
+.community-shell .community-composer { bottom: calc(4rem + var(--keyboard-inset, 0px)); }

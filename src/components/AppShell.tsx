@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { AvisosBanner } from "@/components/AvisosBanner";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import {
   Home,
   ListChecks,
@@ -21,6 +21,20 @@ type Props = {
 };
 
 export function AppShell({ title, children, back, right, conversation = false }: Props) {
+  const shellRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!conversation) return;
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const update = () => {
+      const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+      shellRef.current?.style.setProperty("--keyboard-inset", `${inset}px`);
+    };
+    update();
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
+    return () => { viewport.removeEventListener("resize", update); viewport.removeEventListener("scroll", update); };
+  }, [conversation]);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const tabs = [
@@ -60,7 +74,7 @@ export function AppShell({ title, children, back, right, conversation = false }:
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div ref={shellRef} className={`min-h-screen bg-background text-foreground flex flex-col ${conversation ? "community-shell" : ""}`}>
       {title && (
         <header className="sticky top-0 z-30 backdrop-blur bg-background/90 border-b border-border">
           <div className="mx-auto max-w-2xl flex items-center gap-3 px-4 h-14">
@@ -101,7 +115,7 @@ export function AppShell({ title, children, back, right, conversation = false }:
         </div>}
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur" aria-label="Navegação principal">
+      <nav className="app-bottom-nav fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur" aria-label="Navegação principal">
         <div className="mx-auto max-w-2xl grid grid-cols-5">
           {tabs.map((t) => {
             const active = t.match(pathname);
