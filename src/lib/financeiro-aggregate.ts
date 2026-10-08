@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { selectWorkRevenue, type WorkRevenueBasis } from "./financial-source";
 
 export type UnifiedRow = {
   id: string;
@@ -22,6 +23,7 @@ export type UnifiedRow = {
 };
 
 export type AggregateOptions = {
+  workRevenue?: WorkRevenueBasis;
   start?: string; // YYYY-MM-DD inclusive
   end?: string;   // YYYY-MM-DD inclusive
 };
@@ -230,7 +232,7 @@ export async function loadFinanceiroUnificado(opt: AggregateOptions = {}): Promi
   }
 
   rows.sort((a, b) => (a.data < b.data ? 1 : a.data > b.data ? -1 : 0));
-  return rows;
+  return selectWorkRevenue(rows, opt.workRevenue ?? "received");
 }
 
 export function totalizar(rows: UnifiedRow[]) {

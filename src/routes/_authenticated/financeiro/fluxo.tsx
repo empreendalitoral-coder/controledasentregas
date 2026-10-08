@@ -34,8 +34,8 @@ function FluxoPage() {
   async function load() {
     setLoading(true);
     try {
-      const all = await loadFinanceiroUnificado();
-      setRows(all.slice(0, 200));
+      const all = await loadFinanceiroUnificado({ workRevenue: "received" });
+      setRows(all);
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ function FluxoPage() {
       </div>
 
       <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Integrado: entregas, recebimentos, PIX, abastec., manut., contas, cartões</span>
+        <span>Recebimentos, PIX, abastec., manut., contas, cartões</span>
         <button onClick={load} disabled={loading} className="inline-flex items-center gap-1 text-foreground"><RefreshCw className={`size-3 ${loading ? "animate-spin" : ""}`} /> Atualizar</button>
       </div>
 
