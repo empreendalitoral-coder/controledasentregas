@@ -59,3 +59,10 @@
 - [x] Integrar multas aos registros, menus e backups
 - [x] Renovar conversa e destacar Chat na navegação
 - [x] Testar multas e backup de ponta a ponta; envio, links e moderação; telas no celular e computador
+
+# Separação CNPJ e CPF
+
+- [ ] Salvar classificação individual de receitas e despesas sem alterar os cálculos existentes
+- [ ] Separar totais mensais/anuais e exportação por CNPJ e CPF no Relatório MEI
+- [ ] Permitir excluir transferências e registros duplicados dos totais fiscais
+- [ ] Validar classificação persistida, relatórios e telas
