@@ -62,7 +62,7 @@
 
 # Separação CNPJ e CPF
 
-- [ ] Corrigir dupla contagem: diárias no fiscal, recebimentos no caixa; conferir dados e testes
+- [x] Corrigir dupla contagem: diárias no fiscal, recebimentos no caixa; 12 testes passaram e total fiscal conferido com diárias reais da conta disponível
 
 - [x] Substituir classificação manual por separação automática: trabalho no CNPJ/MEI, contas e Pix no CPF
 - [x] Separar totais mensais/anuais e exportação por CNPJ e CPF no Relatório MEI
