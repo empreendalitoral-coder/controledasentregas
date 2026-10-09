@@ -1,5 +1,12 @@
 # Diagnóstico do aplicativo
 
+# Programa de indicações
+
+- [ ] Criar atribuição no cadastro e comissão única com liberação após 7 dias
+- [ ] Criar saldo, reserva e solicitações de Pix ou desconto a partir de R$ 10
+- [ ] Integrar aprovação administrativa, desconto e estorno por reembolso
+- [ ] Testar regras, segurança e telas sem publicar
+
 - [x] Criar diagnóstico seguro de cálculos, dados locais e backups
 - [x] Adicionar acesso ao diagnóstico na tela Mais
 - [x] Remover completamente a análise inteligente das observações

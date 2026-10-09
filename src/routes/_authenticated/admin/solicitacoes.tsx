@@ -27,6 +27,8 @@ type Solic = {
   status: "pendente" | "aprovado" | "recusado";
   created_at: string;
   observacao_admin: string | null;
+  referral_discount: number;
+  payment_refunded: boolean;
 };
 
 export const Route = createFileRoute("/_authenticated/admin/solicitacoes")({
@@ -56,6 +58,18 @@ function SolicAdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [rejecting, setRejecting] = useState<Solic | null>(null);
   const [reason, setReason] = useState("");
+  const [refunding, setRefunding] = useState<Solic | null>(null);
+
+  async function refund() {
+    if (!refunding || busy) return;
+    setBusy(refunding.id);
+    try {
+      const {error} = await supabase.rpc('refund_referral_payment', {_id:refunding.id,_reason:reason});
+      if(error) throw error;
+      setRefunding(null); setReason(''); await load(); toast.success('Reembolso registrado e recompensa estornada');
+    } catch(e) { toast.error(e instanceof Error ? e.message : 'Não foi possível registrar'); }
+    finally { setBusy(null); }
+  }
 
 
   const load = useCallback(async () => {
@@ -147,10 +161,11 @@ function SolicAdminPage() {
                 </div>
               </div>
               <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${s.status === "aprovado" ? "bg-success/20 text-success" : s.status === "recusado" ? "bg-destructive/20 text-destructive" : "bg-warning/20 text-warning"}`}>
-                {s.status}
+                {s.payment_refunded ? 'reembolsado' : s.status}
               </span>
             </div>
             {s.observacao_admin && <p className="text-xs text-muted-foreground mt-2 italic">{s.observacao_admin}</p>}
+            {s.referral_discount > 0 && <p className="text-xs text-primary mt-2">Desconto aplicado: {BRL(Number(s.referral_discount))} · Valor restante: {BRL(s.valor)}</p>}
             <div className="mt-3 flex gap-2">
               {s.comprovante_path && (
                 <Button onClick={() => s.comprovante_path && verComprovante(s.comprovante_path)} variant="secondary"><Eye className="size-4" /> Ver</Button>
@@ -169,14 +184,15 @@ function SolicAdminPage() {
                 </>
               )}
             </div>
+            {s.status==='aprovado' && !s.payment_refunded && <Button className="mt-2" variant="outline" disabled={busy!==null} onClick={()=>{setReason('');setRefunding(s);}}>Registrar reembolso</Button>}
             {aprovando === s.id && (
               <div className="mt-2 rounded-lg bg-secondary/60 p-2">
                 <div className="text-xs text-muted-foreground mb-2">Liberar por quanto tempo?</div>
                 <div className="grid grid-cols-3 gap-2">
-                  {([["teste", "15 dias"], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).map(([p, lbl]) => (
-                    <button key={p} onClick={() => decidir(s, "aprovado", p)} className={`h-9 rounded-md text-xs font-semibold ${p === s.plano ? "bg-primary text-primary-foreground" : "bg-background border border-border"}`}>
+                  {([["teste", "15 dias"], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).filter(([p])=>!s.referral_discount || p===s.plano).map(([p, lbl]) => (
+                    <Button disabled={busy!==null} key={p} onClick={() => decidir(s, "aprovado", p)} variant={p===s.plano?'default':'outline'} className="h-9 text-xs font-semibold">
                       {lbl}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -204,6 +220,7 @@ function SolicAdminPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <Dialog open={refunding!==null} onOpenChange={open=>{if(!open&&!busy)setRefunding(null);}}><DialogContent><DialogHeader><DialogTitle>Registrar reembolso realizado?</DialogTitle><DialogDescription>Confirme somente após devolver o pagamento. A comissão será cancelada e eventual desconto devolvido ao saldo. Esta ação não envia Pix nem altera a validade do Premium.</DialogDescription></DialogHeader><label className="text-sm">Motivo<textarea className="ep-input mt-1" minLength={3} maxLength={300} value={reason} onChange={e=>setReason(e.target.value)}/></label><DialogFooter><Button variant="outline" disabled={busy!==null} onClick={()=>setRefunding(null)}>Cancelar</Button><Button variant="destructive" disabled={busy!==null||reason.trim().length<3} onClick={()=>void refund()}>Confirmar reembolso</Button></DialogFooter></DialogContent></Dialog>
     </>
   );
 }

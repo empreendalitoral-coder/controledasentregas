@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Mail, Phone, Lock, User, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { referralCode } from "@/lib/referrals";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): { ref?: string } => ({ ref: referralCode(search.ref) }),
   head: () => ({
     meta: [
       { title: "Entrar — Entrega Pro" },
@@ -29,6 +31,7 @@ type Mode = "login" | "signup" | "reset";
 type Channel = "email" | "telefone";
 
 function AuthPage() {
+  const { ref } = Route.useSearch();
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("login");
   const [channel, setChannel] = useState<Channel>("email");
@@ -42,10 +45,11 @@ function AuthPage() {
   const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    if (ref) { sessionStorage.setItem('entrega-referral', ref); setMode('signup'); }
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/" });
     });
-  }, [navigate]);
+  }, [navigate, ref]);
 
   function formatPhone(v: string) {
     const digits = v.replace(/\D/g, "");
@@ -75,10 +79,11 @@ function AuthPage() {
             password: senha,
             options: {
               emailRedirectTo: window.location.origin + "/auth",
-              data: { nome },
+              data: { nome, referral_code: ref || referralCode(sessionStorage.getItem('entrega-referral')) },
             },
           });
           if (error) throw error;
+          sessionStorage.removeItem('entrega-referral');
           if (!data.session) {
             setConfirmationEmail(email);
             return;
@@ -93,7 +98,7 @@ function AuthPage() {
         // telefone — OTP
         const phone = formatPhone(telefone);
         if (!otpSent) {
-          const { error } = await supabase.auth.signInWithOtp({ phone });
+          const { error } = await supabase.auth.signInWithOtp({ phone, options: { data: { nome, referral_code: ref || referralCode(sessionStorage.getItem('entrega-referral')) } } });
           if (error) throw error;
           setOtpSent(true);
           toast.success("Código enviado por SMS.");
