@@ -2,10 +2,10 @@
 
 # Programa de indicações
 
-- [ ] Criar atribuição no cadastro e comissão única com liberação após 7 dias
-- [ ] Criar saldo, reserva e solicitações de Pix ou desconto a partir de R$ 10
-- [ ] Integrar aprovação administrativa, desconto e estorno por reembolso
-- [ ] Testar regras, segurança e telas sem publicar
+- [x] Criar atribuição no cadastro e comissão única com liberação após 7 dias
+- [x] Criar saldo, reserva e solicitações de Pix ou desconto a partir de R$ 10
+- [x] Integrar aprovação administrativa, desconto e estorno por reembolso
+- [x] Testar regras, segurança e telas sem publicar; remover registros temporários; 24 testes passaram
 
 - [x] Criar diagnóstico seguro de cálculos, dados locais e backups
 - [x] Adicionar acesso ao diagnóstico na tela Mais
@@ -57,8 +57,8 @@
 - [x] Avisar quando a conexão cair e quando voltar
 - [x] Validar backups e restaurar todos os registros em uma única operação
 - [x] Remover o token de notificações deste aparelho antes de sair
-- [ ] Criar e executar os testes essenciais
-- [ ] Validar os fluxos principais no celular e computador
+- [x] Criar e executar os testes essenciais
+- [x] Validar os fluxos principais no celular e computador
 
 # Multas e chat moderno
 

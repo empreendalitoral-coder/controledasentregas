@@ -7,6 +7,15 @@ import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSq
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
+  head: () => ({ meta: [
+    { title: "Administração — Entrega Pro" },
+    { name: "description", content: "Administração de usuários, assinaturas e recompensas do Entrega Pro." },
+    { property: "og:title", content: "Administração — Entrega Pro" },
+    { property: "og:description", content: "Gestão administrativa do Entrega Pro." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: AdminLayout,
 });
 
