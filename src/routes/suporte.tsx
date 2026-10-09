@@ -14,6 +14,7 @@ export const Route = createFileRoute("/suporte")({
       { property: "og:title", content: "Suporte — Entrega Pro" },
       { property: "og:description", content: "Central de ajuda do Entrega Pro: contato, dúvidas frequentes e suporte ao motorista." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: URL },
     ],
     links: [{ rel: "canonical", href: URL }],

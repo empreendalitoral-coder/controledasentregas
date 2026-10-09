@@ -22,6 +22,7 @@ import {
   Lock,
   Stethoscope,
   MessagesSquare,
+  Gift,
 
 } from "lucide-react";
 import { toast } from "sonner";
@@ -131,7 +132,7 @@ function MaisPage() {
   }
 
   const groups: { title: string; items: { icon: typeof Calendar; label: string; onClick?: () => void; to?: string; highlight?: boolean; destructive?: boolean }[] }[] = [
-    { title: "Conta", items: [{ icon: User, label: "Perfil do motorista", to: "/perfil" }, ...(admin.isAdmin ? [{ icon: Shield, label: "Painel Administrativo", to: "/admin" as const }] : [])] },
+    { title: "Conta", items: [{ icon: User, label: "Perfil do motorista", to: "/perfil" }, { icon: Gift, label: "Indique e ganhe", to: "/indicacoes" }, ...(admin.isAdmin ? [{ icon: Shield, label: "Painel Administrativo", to: "/admin" as const }] : [])] },
     { title: "Comunidade", items: [{ icon: MessagesSquare, label: "Comunidade de motoristas", to: "/comunidade", highlight: communityAccess.premiumRequired }] },
     { title: "Trabalho", items: [{ icon: Fuel, label: "Abastecimentos", to: "/abastecimentos" }, { icon: Wrench, label: "Manutenção", to: "/manutencao" }, { icon: ReceiptText, label: "Multas", to: "/multas" }, { icon: Calendar, label: "Recebimentos", to: "/recebimentos" }] },
     { title: "Financeiro", items: [{ icon: Wallet2, label: "Central Financeira Premium", to: "/financeiro", highlight: true }, { icon: TrendingUp, label: "Gráficos e Lucro Real", to: "/graficos" }, { icon: Settings, label: "Resumo mensal completo", to: "/resumo" }, { icon: FileText, label: "Relatório mensal (imprimir)", onClick: gerarRelatorio }] },

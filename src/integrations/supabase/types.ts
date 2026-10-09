@@ -1135,6 +1135,200 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_attributions: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          referrer_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          referrer_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          referrer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_attributions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_attributions_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          user_id: string
+        }
+        Insert: {
+          code?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_codes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_commissions: {
+        Row: {
+          amount: number
+          available_at: string
+          cancelled: boolean
+          created_at: string
+          id: string
+          payment_id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          available_at?: string
+          cancelled?: boolean
+          created_at?: string
+          id?: string
+          payment_id: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          available_at?: string
+          cancelled?: boolean
+          created_at?: string
+          id?: string
+          payment_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_commissions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "solicitacoes_premium"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_commissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_first_payments: {
+        Row: {
+          buyer_id: string
+          confirmed_at: string
+          payment_id: string
+        }
+        Insert: {
+          buyer_id: string
+          confirmed_at?: string
+          payment_id: string
+        }
+        Update: {
+          buyer_id?: string
+          confirmed_at?: string
+          payment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_first_payments_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_first_payments_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "solicitacoes_premium"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_redemptions: {
+        Row: {
+          amount: number
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          kind: string
+          payment_id: string | null
+          pix_key: string | null
+          plan: Database["public"]["Enums"]["plano_premium"] | null
+          reason: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          kind: string
+          payment_id?: string | null
+          pix_key?: string | null
+          plan?: Database["public"]["Enums"]["plano_premium"] | null
+          reason?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          kind?: string
+          payment_id?: string | null
+          pix_key?: string | null
+          plan?: Database["public"]["Enums"]["plano_premium"] | null
+          reason?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_redemptions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "solicitacoes_premium"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       solicitacoes_premium: {
         Row: {
           comprovante_path: string | null
@@ -1143,7 +1337,9 @@ export type Database = {
           id: string
           nome: string
           observacao_admin: string | null
+          payment_refunded: boolean
           plano: Database["public"]["Enums"]["plano_premium"]
+          referral_discount: number
           status: Database["public"]["Enums"]["status_solicitacao"]
           telefone: string | null
           updated_at: string
@@ -1157,7 +1353,9 @@ export type Database = {
           id?: string
           nome: string
           observacao_admin?: string | null
+          payment_refunded?: boolean
           plano: Database["public"]["Enums"]["plano_premium"]
+          referral_discount?: number
           status?: Database["public"]["Enums"]["status_solicitacao"]
           telefone?: string | null
           updated_at?: string
@@ -1171,7 +1369,9 @@ export type Database = {
           id?: string
           nome?: string
           observacao_admin?: string | null
+          payment_refunded?: boolean
           plano?: Database["public"]["Enums"]["plano_premium"]
+          referral_discount?: number
           status?: Database["public"]["Enums"]["status_solicitacao"]
           telefone?: string | null
           updated_at?: string
@@ -1236,12 +1436,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      attach_referral_receipt: {
+        Args: { _id: string; _path: string }
+        Returns: undefined
+      }
       block_community_message: {
         Args: { _message_id: string }
         Returns: undefined
       }
       cancelar_exclusao_conta: { Args: never; Returns: undefined }
       cron_token_valido: { Args: { _token: string }; Returns: boolean }
+      decide_referral_redemption: {
+        Args: { _approve: boolean; _id: string; _reason: string }
+        Returns: undefined
+      }
       get_community_access_status: {
         Args: never
         Returns: {
@@ -1282,13 +1490,27 @@ export type Database = {
           valor_mensal: number
         }[]
       }
+      get_referral_wallet: { Args: never; Returns: Json }
       moderate_community_message: {
         Args: { _action: string; _message_id: string; _reason: string }
+        Returns: undefined
+      }
+      refund_referral_payment: {
+        Args: { _id: string; _reason: string }
         Returns: undefined
       }
       registrar_acesso_nao_autorizado: {
         Args: { _detalhes?: Json }
         Returns: undefined
+      }
+      request_referral_redemption: {
+        Args: {
+          _amount?: number
+          _kind: string
+          _pix_key?: string
+          _plan?: Database["public"]["Enums"]["plano_premium"]
+        }
+        Returns: string
       }
       restore_entrega_pro_backup: { Args: { _backup: Json }; Returns: Json }
       set_community_anonymous: { Args: { _enabled: boolean }; Returns: boolean }

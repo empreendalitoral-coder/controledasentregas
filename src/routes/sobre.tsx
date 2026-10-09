@@ -15,6 +15,7 @@ export const Route = createFileRoute("/sobre")({
       { property: "og:title", content: "Sobre — Entrega Pro" },
       { property: "og:description", content: "Conheça o Entrega Pro: para que serve, versão atual e licenças do aplicativo." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: URL },
     ],
     links: [{ rel: "canonical", href: URL }],

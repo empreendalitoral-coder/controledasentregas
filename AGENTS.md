@@ -18,3 +18,4 @@
 - AppShell conversation mode omits legal footer links so the community composer can remain adjacent to the transcript.
 - Fiscal reports derive classification automatically from unified movement origin, never read or write legacy fiscal annotations, and never change operational profit; this removes per-record manual work.
 - Unified financial reads select exactly one work-revenue basis: daily earnings for fiscal reports, actual settlements for cash flow (the default); this prevents counting the same work twice.
+- Referral attribution is fixed at signup; commissions, payment confirmation, reservations and redemptions use authenticated atomic database functions and a first-paid-purchase marker, preventing client-written rewards and duplicate payouts.

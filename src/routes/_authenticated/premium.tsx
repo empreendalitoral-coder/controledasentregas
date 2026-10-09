@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,6 +35,8 @@ type Solic = {
   status: "pendente" | "aprovado" | "recusado";
   created_at: string;
   observacao_admin: string | null;
+  referral_discount: number;
+  payment_refunded: boolean;
 };
 
 export const Route = createFileRoute("/_authenticated/premium")({
@@ -83,7 +85,7 @@ function PremiumPage() {
     if (!u.user) return;
     const { data } = await supabase
       .from("solicitacoes_premium")
-      .select("id, plano, valor, status, created_at, observacao_admin")
+      .select("id, plano, valor, status, created_at, observacao_admin, referral_discount, payment_refunded")
       .eq("user_id", u.user.id)
       .order("created_at", { ascending: false });
     if (data) setSolicitacoes(data as Solic[]);
@@ -119,7 +121,8 @@ function PremiumPage() {
         .eq("id", u.user.id)
         .maybeSingle();
       const valor = plano === "mensal" ? config.valor_mensal : config.valor_anual;
-      const { error } = await supabase.from("solicitacoes_premium").insert({
+      const discounted = solicitacoes.find(s => s.status === 'pendente' && s.referral_discount > 0 && s.plano === plano);
+      const { error } = discounted ? await supabase.rpc('attach_referral_receipt', { _id: discounted.id, _path: path }) : await supabase.from("solicitacoes_premium").insert({
         user_id: u.user.id,
         nome: prof?.nome || u.user.email || "Sem nome",
         telefone: prof?.telefone || null,
@@ -146,6 +149,8 @@ function PremiumPage() {
 
   return (
     <AppShell title="Premium" back="/mais">
+      <Link to="/indicacoes" className="block text-sm text-primary mb-4">Indique e ganhe · usar saldo como desconto</Link>
+      {solicitacoes.filter(s=>s.status==='pendente' && s.referral_discount>0).map(s=><div key={s.id} className="border border-primary rounded-lg p-3 mb-4 text-sm"><strong>Desconto aprovado · plano {s.plano}</strong><p>Desconto: R$ {Number(s.referral_discount).toFixed(2).replace('.',',')} · Restante a pagar: R$ {Number(s.valor).toFixed(2).replace('.',',')}</p><p className="text-muted-foreground mt-1">Selecione o plano {s.plano} e envie o comprovante do valor restante.</p></div>)}
       {/* Hero */}
       <div className="ep-hero text-center">
         <div className="relative z-10">
@@ -345,7 +350,7 @@ function PremiumPage() {
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {new Date(s.created_at).toLocaleDateString("pt-BR")} ·{" "}
-                      <span className="capitalize">{s.status}</span>
+                       <span className="capitalize">{s.payment_refunded?'Reembolsado':s.status}</span>
                       {s.observacao_admin ? ` • ${s.observacao_admin}` : ""}
                     </div>
                   </div>

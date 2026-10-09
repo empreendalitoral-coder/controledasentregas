@@ -3,10 +3,19 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { registrarLogAdmin } from "@/lib/admin-log";
-import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning } from "lucide-react";
+import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning, Gift } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
+  head: () => ({ meta: [
+    { title: "Administração — Entrega Pro" },
+    { name: "description", content: "Administração de usuários, assinaturas e recompensas do Entrega Pro." },
+    { property: "og:title", content: "Administração — Entrega Pro" },
+    { property: "og:description", content: "Gestão administrativa do Entrega Pro." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: AdminLayout,
 });
 
@@ -76,6 +85,7 @@ function AdminLayout() {
   const tabs = [
     { to: "/admin", label: "Visão geral", icon: BarChart },
     { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck, badge: true },
+    { to: "/admin/indicacoes", label: "Indicações", icon: Gift },
     { to: "/admin/usuarios", label: "Usuários", icon: Users },
     { to: "/admin/mensagens", label: "Mensagens", icon: Megaphone },
     { to: "/admin/comunidade", label: "Comunidade", icon: MessageSquareWarning },
@@ -129,6 +139,7 @@ function AdminIndex() {
       </div>
 
       <div className="mt-4 grid gap-2">
+        <Link to="/admin/indicacoes" className="ep-card flex items-center gap-3"><Gift className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Resgates de indicação</div><div className="text-xs text-muted-foreground">Pix e descontos aguardando decisão</div></div></Link>
         <Link to="/admin/solicitacoes" className="ep-card flex items-center gap-3">
           <FileCheck className="size-5 text-primary" />
           <div className="flex-1"><div className="font-semibold">Solicitações PIX</div><div className="text-xs text-muted-foreground">Aprovar ou recusar pagamentos</div></div>
