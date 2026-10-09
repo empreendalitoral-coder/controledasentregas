@@ -42,7 +42,7 @@ function SuportePage() {
 
       <h3>Como funciona o teste grátis?</h3>
       <p>
-        Ao criar sua conta você recebe 15 dias com todos os recursos Premium
+        Ao criar sua conta você recebe 3 dias com todos os recursos Premium
         liberados. Depois, você escolhe se quer continuar no plano gratuito ou
         assinar Premium.
       </p>

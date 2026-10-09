@@ -32,7 +32,7 @@ function TermosPage() {
     <LegalPage
       title="Termos de Uso"
       subtitle="Ao usar o Entrega Pro, você concorda com estes termos."
-      updatedAt="28 de junho de 2026"
+      updatedAt="9 de outubro de 2026"
     >
       <h2>1. Aceitação</h2>
       <p>
@@ -57,8 +57,8 @@ function TermosPage() {
       <h2>4. Plano Premium</h2>
       <ul>
         <li>
-          <strong>Teste grátis:</strong> novas contas recebem 15 dias com todos os
-          recursos Premium liberados.
+          <strong>Teste grátis:</strong> novas contas recebem 3 dias com todos os
+          recursos Premium liberados. Prazos já concedidos às contas existentes são preservados.
         </li>
         <li>
           <strong>Assinatura mensal:</strong> R$ 9,90 por mês, renovação a cada 30 dias.

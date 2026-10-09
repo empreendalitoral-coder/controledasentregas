@@ -78,6 +78,13 @@
       "when": 1791505807895,
       "tag": "0010_referral_paid_lock_scope",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791506644196,
+      "tag": "0011_configured_new_account_trial",
+      "breakpoints": true
     }
   ]
 }
