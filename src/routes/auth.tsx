@@ -145,7 +145,7 @@ function AuthPage() {
   <h1 className="text-2xl font-bold">Entrega Pro</h1>
   <p className="text-sm text-muted-foreground mt-1">
     {mode === "login" && "Entre na sua conta"}
-    {mode === "signup" && "Crie sua conta — 15 dias Premium grátis"}
+    {mode === "signup" && "Crie sua conta — 3 dias Premium grátis"}
     {mode === "reset" && "Recupere seu acesso"}
   </p>
 </div>

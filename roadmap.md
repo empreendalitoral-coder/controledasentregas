@@ -1,5 +1,11 @@
 # Diagnóstico do aplicativo
 
+# Teste grátis reduzido
+
+- [ ] Aplicar 3 dias em novos cadastros sem alterar validades existentes
+- [ ] Atualizar cadastro, Termos, Suporte e opção administrativa de teste
+- [ ] Validar concessão e preservação dos prazos; não publicar sem nova autorização
+
 # Programa de indicações
 
 - [x] Criar atribuição no cadastro e comissão única com liberação após 7 dias

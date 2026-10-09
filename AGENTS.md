@@ -19,3 +19,4 @@
 - Fiscal reports derive classification automatically from unified movement origin, never read or write legacy fiscal annotations, and never change operational profit; this removes per-record manual work.
 - Unified financial reads select exactly one work-revenue basis: daily earnings for fiscal reports, actual settlements for cash flow (the default); this prevents counting the same work twice.
 - Referral attribution is fixed at signup; commissions, payment confirmation, reservations and redemptions use authenticated atomic database functions and a first-paid-purchase marker, preventing client-written rewards and duplicate payouts.
+- New-account trial grants and future manual trial approvals read the configured trial duration at grant time; changing configuration never rewrites existing Premium validity.

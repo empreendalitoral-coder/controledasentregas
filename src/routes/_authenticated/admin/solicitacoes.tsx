@@ -59,6 +59,14 @@ function SolicAdminPage() {
   const [rejecting, setRejecting] = useState<Solic | null>(null);
   const [reason, setReason] = useState("");
   const [refunding, setRefunding] = useState<Solic | null>(null);
+  const [trialDays, setTrialDays] = useState(3);
+  useEffect(() => {
+    let alive = true;
+    supabase.rpc("get_payment_info").then(({ data }) => {
+      if (alive && data?.[0]) setTrialDays(data[0].dias_teste_gratis);
+    });
+    return () => { alive = false; };
+  }, []);
 
   async function refund() {
     if (!refunding || busy) return;
@@ -189,7 +197,7 @@ function SolicAdminPage() {
               <div className="mt-2 rounded-lg bg-secondary/60 p-2">
                 <div className="text-xs text-muted-foreground mb-2">Liberar por quanto tempo?</div>
                 <div className="grid grid-cols-3 gap-2">
-                  {([["teste", "15 dias"], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).filter(([p])=>!s.referral_discount || p===s.plano).map(([p, lbl]) => (
+                  {([["teste", `${trialDays} dias`], ["mensal", "30 dias"], ["anual", "1 ano"]] as const).filter(([p])=>!s.referral_discount || p===s.plano).map(([p, lbl]) => (
                     <Button disabled={busy!==null} key={p} onClick={() => decidir(s, "aprovado", p)} variant={p===s.plano?'default':'outline'} className="h-9 text-xs font-semibold">
                       {lbl}
                     </Button>
