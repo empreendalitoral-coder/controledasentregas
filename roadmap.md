@@ -1,5 +1,12 @@
 # Diagnóstico do aplicativo
 
+# Varredura de erros
+
+- [ ] Revisar carregamento, salvamentos e falhas de conexão
+- [ ] Corrigir falhas confirmadas e acrescentar testes de regressão
+- [ ] Conferir navegação e salvamento real com a conta autenticada
+- [ ] Conferir segurança e registrar limitações; não publicar sem autorização
+
 # Teste grátis reduzido
 
 - [x] Aplicar 3 dias em novos cadastros sem alterar validades existentes

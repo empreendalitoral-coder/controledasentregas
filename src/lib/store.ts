@@ -91,6 +91,7 @@ export type State = {
   manutencoes: Manutencao[];
   multas: Multa[];
   hydrated: boolean;
+  loadError?: string;
 };
 
 const LEGACY_KEY = "entrega-pro:v1";
@@ -108,7 +109,7 @@ const defaultState: State = {
 
 let state: State = defaultState;
 let userId: string | null = null;
-let loading = false;
+let hydrationVersion = 0;
 const listeners = new Set<() => void>();
 
 function setState(updater: (s: State) => State) {
@@ -141,8 +142,8 @@ function num(v: number | null | undefined): number | undefined {
 }
 
 async function hydrate(uid: string) {
-  if (loading) return;
-  loading = true;
+  const version = ++hydrationVersion;
+  setState((s) => ({ ...s, loadError: undefined }));
   try {
     const [prof, lanc, rec, abast, man, multas] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
@@ -153,7 +154,10 @@ async function hydrate(uid: string) {
       supabase.from("multas").select("*").eq("user_id", uid).order("data", { ascending: false }),
     ]);
 
-    if (multas.error) throw multas.error;
+    for (const result of [prof, lanc, rec, abast, man, multas]) {
+      if (result.error) throw result.error;
+    }
+    if (version !== hydrationVersion || uid !== userId) return;
     const p = prof.data;
     const motorista: Motorista = p
       ? {
@@ -223,8 +227,11 @@ async function hydrate(uid: string) {
       multas: (multas.data ?? []).map((m) => ({ id: m.id, data: m.data, valor: Number(m.valor), descricao: m.descricao ?? undefined, status: m.status as Multa["status"] })),
       hydrated: true,
     }));
-  } finally {
-    loading = false;
+  } catch (error) {
+    if (version === hydrationVersion && uid === userId) {
+      setState((s) => ({ ...s, loadError: "Não foi possível carregar seus registros. Tente novamente." }));
+    }
+    throw error;
   }
 }
 
@@ -242,12 +249,14 @@ function ensureInit() {
     })
     .catch((error) => {
       console.error("[store] falha ao carregar sessão", error);
-      setState(() => ({ ...defaultState, hydrated: true }));
+      if (!userId) setState(() => ({ ...defaultState, hydrated: true }));
     });
   supabase.auth.onAuthStateChange((_event, session) => {
     const uid = session?.user.id ?? null;
     if (uid !== userId) {
       userId = uid;
+      ++hydrationVersion;
+      setState(() => ({ ...defaultState, hydrated: !uid }));
       if (uid) {
         void hydrate(uid).catch((error) => {
           console.error("[store] falha ao carregar dados", error);
@@ -315,6 +324,10 @@ function lancToDb(l: Partial<Lancamento>) {
 }
 
 export const actions = {
+  async retryLoad() {
+    await hydrate(uidOrThrow());
+  },
+
   async setMotorista(m: Motorista) {
     const uid = uidOrThrow();
     const { error } = await supabase
@@ -328,14 +341,14 @@ export const actions = {
         modelo: m.modelo ?? null,
         placa: m.placa ?? null,
       })
-      .eq("id", uid);
+      .eq("id", uid).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, motorista: m }));
   },
 
   async setMeta(v: number) {
     const uid = uidOrThrow();
-    const { error } = await supabase.from("profiles").update({ meta_mensal: v }).eq("id", uid);
+    const { error } = await supabase.from("profiles").update({ meta_mensal: v }).eq("id", uid).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, meta_mensal: v }));
   },
@@ -354,7 +367,9 @@ export const actions = {
   },
 
   async updateLancamento(id: string, patch: Partial<Lancamento>) {
-    const { error } = await supabase.from("lancamentos").update(lancToDb(patch) as never).eq("id", id);
+    const values = lancToDb(patch);
+    const update = Object.fromEntries(Object.entries(values).filter(([key]) => key in patch));
+    const { error } = await supabase.from("lancamentos").update(update as never).eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({
       ...s,
@@ -363,7 +378,7 @@ export const actions = {
   },
 
   async deleteLancamento(id: string) {
-    const { error } = await supabase.from("lancamentos").delete().eq("id", id);
+    const { error } = await supabase.from("lancamentos").delete().eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, lancamentos: s.lancamentos.filter((l) => l.id !== id) }));
   },
@@ -393,17 +408,8 @@ export const actions = {
   async updateRecebimento(id: string, patch: Partial<Recebimento>) {
     const { error } = await supabase
       .from("recebimentos")
-      .update({
-        nome_periodo: patch.nome_periodo,
-        data_inicial: patch.data_inicial,
-        data_final: patch.data_final,
-        data_pagamento: patch.data_pagamento,
-        valor_recebido: patch.valor_recebido ?? null,
-        data_recebimento: patch.data_recebimento || null,
-        status: patch.status,
-        observacao: patch.observacao ?? null,
-      })
-      .eq("id", id);
+      .update(Object.fromEntries(Object.entries(patch).filter(([key]) => key !== "id").map(([key, value]) => [key, value === undefined || value === "" ? null : value])) as never)
+      .eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({
       ...s,
@@ -412,7 +418,7 @@ export const actions = {
   },
 
   async deleteRecebimento(id: string) {
-    const { error } = await supabase.from("recebimentos").delete().eq("id", id);
+    const { error } = await supabase.from("recebimentos").delete().eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, recebimentos: s.recebimentos.filter((r) => r.id !== id) }));
   },
@@ -439,7 +445,7 @@ export const actions = {
   },
 
   async deleteAbastecimento(id: string) {
-    const { error } = await supabase.from("abastecimentos").delete().eq("id", id);
+    const { error } = await supabase.from("abastecimentos").delete().eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, abastecimentos: s.abastecimentos.filter((a) => a.id !== id) }));
   },
@@ -465,7 +471,7 @@ export const actions = {
   },
 
   async deleteManutencao(id: string) {
-    const { error } = await supabase.from("manutencoes").delete().eq("id", id);
+    const { error } = await supabase.from("manutencoes").delete().eq("id", id).select("id").single();
     if (error) throw error;
     setState((s) => ({ ...s, manutencoes: s.manutencoes.filter((m) => m.id !== id) }));
   },
@@ -487,6 +493,7 @@ export const actions = {
   },
 
   exportJSON(): string {
+    if (!state.hydrated || state.loadError) throw new Error("Aguarde o carregamento completo dos registros antes de exportar.");
     return JSON.stringify(state, null, 2);
   },
 
@@ -522,14 +529,16 @@ export const actions = {
 
   async reset() {
     const uid = uidOrThrow();
-    await Promise.all([
+    const results = await Promise.all([
       supabase.from("lancamentos").delete().eq("user_id", uid),
       supabase.from("recebimentos").delete().eq("user_id", uid),
       supabase.from("abastecimentos").delete().eq("user_id", uid),
       supabase.from("manutencoes").delete().eq("user_id", uid),
       supabase.from("multas").delete().eq("user_id", uid),
     ]);
-    setState((s) => ({ ...s, lancamentos: [], recebimentos: [], abastecimentos: [], manutencoes: [], multas: [] }));
+    const failure = results.find((result) => result.error);
+    await hydrate(uid);
+    if (failure?.error) throw failure.error;
   },
 
   async signOut() {
@@ -543,6 +552,7 @@ export const actions = {
     } catch (error) {
       console.warn("[push] não foi possível remover o token deste aparelho", error);
     }
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   },
 };
