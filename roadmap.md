@@ -2,9 +2,9 @@
 
 # Teste grátis reduzido
 
-- [ ] Aplicar 3 dias em novos cadastros sem alterar validades existentes
-- [ ] Atualizar cadastro, Termos, Suporte e opção administrativa de teste
-- [ ] Validar concessão e preservação dos prazos; não publicar sem nova autorização
+- [x] Aplicar 3 dias em novos cadastros sem alterar validades existentes
+- [x] Atualizar cadastro, Termos, Suporte e opção administrativa de teste
+- [x] Conferir configuração de 3 dias, textos e preservação das 13 validades existentes; 24 testes passaram; não publicado
 
 # Programa de indicações
 
