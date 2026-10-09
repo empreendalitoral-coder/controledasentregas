@@ -71,6 +71,13 @@
       "when": 1791505787024,
       "tag": "0009_referral_wallet_lock_order",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791505807895,
+      "tag": "0010_referral_paid_lock_scope",
+      "breakpoints": true
     }
   ]
 }
