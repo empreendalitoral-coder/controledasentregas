@@ -41,8 +41,9 @@ function inRange(date: string, opt: AggregateOptions): boolean {
  * (fluxo_caixa). Não grava nada — sempre lê em tempo real.
  */
 export async function loadFinanceiroUnificado(opt: AggregateOptions = {}): Promise<UnifiedRow[]> {
-  const { data: u } = await supabase.auth.getUser();
-  if (!u.user) return [];
+  const { data: u, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!u.user) throw new Error("Sua sessão expirou. Entre novamente para carregar os movimentos.");
   const uid = u.user.id;
 
   const [lanc, rec, pixR, pixE, abast, man, contas, cart, fluxo] = await Promise.all([

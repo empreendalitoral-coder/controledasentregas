@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput, TextArea } from "@/components/Field";
 import { actions, useFullStore, type Lancamento } from "@/lib/store";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
 import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
@@ -37,14 +37,25 @@ function todayStr() {
 
 function LancamentoPage() {
   const { id } = Route.useParams();
+  const state = useFullStore();
+  const existing = state.lancamentos.find((l) => l.id === id);
+  if (state.loadError) {
+    return <AppShell title="Lançamento" back="/historico"><div role="alert" className="ep-empty"><p>{state.loadError}</p><Button onClick={() => { void actions.retryLoad().catch(() => toast.error("Não foi possível carregar. Tente novamente.")); }}>Tentar novamente</Button></div></AppShell>;
+  }
+  if (!state.hydrated) {
+    return <AppShell title="Lançamento" back="/historico"><div className="ep-empty" role="status">Carregando lançamento…</div></AppShell>;
+  }
+  if (id !== "novo" && !existing) {
+    return <AppShell title="Lançamento" back="/historico"><div className="ep-empty" role="alert">Lançamento não encontrado.</div></AppShell>;
+  }
+  return <LancamentoForm key={id} id={id} existing={existing} />;
+}
+
+function LancamentoForm({ id, existing }: { id: string; existing?: Lancamento }) {
   const { repetir } = Route.useSearch();
   const isNew = id === "novo";
   const nav = useNavigate();
   const state = useFullStore();
-  const existing = useMemo(
-    () => (isNew ? null : state.lancamentos.find((l) => l.id === id) || null),
-    [id, isNew, state.lancamentos],
-  );
 
   const [f, setF] = useState<Lancamento>(
     existing ?? {
@@ -99,6 +110,7 @@ function LancamentoPage() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (saving) return;
     if (!f.data) {
       toast.error("Informe a data");
       return;
