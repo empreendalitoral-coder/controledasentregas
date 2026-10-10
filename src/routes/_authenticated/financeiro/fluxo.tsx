@@ -118,7 +118,7 @@ function FluxoPage() {
 
       <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
         <span>Recebimentos, PIX, abastec., manut., contas, cartões</span>
-        <Button disabled={saving} onClick={load} disabled={loading} className="inline-flex items-center gap-1 text-foreground"><RefreshCw className={`size-3 ${loading ? "animate-spin" : ""}`} /> Atualizar</Button>
+        <Button disabled={saving || loading} onClick={load} variant="ghost" className="inline-flex items-center gap-1 text-foreground"><RefreshCw className={`size-3 ${loading ? "animate-spin" : ""}`} /> Atualizar</Button>
       </div>
 
       <form onSubmit={add} className="mt-4 ep-card space-y-2">

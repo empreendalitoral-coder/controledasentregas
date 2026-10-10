@@ -99,7 +99,8 @@ function MetasPage() {
     mutationBusy.current = true;
     setSaving(true);
     try { const { error } = await supabase.from("metas_financeiras").delete().eq("id", id).select("id").single();
-    if (error) throw error; load(); 
+    if (error) throw error;
+    await load();
     } catch (error) {
       toast.error("Não foi possível salvar a alteração. Tente novamente.");
       throw error;
@@ -141,6 +142,7 @@ function MetasPage() {
               <div className="mt-1 text-right text-xs font-medium text-primary">{pct}%</div>
               <div className="mt-2 flex gap-2">
                 <input
+                  disabled={saving}
                   className="ep-input flex-1"
                   type="number"
                   step="0.01"
