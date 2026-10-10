@@ -59,8 +59,9 @@ function RecebimentosPage() {
     try {
       await actions.deleteRecebimento(id);
       toast.success("Período excluído");
-    } catch {
+    } catch (error) {
       toast.error("Não foi possível excluir o período");
+      throw error;
     }
   }
 
@@ -195,6 +196,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
+    if (saving) return;
     if (!f.nome_periodo.trim() || !f.data_inicial || !f.data_final || !f.data_pagamento) {
       toast.error("Preencha os campos obrigatórios");
       return;
@@ -222,7 +224,7 @@ function NovoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+    <Dialog open={open} onOpenChange={(next) => { if (!next && !saving) onClose(); }}>
       <DialogContent className="w-[calc(100%-1.5rem)] max-w-md rounded-xl bg-card p-5 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-left"><DialogTitle className="font-display flex items-center gap-2"><CircleDollarSign className="size-5 text-primary" /> Novo recebimento</DialogTitle><DialogDescription>Crie um período e informe quando ele deve ser pago.</DialogDescription></DialogHeader>
       <form
@@ -285,7 +287,7 @@ function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | nu
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!recebimento) return;
+    if (!recebimento || saving) return;
     const numero = Number(valor.replace(",", "."));
     if (!data || !Number.isFinite(numero) || numero < 0) {
       toast.error("Informe uma data e um valor válidos");
@@ -305,7 +307,7 @@ function RecebidoModal({ recebimento, onClose }: { recebimento: Recebimento | nu
   }
 
   return (
-    <Dialog open={recebimento !== null} onOpenChange={(next) => { if (!next) onClose(); }}>
+    <Dialog open={recebimento !== null} onOpenChange={(next) => { if (!next && !saving) onClose(); }}>
       <DialogContent className="w-[calc(100%-1.5rem)] max-w-sm rounded-xl bg-card p-5">
         <DialogHeader className="text-left"><DialogTitle className="font-display">Confirmar recebimento</DialogTitle><DialogDescription>Registre a data e o valor que entrou.</DialogDescription></DialogHeader>
         <form onSubmit={save} className="space-y-3">

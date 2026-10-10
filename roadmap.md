@@ -2,10 +2,10 @@
 
 # Varredura de erros
 
-- [ ] Revisar carregamento, salvamentos e falhas de conexão
-- [ ] Corrigir falhas confirmadas e acrescentar testes de regressão
-- [ ] Conferir navegação e salvamento real com a conta autenticada
-- [ ] Conferir segurança e registrar limitações; não publicar sem autorização
+- [x] Revisar carregamento, salvamentos e falhas de conexão
+- [x] Corrigir edição vazia após carregamento, falhas silenciosas financeiras e confirmações; acrescentar 3 testes de regressão
+- [x] Conferir navegação, criar/editar/excluir lançamento, preservar campos após falha de conexão, confirmar/excluir recebimento e pagar/excluir conta com a conta autenticada
+- [x] Conferir segurança: sem achados críticos, apenas leitura autenticada do catálogo de tipos de notificação; sem publicação. Notificações externas e tarefas agendadas não exercitadas nesta revisão
 
 # Teste grátis reduzido
 
@@ -88,4 +88,4 @@
 - [x] Separar totais mensais/anuais e exportação por CNPJ e CPF no Relatório MEI
 - [x] Remover seletores manuais e pendências de classificação
 - [x] Validar separação automática com registros reais de rota, Pix e conta; limpar os testes
-- [ ] Validar tela e downloads de relatórios de ponta a ponta — bloqueado: conta disponível para teste sem Premium ativo
+- [x] Validar tela e downloads de relatórios com conta autenticada autorizada: PDF e CSV baixados; sem alterar validade Premium

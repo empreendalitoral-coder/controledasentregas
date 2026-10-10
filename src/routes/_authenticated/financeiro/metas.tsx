@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { useEffect, useState } from "react";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, Trash2, Target } from "lucide-react";
 import { BRL } from "@/lib/calc";
+import { Button } from "@/components/ui/button";
 
 type Meta = { id: string; nome: string; valor_meta: number; valor_atual: number; icone: string | null };
 
@@ -26,48 +28,99 @@ export const Route = createFileRoute("/_authenticated/financeiro/metas")({
 });
 
 function MetasPage() {
+  const [saving, setSaving] = useState(false);
+  const mutationBusy = useRef(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [items, setItems] = useState<Meta[]>([]);
   const [form, setForm] = useState({ nome: "", valor: "", icone: "🎯" });
   const [aporte, setAporte] = useState<Record<string, string>>({});
 
   async function load() {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
-    const { data } = await supabase.from("metas_financeiras").select("*").eq("user_id", u.user.id);
+    setLoadError(null);
+    try {
+    const { data: u, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!u.user) throw new Error("Sua sessão expirou. Entre novamente.");
+    const { data, error } = await supabase.from("metas_financeiras").select("*").eq("user_id", u.user.id);
+    if (error) throw error;
     if (data) setItems(data.map((d) => ({ ...d, valor_meta: Number(d.valor_meta), valor_atual: Number(d.valor_atual) })) as Meta[]);
+  
+    } catch {
+      setLoadError("Não foi possível carregar seus registros. Tente novamente.");
+    }
   }
   useEffect(() => { load(); }, []);
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
+    if (mutationBusy.current) return;
+    mutationBusy.current = true;
+    setSaving(true);
+    try {
+    
+    const { data: u, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!u.user) throw new Error("Sua sessão expirou. Entre novamente.");
     const { error } = await supabase.from("metas_financeiras").insert({
       user_id: u.user.id, nome: form.nome, valor_meta: Number(form.valor), icone: form.icone,
     });
-    if (error) return toast.error(error.message);
+    if (error) throw error;
     setForm({ nome: "", valor: "", icone: "🎯" });
-    load();
+    await load();
+  
+    } catch (error) {
+      toast.error("Não foi possível salvar a alteração. Tente novamente.");
+    } finally {
+      mutationBusy.current = false;
+      setSaving(false);
+    }
   }
   async function aportar(m: Meta) {
+    if (mutationBusy.current) return;
+    mutationBusy.current = true;
+    setSaving(true);
+    try {
     const v = Number(aporte[m.id] || 0);
     if (!v) return;
-    await supabase.from("metas_financeiras").update({ valor_atual: m.valor_atual + v }).eq("id", m.id);
+    const { error } = await supabase.from("metas_financeiras").update({ valor_atual: m.valor_atual + v }).eq("id", m.id).select("id").single();
+    if (error) throw error;
     setAporte({ ...aporte, [m.id]: "" });
-    load();
+    await load();
+  
+    } catch (error) {
+      toast.error("Não foi possível salvar a alteração. Tente novamente.");
+    } finally {
+      mutationBusy.current = false;
+      setSaving(false);
+    }
   }
-  async function remove(id: string) { await supabase.from("metas_financeiras").delete().eq("id", id); load(); }
+  async function remove(id: string) {
+    if (mutationBusy.current) return;
+    mutationBusy.current = true;
+    setSaving(true);
+    try { const { error } = await supabase.from("metas_financeiras").delete().eq("id", id).select("id").single();
+    if (error) throw error;
+    await load();
+    } catch (error) {
+      toast.error("Não foi possível salvar a alteração. Tente novamente.");
+      throw error;
+    } finally {
+      mutationBusy.current = false;
+      setSaving(false);
+    }
+  }
 
   return (
     <AppShell title="Metas Financeiras" back="/financeiro">
+      {loadError && <div role="alert" className="mb-4 text-sm text-destructive">{loadError}<Button variant="outline" onClick={() => { void load(); }}>Tentar novamente</Button></div>}
       <form onSubmit={add} className="ep-card space-y-2">
         <h3 className="font-semibold flex items-center gap-2"><Target className="size-4" /> Nova meta</h3>
-        <input className="ep-input" placeholder="Nome (ex: Moto nova)" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} required />
+        <input disabled={saving} className="ep-input" placeholder="Nome (ex: Moto nova)" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} required />
         <div className="grid grid-cols-3 gap-2">
-          <input className="ep-input col-span-2" type="number" step="0.01" placeholder="Valor da meta" value={form.valor} onChange={(e) => setForm({ ...form, valor: e.target.value })} required />
-          <input className="ep-input text-center text-xl" maxLength={2} value={form.icone} onChange={(e) => setForm({ ...form, icone: e.target.value })} />
+          <input disabled={saving} className="ep-input col-span-2" type="number" step="0.01" placeholder="Valor da meta" value={form.valor} onChange={(e) => setForm({ ...form, valor: e.target.value })} required />
+          <input disabled={saving} className="ep-input text-center text-xl" maxLength={2} value={form.icone} onChange={(e) => setForm({ ...form, icone: e.target.value })} />
         </div>
-        <button className="w-full h-11 rounded-md bg-primary text-primary-foreground font-semibold"><Plus className="size-4 inline mr-1" /> Criar meta</button>
+        <Button type="submit" disabled={saving} className="w-full h-11 rounded-md bg-primary text-primary-foreground font-semibold"><Plus className="size-4 inline mr-1" /> Criar meta</Button>
       </form>
 
       <div className="mt-4 space-y-3">
@@ -81,7 +134,7 @@ function MetasPage() {
                   <div className="font-semibold">{m.nome}</div>
                   <div className="text-xs text-muted-foreground">{BRL(m.valor_atual)} de {BRL(m.valor_meta)}</div>
                 </div>
-                <button onClick={() => remove(m.id)} className="text-destructive"><Trash2 className="size-4" /></button>
+                <ConfirmAction disabled={saving} title="Excluir meta?" description="Este registro será removido permanentemente." confirmLabel="Excluir" destructive onConfirm={() => remove(m.id)} trigger={<Button aria-label="Excluir" variant="ghost" size="icon" disabled={saving} className="text-destructive"><Trash2 className="size-4" /></Button>} />
               </div>
               <div className="mt-2 h-2 rounded-full bg-secondary overflow-hidden">
                 <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
@@ -89,6 +142,7 @@ function MetasPage() {
               <div className="mt-1 text-right text-xs font-medium text-primary">{pct}%</div>
               <div className="mt-2 flex gap-2">
                 <input
+                  disabled={saving}
                   className="ep-input flex-1"
                   type="number"
                   step="0.01"
@@ -96,7 +150,7 @@ function MetasPage() {
                   value={aporte[m.id] || ""}
                   onChange={(e) => setAporte({ ...aporte, [m.id]: e.target.value })}
                 />
-                <button onClick={() => aportar(m)} className="h-11 px-4 rounded-md bg-success text-success-foreground font-semibold">+ Guardar</button>
+                <Button disabled={saving} onClick={() => aportar(m)} className="h-11 px-4 rounded-md bg-success text-success-foreground font-semibold">+ Guardar</Button>
               </div>
             </div>
           );

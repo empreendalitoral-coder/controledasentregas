@@ -33,19 +33,24 @@ export function ConfirmAction({
 }: ConfirmActionProps) {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function confirm() {
+    if (confirming) return;
+    setError(null);
     setConfirming(true);
     try {
       await onConfirm();
       setOpen(false);
+    } catch {
+      setError("Não foi possível concluir. Tente novamente.");
     } finally {
       setConfirming(false);
     }
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={(next) => { if (!confirming) setOpen(next); }}>
+    <AlertDialog open={open} onOpenChange={(next) => { if (!confirming) { setOpen(next); setError(null); } }}>
       <AlertDialogTrigger asChild disabled={disabled}>
         {trigger}
       </AlertDialogTrigger>
@@ -54,6 +59,7 @@ export function ConfirmAction({
           <AlertDialogTitle className="font-display">{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
         <AlertDialogFooter className="mt-2 grid grid-cols-2 gap-2 sm:flex sm:space-x-0">
           <AlertDialogCancel disabled={confirming}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
