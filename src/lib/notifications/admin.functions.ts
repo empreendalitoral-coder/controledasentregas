@@ -16,7 +16,7 @@ async function loadAdmin() {
 export const listNotificationLogs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const admin = await loadAdmin();
+    const admin = context.supabase;
     const { data, error } = await admin
       .from("notification_envios")
       .select("id, tipo_codigo, titulo, corpo, sucesso, erro, enviado_em")
@@ -47,7 +47,11 @@ export const sendTestNotification = createServerFn({ method: "POST" })
         titulo: z.string().min(1).max(120),
         mensagem: z.string().min(1).max(500),
         escopo: z.enum(["dispositivo", "todos"]),
-        token: z.string().optional(),
+        token: z.string().min(10).max(4096).optional(),
+      })
+      .refine((data) => data.escopo !== "dispositivo" || Boolean(data.token), {
+        message: "Selecione um dispositivo para enviar o teste",
+        path: ["token"],
       })
       .parse(raw),
   )
@@ -105,10 +109,11 @@ export const sendTestNotification = createServerFn({ method: "POST" })
     );
 
     if (invalidos.length) {
-      await admin.from("notification_tokens").delete().in("token", invalidos);
+      const { error } = await admin.from("notification_tokens").delete().eq("user_id", context.userId).in("token", invalidos);
+      if (error) throw new Error(error.message);
     }
 
-    await admin.from("notification_envios").insert({
+    const { error: logError } = await admin.from("notification_envios").insert({
       user_id: context.userId,
       tipo_codigo: "teste_manual",
       chave_dedup: `teste:${context.userId}:${Date.now()}`,
@@ -117,6 +122,7 @@ export const sendTestNotification = createServerFn({ method: "POST" })
       sucesso: enviados > 0,
       erro: enviados > 0 ? null : erros[0] ?? "falha_desconhecida",
     });
+    if (logError) throw new Error(logError.message);
 
     return { ok: enviados > 0, enviados, falhas, erros };
   });
@@ -138,10 +144,11 @@ export const getFirebaseDiagnostics = createServerFn({ method: "GET" })
       }
     })();
 
-    const { count: tokensCount } = await admin
+    const { count: tokensCount, error } = await context.supabase
       .from("notification_tokens")
       .select("*", { count: "exact", head: true })
       .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
 
     const isProd = process.env.NODE_ENV === "production";
 

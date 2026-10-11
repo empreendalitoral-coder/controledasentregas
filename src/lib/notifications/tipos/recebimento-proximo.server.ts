@@ -20,7 +20,7 @@ export const tipoRecebimentoProximo: NotificationTipo<Ctx> = {
       .neq("status", "recebido");
     if (error) {
       console.error("[notif recebimento_proximo] scan erro", error);
-      return [];
+      throw error;
     }
     return (data ?? []).map((r) => ({
       userId: r.user_id as string,

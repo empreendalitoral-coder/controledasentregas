@@ -32,10 +32,9 @@ describe("notificação de recebimento próximo", () => {
     const from = vi.fn(() => ({ select }));
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-    const result = await tipoRecebimentoProximo.scan?.({ from } as never);
+    await expect(tipoRecebimentoProximo.scan?.({ from } as never)).rejects.toEqual(error);
 
     expect(select).toHaveBeenCalledWith("id, user_id, nome_periodo, valor_recebido, data_pagamento, status");
-    expect(result).toEqual([]);
     expect(consoleError).toHaveBeenCalledWith("[notif recebimento_proximo] scan erro", error);
     consoleError.mockRestore();
   });

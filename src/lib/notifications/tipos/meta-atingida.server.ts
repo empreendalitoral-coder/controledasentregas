@@ -18,7 +18,7 @@ export const tipoMetaAtingida: NotificationTipo<Ctx> = {
       .not("valor_meta", "is", null);
     if (error) {
       console.error("[notif meta_atingida] scan erro", error);
-      return [];
+      throw error;
     }
     return (data ?? [])
       .filter((m) => Number(m.valor_atual) >= Number(m.valor_meta) && Number(m.valor_meta) > 0)
