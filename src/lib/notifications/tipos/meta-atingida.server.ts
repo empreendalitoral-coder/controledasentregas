@@ -13,22 +13,22 @@ export const tipoMetaAtingida: NotificationTipo<Ctx> = {
   scan: async (admin) => {
     const { data, error } = await admin
       .from("metas_financeiras")
-      .select("id, user_id, titulo, valor_alvo, valor_atual")
+      .select("id, user_id, nome, valor_meta, valor_atual")
       .not("valor_atual", "is", null)
-      .not("valor_alvo", "is", null);
+      .not("valor_meta", "is", null);
     if (error) {
       console.error("[notif meta_atingida] scan erro", error);
       return [];
     }
     return (data ?? [])
-      .filter((m) => Number(m.valor_atual) >= Number(m.valor_alvo) && Number(m.valor_alvo) > 0)
+      .filter((m) => Number(m.valor_atual) >= Number(m.valor_meta) && Number(m.valor_meta) > 0)
       .map((m) => ({
         userId: m.user_id as string,
         dedupKey: `meta:${m.id}`,
         contexto: {
           id: m.id,
-          titulo: (m.titulo as string) ?? "Meta",
-          valor: Number(m.valor_alvo) || 0,
+          titulo: (m.nome as string) ?? "Meta",
+          valor: Number(m.valor_meta) || 0,
         },
       }));
   },
