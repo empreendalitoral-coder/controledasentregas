@@ -140,11 +140,17 @@ export async function sendFcmMessage(payload: FcmPayload): Promise<FcmSendResult
     );
     if (res.ok) return { ok: true };
     const body = await res.text();
-    const invalid =
-      res.status === 404 ||
-      body.includes("UNREGISTERED") ||
-      body.includes("INVALID_ARGUMENT") ||
-      body.includes("registration-token-not-registered");
+    // Invalid payloads and missing projects must not delete a valid device token.
+    let invalid = false;
+    try {
+      const response = JSON.parse(body) as { error?: { details?: Array<{ "@type"?: string; errorCode?: string }> } };
+      invalid = response.error?.details?.some((detail) =>
+        detail["@type"] === "type.googleapis.com/google.firebase.fcm.v1.FcmError" &&
+        detail.errorCode === "UNREGISTERED",
+      ) ?? false;
+    } catch {
+      // An unknown response is a delivery failure, not proof of an invalid token.
+    }
     return invalid
       ? { ok: false, invalidToken: true, error: `${res.status} ${body.slice(0, 300)}` }
       : { ok: false, error: `${res.status} ${body.slice(0, 300)}` };

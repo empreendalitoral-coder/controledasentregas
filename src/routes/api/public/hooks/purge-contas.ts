@@ -49,16 +49,21 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
           const uid = row.user_id;
           try {
             for (const t of tabelas) {
-              await supabaseAdmin.from(t).delete().eq("user_id", uid);
+              const { error } = await supabaseAdmin.from(t).delete().eq("user_id", uid);
+              if (error) throw error;
             }
-            await supabaseAdmin.from("profiles").delete().eq("id", uid);
-            await supabaseAdmin
-              .from("contas_excluidas")
-              .update({ purgada_em: new Date().toISOString() })
-              .eq("user_id", uid);
+            const { error: profileError } = await supabaseAdmin.from("profiles").delete().eq("id", uid);
+            if (profileError) throw profileError;
 
             const { error: errDel } = await supabaseAdmin.auth.admin.deleteUser(uid);
             if (errDel) throw errDel;
+
+            // Only mark completion after Auth deletion succeeds; failed accounts stay retryable.
+            const { error: markError } = await supabaseAdmin
+              .from("contas_excluidas")
+              .update({ purgada_em: new Date().toISOString() })
+              .eq("user_id", uid);
+            if (markError) throw markError;
 
             purgados += 1;
           } catch (e) {
