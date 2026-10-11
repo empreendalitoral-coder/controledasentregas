@@ -46,21 +46,21 @@ export const registerDeviceToken = createServerFn({ method: "POST" })
 
 export const unregisterDeviceToken = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((raw) => z.object({ token: z.string() }).parse(raw))
+  .inputValidator((raw) => z.object({ token: z.string().min(10).max(4096) }).parse(raw))
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
-    await admin
+    const { error } = await context.supabase
       .from("notification_tokens")
       .delete()
       .eq("user_id", context.userId)
       .eq("token", data.token);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 export const listNotificationSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const admin = await loadAdmin();
+    const admin = context.supabase;
     const [tiposRes, prefRes, tokensRes] = await Promise.all([
       admin
         .from("notification_tipos")
@@ -78,13 +78,17 @@ export const listNotificationSettings = createServerFn({ method: "GET" })
     ]);
 
     // Descobre se é admin para filtrar tipos apenas_admin (service role bypassa RLS)
-    const { data: adminRow } = await admin
+    const { data: adminRow, error: roleError } = await admin
       .from("user_roles")
       .select("role")
       .eq("user_id", context.userId)
       .eq("role", "admin")
       .maybeSingle();
     const isAdmin = Boolean(adminRow);
+    for (const result of [tiposRes, prefRes, tokensRes]) {
+      if (result.error) throw new Error(result.error.message);
+    }
+    if (roleError) throw new Error(roleError.message);
 
     const prefMap = new Map((prefRes.data ?? []).map((p) => [p.tipo_codigo, p.ativo]));
     const tipos = (tiposRes.data ?? [])
@@ -100,10 +104,20 @@ export const listNotificationSettings = createServerFn({ method: "GET" })
 export const updateNotificationPreference = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
-    z.object({ tipo_codigo: z.string(), ativo: z.boolean() }).parse(raw),
+    z.object({ tipo_codigo: z.string().min(1).max(100), ativo: z.boolean() }).parse(raw),
   )
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
+    const admin = context.supabase;
+    const { data: tipo, error: typeError } = await admin.from("notification_tipos")
+      .select("disponivel, apenas_admin").eq("codigo", data.tipo_codigo).maybeSingle();
+    if (typeError) throw new Error(typeError.message);
+    if (!tipo?.disponivel) throw new Error("Tipo de notificação indisponível");
+    if (tipo.apenas_admin) {
+      const { data: role, error: roleError } = await admin.from("user_roles")
+        .select("role").eq("user_id", context.userId).eq("role", "admin").maybeSingle();
+      if (roleError) throw new Error(roleError.message);
+      if (!role) throw new Error("Acesso restrito aos administradores");
+    }
     const { error } = await admin
       .from("notification_preferencias")
       .upsert(
@@ -122,12 +136,12 @@ export const removeDeviceById = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) => z.object({ id: z.string().uuid() }).parse(raw))
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
-    await admin
+    const { error } = await context.supabase
       .from("notification_tokens")
       .delete()
       .eq("user_id", context.userId)
       .eq("id", data.id);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
@@ -155,29 +169,43 @@ export async function dispatchNotification(
   if (!tipo) return { ok: false, skipped: "tipo_desconhecido" };
 
   // 2. Dedup: já enviado?
-  const { data: jaEnviado } = await admin
+  const { data: jaEnviado, error: dedupError } = await admin
     .from("notification_envios")
     .select("id")
     .eq("user_id", userId)
     .eq("chave_dedup", dedupKey)
     .maybeSingle();
+  if (dedupError) throw new Error(dedupError.message);
   if (jaEnviado) return { ok: true, skipped: "duplicado" };
 
+  const { data: config, error: configError } = await admin.from("notification_tipos")
+    .select("disponivel, padrao_ativo, apenas_admin").eq("codigo", tipoCodigo).maybeSingle();
+  if (configError) throw new Error(configError.message);
+  if (!config?.disponivel) return { ok: true, skipped: "tipo_indisponivel" };
+  if (config.apenas_admin) {
+    const { data: role, error: roleError } = await admin.from("user_roles")
+      .select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    if (roleError) throw new Error(roleError.message);
+    if (!role) return { ok: true, skipped: "apenas_admin" };
+  }
+
   // 3. Preferência do usuário
-  const { data: pref } = await admin
+  const { data: pref, error: prefError } = await admin
     .from("notification_preferencias")
     .select("ativo")
     .eq("user_id", userId)
     .eq("tipo_codigo", tipoCodigo)
     .maybeSingle();
-  if (pref && pref.ativo === false) {
-    await admin.from("notification_envios").insert({
+  if (prefError) throw new Error(prefError.message);
+  if (!(pref?.ativo ?? config.padrao_ativo)) {
+    const { error } = await admin.from("notification_envios").insert({
       user_id: userId,
       tipo_codigo: tipoCodigo,
       chave_dedup: dedupKey,
       sucesso: false,
       erro: "opt_out",
     });
+    if (error) throw new Error(error.message);
     return { ok: true, skipped: "opt_out" };
   }
 
@@ -186,12 +214,13 @@ export async function dispatchNotification(
   const corpo = tipo.corpo(contexto as never);
 
   // 5. Tokens do usuário
-  const { data: tokens } = await admin
+  const { data: tokens, error: tokensError } = await admin
     .from("notification_tokens")
     .select("id, token")
     .eq("user_id", userId);
+  if (tokensError) throw new Error(tokensError.message);
   if (!tokens || tokens.length === 0) {
-    await admin.from("notification_envios").insert({
+    const { error } = await admin.from("notification_envios").insert({
       user_id: userId,
       tipo_codigo: tipoCodigo,
       chave_dedup: dedupKey,
@@ -200,6 +229,7 @@ export async function dispatchNotification(
       sucesso: false,
       erro: "sem_tokens",
     });
+    if (error) throw new Error(error.message);
     return { ok: true, skipped: "sem_tokens" };
   }
 
@@ -207,7 +237,7 @@ export async function dispatchNotification(
   const { sendFcmMessage, isFcmConfigured } = await import("@/lib/fcm.server");
   if (!isFcmConfigured()) {
     console.warn("[notif] FCM não configurado — registrando log sem enviar", { tipoCodigo, userId });
-    await admin.from("notification_envios").insert({
+    const { error } = await admin.from("notification_envios").insert({
       user_id: userId,
       tipo_codigo: tipoCodigo,
       chave_dedup: dedupKey,
@@ -216,6 +246,7 @@ export async function dispatchNotification(
       sucesso: false,
       erro: "fcm_nao_configurado",
     });
+    if (error) throw new Error(error.message);
     return { ok: false, skipped: "fcm_nao_configurado" };
   }
 
@@ -239,10 +270,11 @@ export async function dispatchNotification(
   );
 
   if (invalidos.length) {
-    await admin.from("notification_tokens").delete().in("token", invalidos);
+    const { error } = await admin.from("notification_tokens").delete().eq("user_id", userId).in("token", invalidos);
+    if (error) throw new Error(error.message);
   }
 
-  await admin.from("notification_envios").insert({
+  const { error: logError } = await admin.from("notification_envios").insert({
     user_id: userId,
     tipo_codigo: tipoCodigo,
     chave_dedup: dedupKey,
@@ -251,11 +283,12 @@ export async function dispatchNotification(
     sucesso,
     erro: sucesso ? null : erro ?? "falha_desconhecida",
   });
+  if (logError) throw new Error(logError.message);
 
   return { ok: sucesso, erro };
 }
 
-/** Server fn expondo o dispatch a chamadores autenticados de mesmo user_id ou admin. */
+/** Business notification dispatch is restricted to administrators. */
 export const dispatchNotificationFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
@@ -269,17 +302,15 @@ export const dispatchNotificationFn = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
-    // Autoriza: dono OU admin (service role bypassa RLS)
-    if (data.userId !== context.userId) {
-      const { data: adminRow } = await admin
+    const { data: adminRow, error: roleError } = await context.supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", context.userId)
         .eq("role", "admin")
         .maybeSingle();
-      if (!adminRow) throw new Error("forbidden");
-    }
+    if (roleError) throw new Error(roleError.message);
+    if (!adminRow) throw new Error("forbidden");
+    const admin = await loadAdmin();
     return dispatchNotification(admin, data);
   });
 
@@ -288,7 +319,8 @@ export async function dispatchToAdmins(
   admin: Awaited<ReturnType<typeof loadAdmin>>,
   args: { tipoCodigo: string; contexto: Record<string, unknown>; dedupKey: string },
 ) {
-  const { data } = await admin.from("administradores").select("user_id").eq("ativo", true);
+  const { data, error } = await admin.from("administradores").select("user_id").eq("ativo", true);
+  if (error) throw new Error(error.message);
   if (!data) return;
   await Promise.all(
     data.map((a) =>
