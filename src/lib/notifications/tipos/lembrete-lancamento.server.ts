@@ -22,7 +22,7 @@ export const tipoLembreteLancamento: NotificationTipo<Ctx> = {
       .select("user_id");
     if (errTokens) {
       console.error("[notif lembrete_lancamento] tokens erro", errTokens);
-      return [];
+      throw errTokens;
     }
     const userIds = [...new Set((tokens ?? []).map((t) => t.user_id as string))];
     if (userIds.length === 0) return [];
@@ -34,7 +34,7 @@ export const tipoLembreteLancamento: NotificationTipo<Ctx> = {
       .in("user_id", userIds);
     if (error) {
       console.error("[notif lembrete_lancamento] scan erro", error);
-      return [];
+      throw error;
     }
     const comLancamento = new Set((lancs ?? []).map((l) => l.user_id as string));
 

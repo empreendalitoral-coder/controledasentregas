@@ -22,7 +22,7 @@ export const tipoPremiumVencendo: NotificationTipo<Ctx> = {
       .lte("data_validade", fim);
     if (error) {
       console.error("[notif premium_vencendo] scan erro", error);
-      return [];
+      throw error;
     }
     return (data ?? []).map((u) => ({
       userId: u.user_id as string,

@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ConfirmAction } from "@/components/ConfirmAction";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
   head: () => ({
@@ -202,6 +204,12 @@ function NotifPrefsPage() {
             Carregando…
           </div>
         )}
+        {q.isError && (
+          <div role="alert" className="space-y-3 text-sm text-destructive">
+            <p>Não foi possível carregar suas notificações.</p>
+            <Button variant="outline" onClick={() => void q.refetch()}>Tentar novamente</Button>
+          </div>
+        )}
 
         {/* Preferências */}
         {[...grupos.entries()].map(([cat, tipos]) => (
@@ -222,12 +230,12 @@ function NotifPrefsPage() {
                         {t.descricao}
                       </div>
                     </div>
-                    <button
-                      disabled={busy === t.codigo}
-                      onClick={() => toggle(t.codigo, !t.ativo)}
-                      data-on={t.ativo ? "true" : "false"}
-                      className="ep-switch shrink-0 disabled:opacity-50"
-                      aria-label={t.ativo ? "Desativar" : "Ativar"}
+                    <Switch
+                      disabled={busy !== null}
+                      checked={t.ativo}
+                      onCheckedChange={(ativo) => void toggle(t.codigo, ativo)}
+                      className="shrink-0"
+                      aria-label={`${t.ativo ? "Desativar" : "Ativar"} ${t.titulo}`}
                     />
                   </li>
                 ))}
@@ -244,12 +252,11 @@ function NotifPrefsPage() {
           <div className="ep-card">
             {(q.data?.dispositivos ?? []).length === 0 ? (
               <p className="text-xs text-muted-foreground py-2">
-                Nenhum dispositivo registrado ainda. Instale o app pela Play Store
-                e permita notificações para começar a receber avisos.
+                {q.isError ? "Não foi possível consultar os dispositivos." : "Nenhum dispositivo registrado para notificações."}
               </p>
             ) : (
               <ul className="divide-y divide-border/70">
-                {q.data!.dispositivos.map((d) => (
+                {(q.data?.dispositivos ?? []).map((d) => (
                   <li
                     key={d.id}
                     className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
@@ -267,7 +274,7 @@ function NotifPrefsPage() {
                       </div>
                     </div>
                     <ConfirmAction
-                      trigger={<button disabled={busy === d.id} className="rounded-md p-2 text-destructive hover:bg-destructive/10 disabled:opacity-50" aria-label="Remover"><Trash2 className="size-4" /></button>}
+                      trigger={<Button variant="ghost" size="icon" disabled={busy !== null} className="text-destructive" aria-label="Remover"><Trash2 className="size-4" /></Button>}
                       title="Remover dispositivo?"
                       description="Este aparelho deixará de receber notificações do Entrega Pro."
                       confirmLabel="Remover"
@@ -282,12 +289,13 @@ function NotifPrefsPage() {
           </div>
         </section>
 
-        <button
+        <Button
+          variant="secondary"
           onClick={() => router.navigate({ to: "/perfil" })}
-          className="w-full h-11 rounded-lg bg-secondary text-foreground font-medium hover:bg-secondary/80 transition"
+          className="w-full h-11"
         >
           Voltar ao perfil
-        </button>
+        </Button>
       </div>
     </AppShell>
   );
