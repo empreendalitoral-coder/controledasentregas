@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter, Outlet, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/AppShell";
@@ -44,8 +44,13 @@ export const Route = createFileRoute("/_authenticated/perfil/notificacoes")({
     ],
     links: [{ rel: "canonical", href: "/perfil/notificacoes" }],
   }),
-  component: NotifPrefsPage,
+  component: NotificationRoute,
 });
+
+function NotificationRoute() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname.replace(/\/$/, "") === "/perfil/notificacoes" ? <NotifPrefsPage /> : <Outlet />;
+}
 
 const CATEGORIA_LABEL: Record<string, string> = {
   operacional: "Operacional",
