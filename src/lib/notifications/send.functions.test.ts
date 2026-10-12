@@ -5,7 +5,8 @@ vi.mock("@tanstack/react-start", () => ({
     const builder = {
       middleware: () => builder,
       inputValidator: () => builder,
-      handler: (handler: unknown) => handler,
+      // The Start compiler passes the RPC wrapper before the actual handler.
+      handler: (rpcOrHandler: unknown, serverHandler?: unknown) => serverHandler ?? rpcOrHandler,
     };
     return builder;
   },

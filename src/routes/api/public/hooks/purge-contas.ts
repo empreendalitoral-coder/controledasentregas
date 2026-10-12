@@ -34,13 +34,6 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
           });
         }
 
-        const tabelas = [
-          "lancamentos", "recebimentos", "abastecimentos", "manutencoes",
-          "contas_fixas", "cartoes_credito", "cartao_lancamentos",
-          "fluxo_caixa", "metas_financeiras", "pix_recebidos", "pix_enviados",
-          "solicitacoes_premium", "usuarios_premium", "user_roles",
-        ] as const;
-
         let purgados = 0;
         let falhas = 0;
 
@@ -48,23 +41,12 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
         for (const row of pendentes ?? []) {
           const uid = row.user_id;
           try {
-            for (const t of tabelas) {
-              const { error } = await supabaseAdmin.from(t).delete().eq("user_id", uid);
-              if (error) throw error;
-            }
-            const { error: profileError } = await supabaseAdmin.from("profiles").delete().eq("id", uid);
-            if (profileError) throw profileError;
-
+            // Existing foreign keys cascade from Auth through profiles and owned rows.
+            // Delete the root first: a restricting dependency must fail before any
+            // financial rows are manually removed. Never delete tables one by one.
             const { error: errDel } = await supabaseAdmin.auth.admin.deleteUser(uid);
             if (errDel) throw errDel;
-
-            // Only mark completion after Auth deletion succeeds; failed accounts stay retryable.
-            const { error: markError } = await supabaseAdmin
-              .from("contas_excluidas")
-              .update({ purgada_em: new Date().toISOString() })
-              .eq("user_id", uid);
-            if (markError) throw markError;
-
+            // contas_excluidas also cascades, so there is no surviving row to mark.
             purgados += 1;
           } catch (e) {
             // Detalhes ficam apenas no log do servidor; a resposta não expõe IDs nem mensagens internas.
@@ -74,8 +56,8 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
         }
 
         return new Response(
-          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, falhas }),
-          { headers: { "Content-Type": "application/json" } },
+          JSON.stringify({ ok: falhas === 0, purgados, pendentes: pendentes?.length ?? 0, falhas }),
+          { status: falhas === 0 ? 200 : 500, headers: { "Content-Type": "application/json" } },
         );
       },
     },

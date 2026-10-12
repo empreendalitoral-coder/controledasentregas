@@ -71,7 +71,8 @@ function TestePage() {
         },
       });
       setResultado(r);
-      if (r.ok) toast.success(`Enviada para ${r.enviados} dispositivo(s)`);
+      if (r.enviados > 0 && r.falhas > 0) toast.warning(`Enviada para ${r.enviados} dispositivo(s); ${r.falhas} falha(s)`);
+      else if (r.ok) toast.success(`Enviada para ${r.enviados} dispositivo(s)`);
       else toast.error("Falha ao enviar");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha");
