@@ -2,9 +2,9 @@
 
 # Varredura de erros
 
-- [ ] Revisar notificações e tarefas automáticas sem envios ou exclusões reais
-- [ ] Corrigir falhas confirmadas nessa revisão e testar com respostas simuladas
-- [ ] Conferir preferências autenticadas e registrar limites sem publicar
+- [x] Revisar notificações e tarefas automáticas sem envios ou exclusões reais
+- [x] Corrigir falhas confirmadas: campos de metas, propagação de erros, avisos parciais, proteção contra exclusão parcial; testes com respostas simuladas
+- [ ] Conferir preferências autenticadas: aguarda usuário entrar na prévia; sessão indisponível e acesso automático à própria conta não encontrado. Não publicar nem enviar avisos reais.
 
 - [x] Revisar carregamento, salvamentos e falhas de conexão
 - [x] Corrigir edição vazia após carregamento, falhas silenciosas financeiras e confirmações; acrescentar 3 testes de regressão
