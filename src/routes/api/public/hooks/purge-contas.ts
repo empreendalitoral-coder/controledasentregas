@@ -74,8 +74,8 @@ export const Route = createFileRoute("/api/public/hooks/purge-contas")({
         }
 
         return new Response(
-          JSON.stringify({ ok: true, purgados, pendentes: pendentes?.length ?? 0, falhas }),
-          { headers: { "Content-Type": "application/json" } },
+          JSON.stringify({ ok: falhas === 0, purgados, pendentes: pendentes?.length ?? 0, falhas }),
+          { status: falhas === 0 ? 200 : 500, headers: { "Content-Type": "application/json" } },
         );
       },
     },
