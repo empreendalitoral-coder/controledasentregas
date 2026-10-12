@@ -24,3 +24,4 @@
 - Business notification dispatch from the browser requires an authenticated administrator; user preferences and device removals use the caller's RLS client and propagate database errors to avoid false confirmations.
 - Unit tests use a standalone Vitest configuration without Start RPC transforms so mocked server-function handlers execute their real logic.
 - Scheduled account purge deletes the Auth root and relies on existing cascading foreign keys; restricting dependencies fail without pre-deleting financial rows, preventing partial data loss.
+- Profile and notification parent routes render their own screen only at the exact parent URL and render Outlet for descendants; this prevents nested settings and tools from being hidden by the parent form.

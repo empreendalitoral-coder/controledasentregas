@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Field, TextInput } from "@/components/Field";
 import { actions, useFullStore } from "@/lib/store";
@@ -31,8 +31,13 @@ export const Route = createFileRoute("/_authenticated/perfil")({
     ],
     links: [{ rel: "canonical", href: "/perfil" }],
   }),
-  component: PerfilPage,
+  component: PerfilRoute,
 });
+
+function PerfilRoute() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname.replace(/\/$/, "") === "/perfil" ? <PerfilPage /> : <Outlet />;
+}
 
 // Rascunho em memória (fora do componente): preserva edições não salvas
 // ao navegar Perfil ↔ Notificações e voltar.
