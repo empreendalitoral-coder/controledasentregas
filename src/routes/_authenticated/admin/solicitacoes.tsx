@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { dispatchNotificationFn } from "@/lib/notifications/send.functions";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -49,6 +51,7 @@ export const Route = createFileRoute("/_authenticated/admin/solicitacoes")({
 });
 
 function SolicAdminPage() {
+  const dispatch = useServerFn(dispatchNotificationFn);
   const [filter, setFilter] = useState<"pendente" | "aprovado" | "recusado" | "todos">("pendente");
   const [items, setItems] = useState<Solic[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
@@ -107,17 +110,18 @@ function SolicAdminPage() {
     });
     if (status === "aprovado") {
       try {
-        const { dispatchNotificationFn } = await import("@/lib/notifications/send.functions");
-        await dispatchNotificationFn({
+        const result = await dispatch({
           data: {
             userId: s.user_id,
             tipoCodigo: "pix_aprovado",
-            contexto: { plano: s.plano, valor: s.valor },
+            contexto: { plano: novoPlano, valor: s.valor },
             dedupKey: `pix_aprovado:${s.id}`,
           },
         });
+        if (!result.ok) toast.warning("Premium liberado, mas o aviso não foi enviado.");
       } catch (e) {
         console.warn("[notif pix_aprovado] falhou", e);
+        toast.warning("Premium liberado, mas não foi possível enviar o aviso.");
       }
     }
     toast.success(status === "aprovado" ? "Premium liberado!" : "Solicitação recusada");

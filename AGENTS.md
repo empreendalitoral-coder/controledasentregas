@@ -22,3 +22,4 @@
 - New-account trial grants and future manual trial approvals read the configured trial duration at grant time; changing configuration never rewrites existing Premium validity.
 - Existing daily-entry forms mount only after store hydration and are keyed by record ID; this prevents blank defaults from overwriting saved records or carrying between edits.
 - Business notification dispatch from the browser requires an authenticated administrator; user preferences and device removals use the caller's RLS client and propagate database errors to avoid false confirmations.
+- Unit tests use a standalone Vitest configuration without Start RPC transforms so mocked server-function handlers execute their real logic.

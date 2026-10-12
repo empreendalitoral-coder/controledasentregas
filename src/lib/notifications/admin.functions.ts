@@ -119,12 +119,12 @@ export const sendTestNotification = createServerFn({ method: "POST" })
       chave_dedup: `teste:${context.userId}:${Date.now()}`,
       titulo: data.titulo,
       corpo: data.mensagem,
-      sucesso: enviados > 0,
-      erro: enviados > 0 ? null : erros[0] ?? "falha_desconhecida",
+       sucesso: enviados > 0 && falhas === 0,
+       erro: falhas > 0 ? erros[0] ?? "falha_desconhecida" : null,
     });
     if (logError) throw new Error(logError.message);
 
-    return { ok: enviados > 0, enviados, falhas, erros };
+    return { ok: enviados > 0 && falhas === 0, enviados, falhas, erros };
   });
 
 export const getFirebaseDiagnostics = createServerFn({ method: "GET" })
