@@ -85,6 +85,20 @@
       "when": 1791506644196,
       "tag": "0011_configured_new_account_trial",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793928924046,
+      "tag": "0012_growth_metrics",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793929021919,
+      "tag": "0013_despesas_notas",
+      "breakpoints": true
     }
   ]
 }

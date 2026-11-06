@@ -580,6 +580,53 @@ export type Database = {
         }
         Relationships: []
       }
+      despesas_notas: {
+        Row: {
+          categoria: string
+          cnpj_emitente: string | null
+          created_at: string
+          data: string
+          descricao: string | null
+          fornecedor: string | null
+          id: string
+          tipo_documento: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          cnpj_emitente?: string | null
+          created_at?: string
+          data: string
+          descricao?: string | null
+          fornecedor?: string | null
+          id?: string
+          tipo_documento?: string
+          user_id?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          cnpj_emitente?: string | null
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          fornecedor?: string | null
+          id?: string
+          tipo_documento?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_notas_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fiscal_classifications: {
         Row: {
           classification: string
@@ -1329,6 +1376,24 @@ export type Database = {
           },
         ]
       }
+      site_visits: {
+        Row: {
+          created_at: string
+          day: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       solicitacoes_premium: {
         Row: {
           comprovante_path: string | null
@@ -1478,6 +1543,7 @@ export type Database = {
           reply_to: string
         }[]
       }
+      get_growth_metrics: { Args: { _days?: number }; Returns: Json }
       get_payment_info: {
         Args: never
         Returns: {
@@ -1495,6 +1561,7 @@ export type Database = {
         Args: { _action: string; _message_id: string; _reason: string }
         Returns: undefined
       }
+      record_site_visit: { Args: { _visitor: string }; Returns: undefined }
       refund_referral_payment: {
         Args: { _id: string; _reason: string }
         Returns: undefined

@@ -38,6 +38,7 @@ import { Route as AuthenticatedAdminComunidadeRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as AuthenticatedAdminIndicacoesRouteImport } from './routes/_authenticated/admin/indicacoes'
 import { Route as AuthenticatedAdminMensagensRouteImport } from './routes/_authenticated/admin/mensagens'
+import { Route as AuthenticatedAdminMetricasRouteImport } from './routes/_authenticated/admin/metricas'
 import { Route as AuthenticatedAdminSolicitacoesRouteImport } from './routes/_authenticated/admin/solicitacoes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedFinanceiroCartoesRouteImport } from './routes/_authenticated/financeiro/cartoes'
@@ -209,6 +210,12 @@ const AuthenticatedAdminMensagensRoute =
     path: '/mensagens',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminMetricasRoute =
+  AuthenticatedAdminMetricasRouteImport.update({
+    id: '/metricas',
+    path: '/metricas',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminSolicitacoesRoute =
   AuthenticatedAdminSolicitacoesRouteImport.update({
     id: '/solicitacoes',
@@ -335,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
+  '/admin/metricas': typeof AuthenticatedAdminMetricasRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -381,6 +389,7 @@ export interface FileRoutesByTo {
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
+  '/admin/metricas': typeof AuthenticatedAdminMetricasRoute
   '/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -429,6 +438,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/_authenticated/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
+  '/_authenticated/admin/metricas': typeof AuthenticatedAdminMetricasRoute
   '/_authenticated/admin/solicitacoes': typeof AuthenticatedAdminSolicitacoesRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/financeiro/cartoes': typeof AuthenticatedFinanceiroCartoesRoute
@@ -477,6 +487,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/indicacoes'
     | '/admin/mensagens'
+    | '/admin/metricas'
     | '/admin/solicitacoes'
     | '/admin/usuarios'
     | '/financeiro/cartoes'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/admin/configuracoes'
     | '/admin/indicacoes'
     | '/admin/mensagens'
+    | '/admin/metricas'
     | '/admin/solicitacoes'
     | '/admin/usuarios'
     | '/financeiro/cartoes'
@@ -570,6 +582,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/indicacoes'
     | '/_authenticated/admin/mensagens'
+    | '/_authenticated/admin/metricas'
     | '/_authenticated/admin/solicitacoes'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/financeiro/cartoes'
@@ -806,6 +819,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMensagensRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/metricas': {
+      id: '/_authenticated/admin/metricas'
+      path: '/metricas'
+      fullPath: '/admin/metricas'
+      preLoaderRoute: typeof AuthenticatedAdminMetricasRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/solicitacoes': {
       id: '/_authenticated/admin/solicitacoes'
       path: '/solicitacoes'
@@ -926,6 +946,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminIndicacoesRoute: typeof AuthenticatedAdminIndicacoesRoute
   AuthenticatedAdminMensagensRoute: typeof AuthenticatedAdminMensagensRoute
+  AuthenticatedAdminMetricasRoute: typeof AuthenticatedAdminMetricasRoute
   AuthenticatedAdminSolicitacoesRoute: typeof AuthenticatedAdminSolicitacoesRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
 }
@@ -936,6 +957,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
     AuthenticatedAdminIndicacoesRoute: AuthenticatedAdminIndicacoesRoute,
     AuthenticatedAdminMensagensRoute: AuthenticatedAdminMensagensRoute,
+    AuthenticatedAdminMetricasRoute: AuthenticatedAdminMetricasRoute,
     AuthenticatedAdminSolicitacoesRoute: AuthenticatedAdminSolicitacoesRoute,
     AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   }

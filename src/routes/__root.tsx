@@ -160,6 +160,19 @@ function RootComponent() {
       }
     })();
 
+    // Registra uma visita anônima por dia (sem dados pessoais) para as métricas do admin.
+    (async () => {
+      try {
+        const key = "ep-visitor-id";
+        let vid = localStorage.getItem(key);
+        if (!vid) { vid = crypto.randomUUID(); localStorage.setItem(key, vid); }
+        const { supabase } = await import("@/integrations/supabase/client");
+        await supabase.rpc("record_site_visit", { _visitor: vid });
+      } catch {
+        /* métricas não podem atrapalhar o app */
+      }
+    })();
+
     // Listener global para eventos de auth (SIGNED_IN, SIGNED_OUT, USER_UPDATED).
     let unsub: (() => void) | undefined;
     (async () => {
