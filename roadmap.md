@@ -93,3 +93,7 @@
 - [x] Remover seletores manuais e pendências de classificação
 - [x] Validar separação automática com registros reais de rota, Pix e conta; limpar os testes
 - [x] Validar tela e downloads de relatórios com conta autenticada autorizada: PDF e CSV baixados; sem alterar validade Premium
+
+## Próximos
+- [ ] Tela de métricas de crescimento (admin)
+- [ ] Envio de notas/recibos com leitura por IA, tabela de despesas exportável
