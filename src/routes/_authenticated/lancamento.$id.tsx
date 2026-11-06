@@ -4,7 +4,7 @@ import { Field, TextInput, TextArea } from "@/components/Field";
 import { actions, useFullStore, type Lancamento } from "@/lib/store";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { BRL, kmRodado, lucroLiquido } from "@/lib/calc";
+import { BRL, kmRodado, lucroLiquido, taxaEntrega, fmtTaxa } from "@/lib/calc";
 import { CalendarDays, Clock, Package, Fuel, Calculator } from "lucide-react";
 import type { ReactNode } from "react";
 import { ConfirmAction } from "@/components/ConfirmAction";
@@ -273,6 +273,10 @@ function LancamentoForm({ id, existing }: { id: string; existing?: Lancamento })
                   onChange={(e) => set("insucessos", num(e.target.value))}
                 />
               </Field>
+              <div className="col-span-full rounded-lg bg-muted/40 px-3 py-2 text-sm flex justify-between">
+                <span className="text-muted-foreground">Porcentagem de entrega</span>
+                <span className="font-semibold text-primary">{fmtTaxa(taxaEntrega(f.pacotes, f.insucessos))}</span>
+              </div>
               <Field label="PNR">
                 <TextInput
                   type="number"
