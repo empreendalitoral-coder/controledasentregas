@@ -12,6 +12,8 @@ import {
   lucroLiquido,
   rangeFromStrings,
   type Periodo,
+  taxaEntrega,
+  fmtTaxa,
 } from "@/lib/calc";
 import { Eye, Pencil, Trash2, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
@@ -198,6 +200,7 @@ function HistoricoPage() {
               </div>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
                 <span>Pacotes: {NUM(l.pacotes ?? 0)}</span>
+                <span className="font-semibold text-primary">Entrega: {fmtTaxa(taxaEntrega(l.pacotes, l.insucessos))}</span>
                 <span>PNR: {NUM(l.pnr ?? 0)}</span>
                 <span>Perdidos: {NUM(l.pacotes_perdidos ?? 0)}</span>
                 <span>KM: {NUM(kmRodado(l))}</span>
@@ -216,6 +219,7 @@ function HistoricoPage() {
             </div>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
               <span>Pacotes: {NUM(r.pacotes)}</span>
+              <span className="font-semibold text-primary">Entrega: {fmtTaxa(taxaEntrega(r.pacotes, r.insucessos))}</span>
               <span>PNR: {NUM(r.pnr)}</span>
               <span>Perdidos: {NUM(r.pacotes_perdidos)}</span>
               <span>KM: {NUM(r.km)}</span>

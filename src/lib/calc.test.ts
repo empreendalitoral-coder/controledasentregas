@@ -98,3 +98,9 @@ describe("períodos e totais", () => {
     });
   });
 });
+import { taxaEntrega as _taxa } from "./calc";
+describe("taxaEntrega", () => {
+  it("100 carregados e 5 insucessos = 95%", () => expect(_taxa(100, 5)).toBe(95));
+  it("sem pacotes não calcula", () => expect(_taxa(0, 0)).toBeNull());
+  it("insucessos acima do total = 0%", () => expect(_taxa(10, 20)).toBe(0));
+});
