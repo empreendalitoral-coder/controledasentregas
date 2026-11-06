@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { registrarLogAdmin } from "@/lib/admin-log";
-import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning, Gift } from "lucide-react";
+import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning, Gift, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
@@ -84,6 +84,7 @@ function AdminLayout() {
 
   const tabs = [
     { to: "/admin", label: "Visão geral", icon: BarChart },
+    { to: "/admin/metricas", label: "Métricas", icon: TrendingUp },
     { to: "/admin/solicitacoes", label: "Solicitações", icon: FileCheck, badge: true },
     { to: "/admin/indicacoes", label: "Indicações", icon: Gift },
     { to: "/admin/usuarios", label: "Usuários", icon: Users },
@@ -139,6 +140,7 @@ function AdminIndex() {
       </div>
 
       <div className="mt-4 grid gap-2">
+        <Link to="/admin/metricas" className="ep-card flex items-center gap-3"><TrendingUp className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Métricas de crescimento</div><div className="text-xs text-muted-foreground">Visitas, contas ativas e assinaturas</div></div><span className="text-muted-foreground">›</span></Link>
         <Link to="/admin/indicacoes" className="ep-card flex items-center gap-3"><Gift className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Resgates de indicação</div><div className="text-xs text-muted-foreground">Pix e descontos aguardando decisão</div></div></Link>
         <Link to="/admin/solicitacoes" className="ep-card flex items-center gap-3">
           <FileCheck className="size-5 text-primary" />
