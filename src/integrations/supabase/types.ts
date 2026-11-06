@@ -580,6 +580,53 @@ export type Database = {
         }
         Relationships: []
       }
+      despesas_notas: {
+        Row: {
+          categoria: string
+          cnpj_emitente: string | null
+          created_at: string
+          data: string
+          descricao: string | null
+          fornecedor: string | null
+          id: string
+          tipo_documento: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          cnpj_emitente?: string | null
+          created_at?: string
+          data: string
+          descricao?: string | null
+          fornecedor?: string | null
+          id?: string
+          tipo_documento?: string
+          user_id?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          cnpj_emitente?: string | null
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          fornecedor?: string | null
+          id?: string
+          tipo_documento?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_notas_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fiscal_classifications: {
         Row: {
           classification: string

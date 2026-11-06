@@ -92,6 +92,13 @@
       "when": 1793928924046,
       "tag": "0012_growth_metrics",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793929021919,
+      "tag": "0013_despesas_notas",
+      "breakpoints": true
     }
   ]
 }
