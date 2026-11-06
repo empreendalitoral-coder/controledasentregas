@@ -146,3 +146,15 @@ export function previstoRecebimento(state: State, p: Periodo) {
   const previsto = r.valor_bruto - r.descontos - r.combustivel;
   return { ...r, previsto };
 }
+
+/** Taxa de entrega: pacotes é o total carregado; entregues = pacotes - insucessos. */
+export function taxaEntrega(pacotes?: number | null, insucessos?: number | null): number | null {
+  const total = pacotes ?? 0;
+  if (total <= 0) return null;
+  const falhas = Math.min(Math.max(insucessos ?? 0, 0), total);
+  return ((total - falhas) / total) * 100;
+}
+
+export function fmtTaxa(t: number | null): string {
+  return t === null ? "—" : `${t.toFixed(1).replace(".", ",")}%`;
+}
