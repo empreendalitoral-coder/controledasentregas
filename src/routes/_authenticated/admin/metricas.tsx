@@ -83,7 +83,7 @@ function Metricas() {
                   style={{ height: `${(d.visitas / max) * 100}%`, minHeight: d.visitas ? 3 : 1 }} />
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">Visitas começaram a ser contadas em 6/11/2026.</p>
+            <p className="text-[11px] text-muted-foreground mt-2">Visitas começaram a ser contadas em 5/11/2026.</p>
           </div>
 
           <div className="ep-card overflow-x-auto">

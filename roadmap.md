@@ -95,5 +95,5 @@
 - [x] Validar tela e downloads de relatórios com conta autenticada autorizada: PDF e CSV baixados; sem alterar validade Premium
 
 ## Próximos
-- [ ] Tela de métricas de crescimento (admin)
+- [x] Tela de métricas de crescimento (admin)
 - [ ] Envio de notas/recibos com leitura por IA, tabela de despesas exportável
