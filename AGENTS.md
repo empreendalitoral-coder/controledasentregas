@@ -25,3 +25,4 @@
 - Unit tests use a standalone Vitest configuration without Start RPC transforms so mocked server-function handlers execute their real logic.
 - Scheduled account purge deletes the Auth root and relies on existing cascading foreign keys; restricting dependencies fail without pre-deleting financial rows, preventing partial data loss.
 - Profile and notification parent routes render their own screen only at the exact parent URL and render Outlet for descendants; this prevents nested settings and tools from being hidden by the parent form.
+- Receipt expenses remain a separate owner-scoped register with explicit review before saving and CSV export; never merge them into profit or fiscal totals automatically, preventing duplicate expenses.
