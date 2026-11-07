@@ -4,7 +4,7 @@
 
 - [x] Revisar notificações e tarefas automáticas sem envios ou exclusões reais
 - [x] Corrigir falhas confirmadas: campos de metas, propagação de erros, avisos parciais, proteção contra exclusão parcial; testes com respostas simuladas
-- [ ] Conferir preferências autenticadas: aguarda usuário entrar na prévia; sessão indisponível e acesso automático à própria conta não encontrado. Não publicar nem enviar avisos reais.
+- [x] Conferir preferências autenticadas e corrigir atalhos do perfil; salvamento validado, sem avisos reais nem publicação.
 
 - [x] Revisar carregamento, salvamentos e falhas de conexão
 - [x] Corrigir edição vazia após carregamento, falhas silenciosas financeiras e confirmações; acrescentar 3 testes de regressão
@@ -96,4 +96,4 @@
 
 ## Próximos
 - [x] Tela de métricas de crescimento (admin)
-- [ ] Envio de notas/recibos com leitura por IA, tabela de despesas exportável
+- [x] Envio de notas/recibos com leitura por IA, revisão antes de salvar, edição/exclusão e tabela exportável CSV; recibo fictício lido e fluxo autenticado validado. Somente dados extraídos são guardados, sem documento original e sem integrar ao lucro ou relatório fiscal. Não publicado.
