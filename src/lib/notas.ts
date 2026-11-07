@@ -12,6 +12,18 @@ export const CATEGORIAS_NOTA = [
 export type CategoriaNota = (typeof CATEGORIAS_NOTA)[number];
 export type TipoDocumento = "nota_fiscal" | "recibo" | "cupom" | "outro";
 
+export const MAX_NOTA_BYTES = 6 * 1024 * 1024;
+export function validarArquivoNota(type: string, size: number) {
+  if (!["image/jpeg", "image/png", "image/webp", "application/pdf"].includes(type)) throw new Error("Envie JPG, PNG, WEBP ou PDF.");
+  if (size <= 0 || size > MAX_NOTA_BYTES) throw new Error("Envie um arquivo de até 6 MB.");
+}
+export function validarDespesaNota(note: LeituraNota) {
+  const date = new Date(`${note.data}T12:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(note.data) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== note.data) throw new Error("Informe uma data válida.");
+  if (!Number.isFinite(note.valor) || note.valor <= 0 || note.valor > 9999999999.99) throw new Error("Informe um valor maior que zero.");
+  if (!CATEGORIAS_NOTA.includes(note.categoria)) throw new Error("Categoria inválida.");
+}
+
 export type LeituraNota = {
   data: string;
   fornecedor: string;
@@ -54,7 +66,7 @@ export const tipoLabel: Record<TipoDocumento, string> = {
 type Linha = { data: string; fornecedor: string | null; cnpj_emitente: string | null; categoria: string; tipo_documento: string; descricao: string | null; valor: number };
 
 export function notasCSV(rows: Linha[]): string {
-  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+  const esc = (v: string) => `"${(/^[\s]*[=+@-]/.test(v) ? "'" + v : v).replace(/"/g, '""')}"`;
   const head = ["Data", "Fornecedor", "CNPJ emitente", "Categoria", "Documento", "Descrição", "Valor"];
   const body = rows.map((r) =>
     [
