@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { Ban, Crown, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2, UserRound } from "lucide-react";
+import { compressImage } from "@/lib/compress-image";
+import { Ban, Camera, Crown, X, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 type Message = Database["public"]["Functions"]["get_community_messages"]["Returns"][number];
@@ -46,6 +47,7 @@ const RULES = [
   "Trate todos com respeito. Ofensas, ameaças e discriminação não são permitidas.",
   "Não envie links, convites, propaganda, correntes ou mensagens repetidas.",
   "Não publique telefone, e-mail, endereço ou outros dados pessoais.",
+  "Fotos: apenas uma por mensagem e nunca mostre etiquetas, nomes ou dados de clientes.",
   "Não compartilhe golpes, conteúdo ilegal ou informações que coloquem alguém em risco.",
   "Denuncie abusos e use o bloqueio quando não quiser ver mensagens de uma pessoa.",
 ];
@@ -83,6 +85,12 @@ function CommunityPage() {
   const [anonymousEnabled, setAnonymousEnabled] = useState(false);
   const [changingAnonymous, setChangingAnonymous] = useState(false);
   const [moderating, setModerating] = useState<{ id: string; action: CommunityModerationAction } | null>(null);
+  const [photo, setPhoto] = useState<Blob | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [preparingPhoto, setPreparingPhoto] = useState(false);
+  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [viewingPhoto, setViewingPhoto] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
 
@@ -118,6 +126,13 @@ function CommunityPage() {
     setAnonymousEnabled(Boolean(member?.anonymous_enabled) && accessStatus.premium_valid);
     setRulesOpen(!member?.rules_accepted_at);
     setMessages(rows ?? []);
+    const paths = (rows ?? []).map((row) => row.image_path).filter((path): path is string => Boolean(path));
+    if (paths.length) {
+      const { data: signed } = await supabase.storage.from("community-photos").createSignedUrls(paths, 3600);
+      if (mountedRef.current && signed) {
+        setPhotoUrls(Object.fromEntries(signed.filter((item) => item.signedUrl && item.path).map((item) => [item.path as string, item.signedUrl])));
+      }
+    }
     setLoading(false);
   }, []);
 
@@ -149,20 +164,57 @@ function CommunityPage() {
   }
 
   async function sendMessage() {
-    const text = content.trim();
+    const text = content.trim() || (photo ? "📷 Foto" : "");
     if (!text || !userId) return;
     setSending(true);
+    let imagePath: string | null = null;
+    if (photo) {
+      imagePath = `${userId}/${crypto.randomUUID()}.jpg`;
+      const { error: uploadError } = await supabase.storage.from("community-photos").upload(imagePath, photo, { contentType: "image/jpeg" });
+      if (uploadError) {
+        setSending(false);
+        return toast.error("Não foi possível enviar a foto. Tente novamente.");
+      }
+    }
     const { error } = await supabase.from("community_messages").insert({
       author_id: userId,
       author_name: "",
       content: text,
       reply_to: replying?.id ?? null,
+      image_path: imagePath,
     });
     setSending(false);
-    if (error) return toast.error(readCommunityError(error.message));
+    if (error) {
+      if (imagePath) void supabase.storage.from("community-photos").remove([imagePath]);
+      return toast.error(readCommunityError(error.message));
+    }
     setContent("");
+    clearPhoto();
     setReplying(null);
     await load();
+  }
+
+  function clearPhoto() {
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhoto(null);
+    setPhotoPreview(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  async function pickPhoto(file: File | undefined) {
+    if (!file) return;
+    setPreparingPhoto(true);
+    try {
+      const blob = await compressImage(file);
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+      setPhoto(blob);
+      setPhotoPreview(URL.createObjectURL(blob));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível usar esta foto.");
+      if (fileRef.current) fileRef.current.value = "";
+    } finally {
+      setPreparingPhoto(false);
+    }
   }
 
   async function submitReport() {
@@ -278,7 +330,12 @@ function CommunityPage() {
                       <strong>{message.reply_author_name}</strong><div className="truncate">{message.reply_preview}</div>
                     </div>
                   )}
-                  {message.removed_at ? <p className={`mt-2 text-sm italic ${own ? "text-chat-own-foreground/80" : "text-muted-foreground"}`}>Mensagem removida pela moderação.</p> : <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
+                  {message.removed_at ? <p className={`mt-2 text-sm italic ${own ? "text-chat-own-foreground/80" : "text-muted-foreground"}`}>Mensagem removida pela moderação.</p> : <>
+                    {message.image_path && (photoUrls[message.image_path]
+                      ? <button type="button" className="mt-2 block overflow-hidden rounded-md" onClick={() => setViewingPhoto(photoUrls[message.image_path as string])} aria-label="Ampliar foto"><img src={photoUrls[message.image_path]} alt="Foto enviada na Comunidade" loading="lazy" className="max-h-72 w-full object-cover" /></button>
+                      : <div className="mt-2 grid h-40 place-items-center rounded-md bg-secondary"><LoaderCircle className="size-5 animate-spin text-muted-foreground" /></div>)}
+                    {!(message.image_path && message.content === "📷 Foto") && <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
+                  </>}
                 <div className="mt-1 text-right text-[10px] opacity-70"><time>{formatTime(message.created_at)}</time></div>
                 </article>
                 </div>
@@ -292,14 +349,28 @@ function CommunityPage() {
       {accepted && (
         <div className="community-composer sticky bottom-16 z-20 -mx-4 mt-4 border-t border-border bg-background/95 px-4 pb-2 pt-3 backdrop-blur">
           {replying && <div className="mb-2 flex items-center gap-2 rounded-md bg-secondary px-3 py-2 text-xs"><Reply className="size-3.5 text-primary" /><span className="min-w-0 flex-1 truncate">Respondendo a {replying.is_anonymous ? "Anônimo" : replying.author_name}: {replying.content}</span><Button variant="ghost" size="sm" onClick={() => setReplying(null)}>Cancelar</Button></div>}
+          {photoPreview && (
+            <div className="relative mb-2 inline-block">
+              <img src={photoPreview} alt="Foto selecionada" className="h-24 rounded-md border border-border object-cover" />
+              <Button type="button" variant="secondary" size="icon" className="absolute -right-2 -top-2 size-7 rounded-full" onClick={clearPhoto} aria-label="Remover foto"><X className="size-4" /></Button>
+            </div>
+          )}
           <div className="flex items-end gap-2">
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(event) => void pickPhoto(event.target.files?.[0])} />
+            <Button type="button" variant="ghost" size="icon" className="size-11 shrink-0" disabled={sending || preparingPhoto || Boolean(photo)} onClick={() => fileRef.current?.click()} aria-label="Adicionar foto">{preparingPhoto ? <LoaderCircle className="animate-spin" /> : <Camera />}</Button>
             <Textarea aria-label="Mensagem" value={content} onChange={(event) => setContent(event.target.value)} maxLength={500} rows={1} placeholder="Escreva uma mensagem…" className="max-h-32 min-h-11 resize-none rounded-lg bg-card text-sm" />
-            <Button size="icon" className="size-11 shrink-0" disabled={sending || !content.trim()} onClick={() => void sendMessage()} aria-label="Enviar mensagem">{sending ? <LoaderCircle className="animate-spin" /> : <Send />}</Button>
+            <Button size="icon" className="size-11 shrink-0" disabled={sending || preparingPhoto || (!content.trim() && !photo)} onClick={() => void sendMessage()} aria-label="Enviar mensagem">{sending ? <LoaderCircle className="animate-spin" /> : <Send />}</Button>
           </div>
           <div className="mt-1 text-right text-[10px] text-muted-foreground">{content.length}/500</div>
         </div>
       )}
 
+      <Dialog open={viewingPhoto !== null} onOpenChange={(open) => !open && setViewingPhoto(null)}>
+        <DialogContent className="w-[calc(100%-1rem)] max-w-2xl rounded-lg bg-card p-2">
+          <DialogHeader className="sr-only"><DialogTitle>Foto</DialogTitle><DialogDescription>Foto ampliada</DialogDescription></DialogHeader>
+          {viewingPhoto && <img src={viewingPhoto} alt="Foto ampliada" className="max-h-[80vh] w-full rounded-md object-contain" />}
+        </DialogContent>
+      </Dialog>
       <RulesDialog open={rulesOpen} accepted={accepted} onOpenChange={setRulesOpen} onAccept={acceptRules} />
       <Dialog open={reporting !== null} onOpenChange={(open) => !open && setReporting(null)}>
         <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-lg bg-card p-5">
@@ -317,10 +388,12 @@ function CommunityPage() {
         action={moderating?.action ?? "hide"}
         onOpenChange={(open) => { if (!open) setModerating(null); }}
         onCompleted={async (messageId, action) => {
+          const removedPath = messages.find((message) => message.id === messageId)?.image_path;
+          if (removedPath) void supabase.storage.from("community-photos").remove([removedPath]);
           setMessages((current) => action === "delete"
             ? current.filter((message) => message.id !== messageId)
             : current.map((message) => message.id === messageId
-              ? { ...message, content: "Conteúdo removido pela moderação.", removed_at: new Date().toISOString() }
+              ? { ...message, content: "Conteúdo removido pela moderação.", image_path: null, removed_at: new Date().toISOString() }
               : message));
           await load();
         }}

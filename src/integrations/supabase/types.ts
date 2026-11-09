@@ -307,6 +307,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_path: string | null
           is_anonymous: boolean
           removal_reason: string | null
           removed_at: string | null
@@ -322,6 +323,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          image_path?: string | null
           is_anonymous?: boolean
           removal_reason?: string | null
           removed_at?: string | null
@@ -337,6 +339,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          image_path?: string | null
           is_anonymous?: boolean
           removal_reason?: string | null
           removed_at?: string | null
@@ -1535,6 +1538,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_path: string
           is_anonymous: boolean
           is_own: boolean
           removed_at: string
