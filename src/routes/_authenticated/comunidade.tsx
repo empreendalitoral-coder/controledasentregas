@@ -130,7 +130,7 @@ function CommunityPage() {
     if (paths.length) {
       const { data: signed } = await supabase.storage.from("community-photos").createSignedUrls(paths, 3600);
       if (mountedRef.current && signed) {
-        setPhotoUrls(Object.fromEntries(signed.filter((item) => item.signedUrl && item.path).map((item) => [item.path as string, item.signedUrl])));
+        setPhotoUrls(Object.fromEntries(signed.filter((item) => item.signedUrl && item.path).map((item) => [item.path as string, item.signedUrl as string])) as Record<string, string>);
       }
     }
     setLoading(false);
@@ -393,7 +393,7 @@ function CommunityPage() {
           setMessages((current) => action === "delete"
             ? current.filter((message) => message.id !== messageId)
             : current.map((message) => message.id === messageId
-              ? { ...message, content: "Conteúdo removido pela moderação.", image_path: null, removed_at: new Date().toISOString() }
+              ? { ...message, content: "Conteúdo removido pela moderação.", image_path: null as unknown as string, removed_at: new Date().toISOString() }
               : message));
           await load();
         }}
