@@ -388,6 +388,8 @@ function CommunityPage() {
         action={moderating?.action ?? "hide"}
         onOpenChange={(open) => { if (!open) setModerating(null); }}
         onCompleted={async (messageId, action) => {
+          const removedPath = messages.find((message) => message.id === messageId)?.image_path;
+          if (removedPath) void supabase.storage.from("community-photos").remove([removedPath]);
           setMessages((current) => action === "delete"
             ? current.filter((message) => message.id !== messageId)
             : current.map((message) => message.id === messageId
