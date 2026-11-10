@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { useFullStore, actions } from "@/lib/store";
-import { computeResumo, currentMonthRange, BRL, NUM, formatHoras } from "@/lib/calc";
+import { computeResumo, currentMonthRange, BRL, NUM, formatHoras, taxaEntrega, fmtTaxa } from "@/lib/calc";
+import { OnboardingCard, TrialEndingBanner, FeedPreview } from "@/components/HomeExtras";
 import {
   Plus,
   Pencil,
@@ -239,16 +240,22 @@ function Dashboard() {
         </section>
       )}
 
+      {state.hydrated && <OnboardingCard temLancamento={state.lancamentos.length > 0} />}
+
       {/* Convite Premium */}
       {!premium.loading && !premium.ativo && <PremiumCTA />}
 
-      {premium.ativo && premium.plano === "teste" && (
+      {premium.ativo && premium.plano === "teste" && premium.diasRestantes <= 1 && (
+        <TrialEndingBanner dias={premium.diasRestantes} />
+      )}
+
+      {premium.ativo && premium.plano === "teste" && premium.diasRestantes > 1 && (
         <Link to="/premium" className="ep-card mt-3 flex items-center gap-2 bg-primary/10 border-primary/40">
           <Crown className="size-5 text-primary shrink-0" />
           <div className="text-xs flex-1">
             <span className="font-semibold">Teste Premium</span> — {premium.diasRestantes} dias restantes
             <div className="ep-progress mt-1.5">
-              <span style={{ width: `${Math.min(100, (premium.diasRestantes / 7) * 100)}%` }} />
+              <span style={{ width: `${Math.min(100, (premium.diasRestantes / 3) * 100)}%` }} />
             </div>
           </div>
           <ChevronRight className="size-4 text-muted-foreground" />
@@ -281,6 +288,7 @@ function Dashboard() {
           <div className="text-right text-[11px] text-muted-foreground leading-relaxed">
             <div>{NUM(r7.dias_trabalhados)} dias trabalhados</div>
             <div>{NUM(r7.pacotes)} pacotes</div>
+            <div>Taxa de entrega {fmtTaxa(taxaEntrega(r7.pacotes, r7.insucessos))}</div>
           </div>
         </div>
         <div className="ep-bento mt-3">
@@ -288,6 +296,8 @@ function Dashboard() {
           <Metric icon={Fuel} label="Combustível" value={BRL(r7.combustivel)} tone="neg" />
         </div>
       </section>
+
+      <FeedPreview />
 
       {/* Próximo Recebimento */}
       <div className="ep-section-title mt-4">Próximo recebimento</div>
