@@ -6,6 +6,7 @@ import {
   ListChecks,
   Wallet,
   MessageCircle,
+  Camera,
   Menu as MenuIcon,
   Bell,
   ArrowLeft,
