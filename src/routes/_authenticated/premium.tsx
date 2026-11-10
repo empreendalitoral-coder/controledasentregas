@@ -3,6 +3,7 @@ import { AppShell } from "@/components/AppShell";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePremium } from "@/lib/premium";
+import { FeedGrid } from "@/components/FeedGrid";
 import {
   Crown,
   Copy,
@@ -363,6 +364,7 @@ function PremiumPage() {
           </ul>
         </section>
       )}
+      <div className="mt-6"><FeedGrid /></div>
     </AppShell>
   );
 }
