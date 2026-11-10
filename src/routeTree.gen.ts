@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated/comunidade'
 import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authenticated/conta-excluida'
 import { Route as AuthenticatedDiagnosticoRouteImport } from './routes/_authenticated/diagnostico'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
@@ -130,6 +131,11 @@ const AuthenticatedDiagnosticoRoute =
     path: '/diagnostico',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFinanceiroRouteRoute =
   AuthenticatedFinanceiroRouteRouteImport.update({
     id: '/financeiro',
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
+  '/feed': typeof AuthenticatedFeedRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
+  '/feed': typeof AuthenticatedFeedRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -431,6 +439,7 @@ export interface FileRoutesById {
   '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
   '/_authenticated/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/_authenticated/diagnostico': typeof AuthenticatedDiagnosticoRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -482,6 +491,7 @@ export interface FileRouteTypes {
     | '/comunidade'
     | '/conta-excluida'
     | '/diagnostico'
+    | '/feed'
     | '/graficos'
     | '/historico'
     | '/indicacoes'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/comunidade'
     | '/conta-excluida'
     | '/diagnostico'
+    | '/feed'
     | '/graficos'
     | '/historico'
     | '/indicacoes'
@@ -578,6 +589,7 @@ export interface FileRouteTypes {
     | '/_authenticated/comunidade'
     | '/_authenticated/conta-excluida'
     | '/_authenticated/diagnostico'
+    | '/_authenticated/feed'
     | '/_authenticated/graficos'
     | '/_authenticated/historico'
     | '/_authenticated/indicacoes'
@@ -724,6 +736,13 @@ declare module '@tanstack/react-router' {
       path: '/diagnostico'
       fullPath: '/diagnostico'
       preLoaderRoute: typeof AuthenticatedDiagnosticoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/financeiro': {
@@ -1052,6 +1071,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
   AuthenticatedContaExcluidaRoute: typeof AuthenticatedContaExcluidaRoute
   AuthenticatedDiagnosticoRoute: typeof AuthenticatedDiagnosticoRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedIndicacoesRoute: typeof AuthenticatedIndicacoesRoute
@@ -1075,6 +1095,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
   AuthenticatedContaExcluidaRoute: AuthenticatedContaExcluidaRoute,
   AuthenticatedDiagnosticoRoute: AuthenticatedDiagnosticoRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedIndicacoesRoute: AuthenticatedIndicacoesRoute,

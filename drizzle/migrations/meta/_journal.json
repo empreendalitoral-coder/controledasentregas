@@ -113,6 +113,13 @@
       "when": 1794270579473,
       "tag": "0015_community_photos_premium_only",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1794271495210,
+      "tag": "0016_feed_posts",
+      "breakpoints": true
     }
   ]
 }

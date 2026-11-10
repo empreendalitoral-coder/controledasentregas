@@ -276,6 +276,12 @@ function CommunityPage() {
     >
       <div className="mb-4 flex items-center gap-3 border-b border-border pb-4"><div className="grid size-11 place-items-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-6" /></div><div><h2 className="font-display text-lg font-semibold">Motoristas Entrega Pro</h2><p className="text-xs text-muted-foreground">Canal geral</p></div></div>
 
+      <Link to="/feed" className="mb-4 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 p-3">
+        <Camera className="size-5 shrink-0 text-primary" />
+        <div className="min-w-0 flex-1"><div className="text-sm font-semibold">Feed da Estrada</div><div className="text-xs text-muted-foreground">Veja o dia a dia dos motoristas em fotos</div></div>
+        <span className="text-primary">›</span>
+      </Link>
+
       {access?.premium_required && access.transition_days_remaining > 0 && !access.premium_valid && !access.is_admin && (
         <Link to="/premium" className="mb-3 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 p-3">
           <Crown className="size-5 shrink-0 text-primary" />
