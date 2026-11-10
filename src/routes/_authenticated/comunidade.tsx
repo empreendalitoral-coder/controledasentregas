@@ -357,7 +357,13 @@ function CommunityPage() {
           )}
           <div className="flex items-end gap-2">
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(event) => void pickPhoto(event.target.files?.[0])} />
-            <Button type="button" variant="ghost" size="icon" className="size-11 shrink-0" disabled={sending || preparingPhoto || Boolean(photo)} onClick={() => fileRef.current?.click()} aria-label="Adicionar foto">{preparingPhoto ? <LoaderCircle className="animate-spin" /> : <Camera />}</Button>
+            <Button type="button" variant="ghost" size="icon" className="size-11 shrink-0" disabled={sending || preparingPhoto || Boolean(photo)} onClick={() => {
+              if (!access?.premium_valid && !access?.is_admin) {
+                toast("Envio de fotos é exclusivo para assinantes Premium.", { action: { label: "Ver planos", onClick: () => { window.location.href = "/premium"; } } });
+                return;
+              }
+              fileRef.current?.click();
+            }} aria-label="Adicionar foto">{preparingPhoto ? <LoaderCircle className="animate-spin" /> : <Camera />}</Button>
             <Textarea aria-label="Mensagem" value={content} onChange={(event) => setContent(event.target.value)} maxLength={500} rows={1} placeholder="Escreva uma mensagem…" className="max-h-32 min-h-11 resize-none rounded-lg bg-card text-sm" />
             <Button size="icon" className="size-11 shrink-0" disabled={sending || preparingPhoto || (!content.trim() && !photo)} onClick={() => void sendMessage()} aria-label="Enviar mensagem">{sending ? <LoaderCircle className="animate-spin" /> : <Send />}</Button>
           </div>
