@@ -235,6 +235,33 @@ function PremiumPage() {
         </button>
       </div>
 
+      {/* Comparação */}
+      <section className="mt-5 ep-card p-0 overflow-hidden">
+        <div className="grid grid-cols-[1fr_auto_auto] text-xs">
+          <div className="px-3 py-2 font-semibold bg-secondary">Recurso</div>
+          <div className="px-3 py-2 font-semibold bg-secondary text-center">Grátis</div>
+          <div className="px-3 py-2 font-semibold bg-secondary text-center text-primary">Premium</div>
+          {[
+            ["Lançamentos diários e histórico", true],
+            ["Calculadora de lucro", true],
+            ["Bate-papo da Comunidade", true],
+            ["Fechamento por quinzena e PDF", false],
+            ["Separação CNPJ/MEI e CPF", false],
+            ["Contas fixas, cartões e Pix", false],
+            ["Notas e recibos lidos por IA", false],
+            ["Publicar no Feed e enviar fotos", false],
+          ].map(([t, gratis]) => (
+            <div key={t as string} className="contents">
+              <div className="px-3 py-2 border-t border-border">{t as string}</div>
+              <div className="px-3 py-2 border-t border-border text-center">
+                {gratis ? <Check className="size-4 text-primary inline" /> : <span className="text-muted-foreground">—</span>}
+              </div>
+              <div className="px-3 py-2 border-t border-border text-center"><Check className="size-4 text-primary inline" /></div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* PIX */}
       <section className="mt-5 ep-card">
         <div className="flex items-center gap-2 mb-3">
