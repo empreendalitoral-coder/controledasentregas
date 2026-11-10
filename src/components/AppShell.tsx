@@ -6,6 +6,7 @@ import {
   ListChecks,
   Wallet,
   MessageCircle,
+  Camera,
   Menu as MenuIcon,
   Bell,
   ArrowLeft,
@@ -52,10 +53,10 @@ export function AppShell({ title, children, back, right, conversation = false }:
       match: (p: string) => p.startsWith("/recebimentos"),
     },
     {
-      to: "/comunidade",
-      label: "Chat",
-      icon: MessageCircle,
-      match: (p: string) => p.startsWith("/comunidade"),
+      to: "/feed",
+      label: "Feed",
+      icon: Camera,
+      match: (p: string) => p.startsWith("/feed") || p.startsWith("/comunidade"),
     },
     {
       to: "/mais",
