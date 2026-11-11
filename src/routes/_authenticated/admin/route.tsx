@@ -141,6 +141,7 @@ function AdminIndex() {
 
       <div className="mt-4 grid gap-2">
         <Link to="/admin/metricas" className="ep-card flex items-center gap-3"><TrendingUp className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Métricas de crescimento</div><div className="text-xs text-muted-foreground">Visitas, contas ativas e assinaturas</div></div><span className="text-muted-foreground">›</span></Link>
+        <Link to="/admin/feedbacks" className="ep-card flex items-center gap-3"><MessagesSquare className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Sugestões dos motoristas</div><div className="text-xs text-muted-foreground">O que os usuários pediram</div></div><span className="text-muted-foreground">›</span></Link>
         <Link to="/admin/indicacoes" className="ep-card flex items-center gap-3"><Gift className="size-5 text-primary"/><div className="flex-1"><div className="font-semibold">Resgates de indicação</div><div className="text-xs text-muted-foreground">Pix e descontos aguardando decisão</div></div></Link>
         <Link to="/admin/solicitacoes" className="ep-card flex items-center gap-3">
           <FileCheck className="size-5 text-primary" />
