@@ -28,6 +28,7 @@ import {
   PieChart,
   CreditCard,
   Check,
+  Gift,
 } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { usePremium } from "@/lib/premium";
