@@ -749,6 +749,27 @@ export type Database = {
           },
         ]
       }
+      feedbacks: {
+        Row: {
+          created_at: string
+          id: string
+          mensagem: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mensagem: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mensagem?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       fiscal_classifications: {
         Row: {
           classification: string

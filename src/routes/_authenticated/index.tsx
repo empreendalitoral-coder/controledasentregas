@@ -28,6 +28,7 @@ import {
   PieChart,
   CreditCard,
   Check,
+  Gift,
 } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { usePremium } from "@/lib/premium";
@@ -296,6 +297,8 @@ function Dashboard() {
           <Metric icon={Fuel} label="Combustível" value={BRL(r7.combustivel)} tone="neg" />
         </div>
       </section>
+
+      <Link to="/indicacoes" className="ep-card mt-3 flex items-center gap-3 border-primary/40"><Gift className="size-6 text-primary" /><div className="flex-1"><div className="font-semibold">Indique um amigo</div><div className="text-xs text-muted-foreground">Ganhe 5% da primeira assinatura dele</div></div><span className="text-muted-foreground">›</span></Link>
 
       <FeedPreview />
 
