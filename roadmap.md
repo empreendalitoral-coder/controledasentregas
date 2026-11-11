@@ -97,3 +97,5 @@
 ## Próximos
 - [x] Tela de métricas de crescimento (admin)
 - [x] Envio de notas/recibos com leitura por IA, revisão antes de salvar, edição/exclusão e tabela exportável CSV; recibo fictício lido e fluxo autenticado validado. Somente dados extraídos são guardados, sem documento original e sem integrar ao lucro ou relatório fiscal. Não publicado.
+
+- [ ] Futuro: salas do bate-papo por estado (Brasil + UFs, escolha livre) — aguardando ~50 usuários no chat. Plano em .lovable/plan/salas-do-bate-papo-por-estado-para-o-futuro-2026-11-11.md
