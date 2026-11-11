@@ -297,7 +297,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <Link to="/indicacoes" className="ep-card mt-3 flex items-center gap-3 border-primary/40"><span className="text-2xl">🎁</span><div className="flex-1"><div className="font-semibold">Indique um amigo</div><div className="text-xs text-muted-foreground">Ganhe 5% da primeira assinatura dele</div></div><span className="text-muted-foreground">›</span></Link>
+      <Link to="/indicacoes" className="ep-card mt-3 flex items-center gap-3 border-primary/40"><Gift className="size-6 text-primary" /><div className="flex-1"><div className="font-semibold">Indique um amigo</div><div className="text-xs text-muted-foreground">Ganhe 5% da primeira assinatura dele</div></div><span className="text-muted-foreground">›</span></Link>
 
       <FeedPreview />
 

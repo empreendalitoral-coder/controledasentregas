@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { registrarLogAdmin } from "@/lib/admin-log";
-import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning, Gift, TrendingUp } from "lucide-react";
+import { Users, FileCheck, Settings, BarChart, ShieldAlert, Megaphone, MessageSquareWarning, Gift, TrendingUp, MessagesSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,

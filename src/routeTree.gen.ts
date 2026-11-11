@@ -24,6 +24,7 @@ import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authentic
 import { Route as AuthenticatedContaExcluidaRouteImport } from './routes/_authenticated/conta-excluida'
 import { Route as AuthenticatedDiagnosticoRouteImport } from './routes/_authenticated/diagnostico'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedFinanceiroRouteRouteImport } from './routes/_authenticated/financeiro/route'
 import { Route as AuthenticatedGraficosRouteImport } from './routes/_authenticated/graficos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
@@ -38,6 +39,7 @@ import { Route as AuthenticatedRecebimentosRouteImport } from './routes/_authent
 import { Route as AuthenticatedResumoRouteImport } from './routes/_authenticated/resumo'
 import { Route as AuthenticatedAdminComunidadeRouteImport } from './routes/_authenticated/admin/comunidade'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
+import { Route as AuthenticatedAdminFeedbacksRouteImport } from './routes/_authenticated/admin/feedbacks'
 import { Route as AuthenticatedAdminIndicacoesRouteImport } from './routes/_authenticated/admin/indicacoes'
 import { Route as AuthenticatedAdminMensagensRouteImport } from './routes/_authenticated/admin/mensagens'
 import { Route as AuthenticatedAdminMetricasRouteImport } from './routes/_authenticated/admin/metricas'
@@ -136,6 +138,11 @@ const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
   path: '/feed',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFinanceiroRouteRoute =
   AuthenticatedFinanceiroRouteRouteImport.update({
     id: '/financeiro',
@@ -208,6 +215,12 @@ const AuthenticatedAdminConfiguracoesRoute =
   AuthenticatedAdminConfiguracoesRouteImport.update({
     id: '/configuracoes',
     path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminFeedbacksRoute =
+  AuthenticatedAdminFeedbacksRouteImport.update({
+    id: '/feedbacks',
+    path: '/feedbacks',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminIndicacoesRoute =
@@ -341,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -354,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/resumo': typeof AuthenticatedResumoRoute
   '/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/feedbacks': typeof AuthenticatedAdminFeedbacksRoute
   '/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/metricas': typeof AuthenticatedAdminMetricasRoute
@@ -389,6 +404,7 @@ export interface FileRoutesByTo {
   '/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
   '/graficos': typeof AuthenticatedGraficosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -403,6 +419,7 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/feedbacks': typeof AuthenticatedAdminFeedbacksRoute
   '/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/admin/metricas': typeof AuthenticatedAdminMetricasRoute
@@ -440,6 +457,7 @@ export interface FileRoutesById {
   '/_authenticated/conta-excluida': typeof AuthenticatedContaExcluidaRoute
   '/_authenticated/diagnostico': typeof AuthenticatedDiagnosticoRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/graficos': typeof AuthenticatedGraficosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -454,6 +472,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/admin/comunidade': typeof AuthenticatedAdminComunidadeRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/feedbacks': typeof AuthenticatedAdminFeedbacksRoute
   '/_authenticated/admin/indicacoes': typeof AuthenticatedAdminIndicacoesRoute
   '/_authenticated/admin/mensagens': typeof AuthenticatedAdminMensagensRoute
   '/_authenticated/admin/metricas': typeof AuthenticatedAdminMetricasRoute
@@ -492,6 +511,7 @@ export interface FileRouteTypes {
     | '/conta-excluida'
     | '/diagnostico'
     | '/feed'
+    | '/feedback'
     | '/graficos'
     | '/historico'
     | '/indicacoes'
@@ -505,6 +525,7 @@ export interface FileRouteTypes {
     | '/resumo'
     | '/admin/comunidade'
     | '/admin/configuracoes'
+    | '/admin/feedbacks'
     | '/admin/indicacoes'
     | '/admin/mensagens'
     | '/admin/metricas'
@@ -540,6 +561,7 @@ export interface FileRouteTypes {
     | '/conta-excluida'
     | '/diagnostico'
     | '/feed'
+    | '/feedback'
     | '/graficos'
     | '/historico'
     | '/indicacoes'
@@ -554,6 +576,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/comunidade'
     | '/admin/configuracoes'
+    | '/admin/feedbacks'
     | '/admin/indicacoes'
     | '/admin/mensagens'
     | '/admin/metricas'
@@ -590,6 +613,7 @@ export interface FileRouteTypes {
     | '/_authenticated/conta-excluida'
     | '/_authenticated/diagnostico'
     | '/_authenticated/feed'
+    | '/_authenticated/feedback'
     | '/_authenticated/graficos'
     | '/_authenticated/historico'
     | '/_authenticated/indicacoes'
@@ -604,6 +628,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/admin/comunidade'
     | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/feedbacks'
     | '/_authenticated/admin/indicacoes'
     | '/_authenticated/admin/mensagens'
     | '/_authenticated/admin/metricas'
@@ -745,6 +770,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/feedback': {
+      id: '/_authenticated/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/financeiro': {
       id: '/_authenticated/financeiro'
       path: '/financeiro'
@@ -841,6 +873,13 @@ declare module '@tanstack/react-router' {
       path: '/configuracoes'
       fullPath: '/admin/configuracoes'
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/feedbacks': {
+      id: '/_authenticated/admin/feedbacks'
+      path: '/feedbacks'
+      fullPath: '/admin/feedbacks'
+      preLoaderRoute: typeof AuthenticatedAdminFeedbacksRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/indicacoes': {
@@ -982,6 +1021,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminComunidadeRoute: typeof AuthenticatedAdminComunidadeRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminFeedbacksRoute: typeof AuthenticatedAdminFeedbacksRoute
   AuthenticatedAdminIndicacoesRoute: typeof AuthenticatedAdminIndicacoesRoute
   AuthenticatedAdminMensagensRoute: typeof AuthenticatedAdminMensagensRoute
   AuthenticatedAdminMetricasRoute: typeof AuthenticatedAdminMetricasRoute
@@ -993,6 +1033,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminComunidadeRoute: AuthenticatedAdminComunidadeRoute,
     AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+    AuthenticatedAdminFeedbacksRoute: AuthenticatedAdminFeedbacksRoute,
     AuthenticatedAdminIndicacoesRoute: AuthenticatedAdminIndicacoesRoute,
     AuthenticatedAdminMensagensRoute: AuthenticatedAdminMensagensRoute,
     AuthenticatedAdminMetricasRoute: AuthenticatedAdminMetricasRoute,
@@ -1072,6 +1113,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedContaExcluidaRoute: typeof AuthenticatedContaExcluidaRoute
   AuthenticatedDiagnosticoRoute: typeof AuthenticatedDiagnosticoRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedGraficosRoute: typeof AuthenticatedGraficosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedIndicacoesRoute: typeof AuthenticatedIndicacoesRoute
@@ -1096,6 +1138,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedContaExcluidaRoute: AuthenticatedContaExcluidaRoute,
   AuthenticatedDiagnosticoRoute: AuthenticatedDiagnosticoRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedGraficosRoute: AuthenticatedGraficosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedIndicacoesRoute: AuthenticatedIndicacoesRoute,
