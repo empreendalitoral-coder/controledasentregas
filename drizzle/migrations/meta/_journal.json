@@ -127,6 +127,13 @@
       "when": 1794361246092,
       "tag": "0017_feedback",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794451592845,
+      "tag": "0018_community_rooms",
+      "breakpoints": true
     }
   ]
 }

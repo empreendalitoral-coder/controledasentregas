@@ -315,6 +315,7 @@ export type Database = {
           reply_author_name: string | null
           reply_preview: string | null
           reply_to: string | null
+          room: string
         }
         Insert: {
           author_id: string
@@ -331,6 +332,7 @@ export type Database = {
           reply_author_name?: string | null
           reply_preview?: string | null
           reply_to?: string | null
+          room?: string
         }
         Update: {
           author_id?: string
@@ -347,6 +349,7 @@ export type Database = {
           reply_author_name?: string | null
           reply_preview?: string | null
           reply_to?: string | null
+          room?: string
         }
         Relationships: [
           {
@@ -1670,23 +1673,41 @@ export type Database = {
           transition_ends_at: string
         }[]
       }
-      get_community_messages: {
-        Args: never
-        Returns: {
-          author_name: string
-          author_photo: string
-          content: string
-          created_at: string
-          id: string
-          image_path: string
-          is_anonymous: boolean
-          is_own: boolean
-          removed_at: string
-          reply_author_name: string
-          reply_preview: string
-          reply_to: string
-        }[]
-      }
+      get_community_messages:
+        | {
+            Args: never
+            Returns: {
+              author_name: string
+              author_photo: string
+              content: string
+              created_at: string
+              id: string
+              image_path: string
+              is_anonymous: boolean
+              is_own: boolean
+              removed_at: string
+              reply_author_name: string
+              reply_preview: string
+              reply_to: string
+            }[]
+          }
+        | {
+            Args: { _room: string }
+            Returns: {
+              author_name: string
+              author_photo: string
+              content: string
+              created_at: string
+              id: string
+              image_path: string
+              is_anonymous: boolean
+              is_own: boolean
+              removed_at: string
+              reply_author_name: string
+              reply_preview: string
+              reply_to: string
+            }[]
+          }
       get_growth_metrics: { Args: { _days?: number }; Returns: Json }
       get_payment_info: {
         Args: never

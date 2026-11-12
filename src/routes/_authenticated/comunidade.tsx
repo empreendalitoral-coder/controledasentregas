@@ -43,6 +43,12 @@ type AccessStatus = {
   transition_ends_at: string | null;
 };
 
+const ROOMS: { id: string; label: string }[] = [
+  { id: "BR", label: "Brasil (geral)" },
+  ...["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map((uf) => ({ id: uf, label: uf })),
+];
+const ROOM_KEY = "ep-community-room";
+
 const RULES = [
   "Trate todos com respeito. Ofensas, ameaças e discriminação não são permitidas.",
   "Não envie links, convites, propaganda, correntes ou mensagens repetidas.",
@@ -90,6 +96,8 @@ function CommunityPage() {
   const [preparingPhoto, setPreparingPhoto] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [viewingPhoto, setViewingPhoto] = useState<string | null>(null);
+  const [room, setRoom] = useState("BR");
+  const roomRef = useRef("BR");
   const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(false);
@@ -118,7 +126,7 @@ function CommunityPage() {
     }
     const [{ data: member }, { data: rows, error }] = await Promise.all([
       supabase.from("community_members").select("rules_accepted_at, anonymous_enabled").eq("user_id", user.id).maybeSingle(),
-      supabase.rpc("get_community_messages"),
+      supabase.rpc("get_community_messages", { _room: roomRef.current }),
     ]);
     if (!mountedRef.current) return;
     if (error) toast.error("Não foi possível carregar a Comunidade.");
@@ -138,9 +146,11 @@ function CommunityPage() {
 
   useEffect(() => {
     mountedRef.current = true;
+    const saved = window.localStorage.getItem(ROOM_KEY);
+    if (saved && ROOMS.some((item) => item.id === saved)) { roomRef.current = saved; setRoom(saved); }
     void load();
     const channel = supabase
-      .channel("community-live")
+      .channel(`community-live-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "community_events" }, () => void load())
       .subscribe();
     return () => { mountedRef.current = false; void supabase.removeChannel(channel); };
@@ -182,6 +192,7 @@ function CommunityPage() {
       content: text,
       reply_to: replying?.id ?? null,
       image_path: imagePath,
+      room: roomRef.current,
     });
     setSending(false);
     if (error) {
@@ -192,6 +203,14 @@ function CommunityPage() {
     clearPhoto();
     setReplying(null);
     await load();
+  }
+
+  function changeRoom(next: string) {
+    roomRef.current = next;
+    setRoom(next);
+    setReplying(null);
+    window.localStorage.setItem(ROOM_KEY, next);
+    void load();
   }
 
   function clearPhoto() {
@@ -274,7 +293,8 @@ function CommunityPage() {
       back="/mais"
       right={<Button variant="ghost" size="icon" aria-label="Ver regras" onClick={() => setRulesOpen(true)}><ShieldCheck className="size-5" /></Button>}
     >
-      <div className="mb-4 flex items-center gap-3 border-b border-border pb-4"><div className="grid size-11 place-items-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-6" /></div><div><h2 className="font-display text-lg font-semibold">Motoristas Entrega Pro</h2><p className="text-xs text-muted-foreground">Canal geral</p></div></div>
+      <div className="mb-4 flex items-center gap-3 border-b border-border pb-4"><div className="grid size-11 place-items-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-6" /></div><div><h2 className="font-display text-lg font-semibold">Motoristas Entrega Pro</h2><p className="text-xs text-muted-foreground">{room === "BR" ? "Sala Brasil" : `Sala ${room}`}</p></div>
+        <div className="ml-auto w-36"><Select value={room} onValueChange={changeRoom}><SelectTrigger aria-label="Escolher sala"><SelectValue /></SelectTrigger><SelectContent>{ROOMS.map((item) => <SelectItem key={item.id} value={item.id}>{item.id === "BR" ? item.label : `Sala ${item.label}`}</SelectItem>)}</SelectContent></Select></div></div>
 
       <Link to="/feed" className="mb-4 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 p-3">
         <Camera className="size-5 shrink-0 text-primary" />
