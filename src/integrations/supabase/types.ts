@@ -1722,6 +1722,7 @@ export type Database = {
         }[]
       }
       get_referral_wallet: { Args: never; Returns: Json }
+      has_financial_premium_access: { Args: never; Returns: boolean }
       moderate_community_message: {
         Args: { _action: string; _message_id: string; _reason: string }
         Returns: undefined

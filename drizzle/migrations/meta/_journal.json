@@ -134,6 +134,13 @@
       "when": 1794451592845,
       "tag": "0018_community_rooms",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794540442715,
+      "tag": "0019_enforce_financial_premium_access",
+      "breakpoints": true
     }
   ]
 }
