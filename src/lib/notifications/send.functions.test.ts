@@ -20,7 +20,7 @@ vi.mock("@/lib/fcm.server", () => ({
   sendFcmMessage: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
-import { dispatchNotification, unregisterDeviceToken, removeDeviceById, listNotificationSettings, dispatchNotificationFn } from "./send.functions";
+import { dispatchNotification, registerDeviceToken, unregisterDeviceToken, removeDeviceById, listNotificationSettings, dispatchNotificationFn } from "./send.functions";
 import { sendFcmMessage } from "@/lib/fcm.server";
 
 function client(results: Record<string, Array<{ data?: unknown; error?: unknown }>>) {
@@ -41,6 +41,21 @@ const args = { userId: "user-1", tipoCodigo: "meta_atingida", contexto: {}, dedu
 
 describe("confirmações e preferências de notificações", () => {
   beforeEach(() => vi.clearAllMocks());
+
+  it("registra o dispositivo usando as permissões do proprietário", async () => {
+    const supabase = client({ notification_tokens: [{ data: null }] });
+    const handler = registerDeviceToken as unknown as (input: unknown) => Promise<unknown>;
+    expect(await handler({ data: { token: "test-device-token", plataforma: "web" }, context: { supabase, userId: "owner" } })).toEqual({ ok: true });
+    expect(supabase.from).toHaveBeenCalledWith("notification_tokens");
+    const query = supabase.from.mock.results[0]?.value;
+    expect(query.upsert).toHaveBeenCalledWith(expect.objectContaining({ user_id: "owner" }), { onConflict: "token" });
+  });
+
+  it("não confirma tentativa de tomar um dispositivo bloqueada pelas permissões", async () => {
+    const supabase = client({ notification_tokens: [{ error: { message: "row-level security" } }] });
+    const handler = registerDeviceToken as unknown as (input: unknown) => Promise<unknown>;
+    await expect(handler({ data: { token: "other-device-token", plataforma: "web" }, context: { supabase, userId: "attacker" } })).rejects.toThrow("row-level security");
+  });
 
   it("respeita o padrão desativado sem enviar", async () => {
     const admin = client({
