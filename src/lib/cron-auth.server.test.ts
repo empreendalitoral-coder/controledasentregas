@@ -19,4 +19,15 @@ describe("scheduled task authorization", () => {
     expect(response?.status).toBe(401);
     vi.restoreAllMocks();
   });
+  it("rejects a retired environment credential even when it matches", async () => {
+    vi.stubEnv("CRON_SECRET", "retired-credential");
+    mocks.rpc.mockResolvedValue({ data: false, error: null });
+    const response = await assertCronRequest(new Request("https://example.test", { headers: { "x-cron-secret": "retired-credential" } }));
+    expect(response?.status).toBe(401);
+    expect(mocks.rpc).toHaveBeenCalledWith("cron_token_valido", { _token: "retired-credential" });
+  });
+  it("accepts only a currently validated database credential", async () => {
+    mocks.rpc.mockResolvedValue({ data: true, error: null });
+    expect(await assertCronRequest(new Request("https://example.test", { headers: { "x-cron-secret": "current-test-credential" } }))).toBeNull();
+  });
 });

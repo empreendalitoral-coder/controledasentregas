@@ -1,5 +1,12 @@
 # Diagnóstico do aplicativo
 
+## Correções da verificação completa de segurança
+- [ ] Corrigir execução de HTML no relatório e registro de dispositivos com o cliente do proprietário.
+- [ ] Invalidar a credencial antiga dos agendamentos sem executar envios ou exclusões.
+- [ ] Aplicar no banco as restrições Premium já existentes nas telas financeiras e na restauração.
+- [ ] Substituir links temporários de fotos por downloads autenticados e testar os fluxos.
+- [ ] Revisar os resultados de segurança e informar o que permanece pendente; não publicar sem autorização.
+
 # Varredura de erros
 
 - [x] Revisar notificações e tarefas automáticas sem envios ou exclusões reais

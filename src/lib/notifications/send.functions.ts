@@ -28,8 +28,7 @@ export const registerDeviceToken = createServerFn({ method: "POST" })
       .parse(raw),
   )
   .handler(async ({ data, context }) => {
-    const admin = await loadAdmin();
-    const { error } = await admin
+    const { error } = await context.supabase
       .from("notification_tokens")
       .upsert(
         {

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/compress-image";
 import { Camera, Crown, Heart, LoaderCircle, Lock, MessageCircle, Plus, Send, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { PrivatePhoto } from "@/components/PrivatePhoto";
 
 type Post = { id: string; author_id: string; author_name: string; author_photo: string | null; content: string; image_path: string; created_at: string };
 type Comment = { id: string; post_id: string; author_id: string; author_name: string; content: string; created_at: string };
@@ -17,7 +18,6 @@ export function FeedGrid() {
   const [access, setAccess] = useState<Access | null>(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [urls, setUrls] = useState<Record<string, string>>({});
   const [likes, setLikes] = useState<Record<string, { count: number; mine: boolean }>>({});
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [openPost, setOpenPost] = useState<string | null>(null);
@@ -39,16 +39,12 @@ export function FeedGrid() {
     setPosts(list);
     const ids = list.map((p) => p.id);
     if (ids.length) {
-      const [{ data: signed }, { data: likeRows }, { data: commentRows }] = await Promise.all([
-        supabase.storage.from("feed-photos").createSignedUrls(list.map((p) => p.image_path), 3600),
+      const [{ data: likeRows }, { data: commentRows }] = await Promise.all([
         supabase.from("feed_likes").select("post_id, user_id").in("post_id", ids),
         supabase.from("feed_comments").select("id, post_id, author_id, author_name, content, created_at").in("post_id", ids).order("created_at"),
       ]);
-      const u: Record<string, string> = {};
-      signed?.forEach((s) => { if (s.path && s.signedUrl) u[s.path] = s.signedUrl; });
-      setUrls(u);
       const l: Record<string, { count: number; mine: boolean }> = {};
-      likeRows?.forEach((r) => { const c = l[r.post_id] ?? { count: 0, mine: false }; c.count++; if (r.user_id === auth.user!.id) c.mine = true; l[r.post_id] = c; });
+      likeRows?.forEach((r) => { const c = l[r.post_id] ?? { count: 0, mine: false }; c.count++; if (r.user_id === auth.user?.id) c.mine = true; l[r.post_id] = c; });
       setLikes(l);
       const c: Record<string, Comment[]> = {};
       (commentRows as Comment[] | null)?.forEach((r) => { (c[r.post_id] ??= []).push(r); });
@@ -105,7 +101,7 @@ export function FeedGrid() {
         <div className="grid grid-cols-3 gap-1">
           {posts.map((post) => (
             <button key={post.id} type="button" onClick={() => setOpenPost(post.id)} className="relative aspect-square overflow-hidden rounded-md bg-secondary" aria-label={`Abrir publicação de ${post.author_name}`}>
-              {urls[post.image_path] && <img src={urls[post.image_path]} alt="" loading="lazy" className="size-full object-cover" />}
+              <PrivatePhoto bucket="feed-photos" path={post.image_path} alt="" loading="lazy" className="size-full object-cover" />
             </button>
           ))}
         </div>
@@ -131,7 +127,7 @@ export function FeedGrid() {
                 <div className="min-w-0 flex-1"><div className="truncate text-sm font-semibold">{post.author_name}</div><div className="text-xs text-muted-foreground">{timeAgo(post.created_at)}</div></div>
                 {(post.author_id === userId || access.is_admin) && <Button variant="ghost" size="icon" aria-label="Apagar publicação" onClick={() => setDeleting(post)}><Trash2 className="size-4" /></Button>}
               </header>
-              {urls[post.image_path] && <img src={urls[post.image_path]} alt={post.content || "Foto do dia a dia"} className="max-h-[60vh] w-full bg-secondary object-contain" />}
+              <PrivatePhoto bucket="feed-photos" path={post.image_path} alt={post.content || "Foto do dia a dia"} className="max-h-[60vh] w-full bg-secondary object-contain" />
               <div className="p-3">
                 <div className="flex items-center gap-4">
                   <button type="button" onClick={() => void toggleLike(post)} className="flex items-center gap-1.5 text-sm" aria-label={like.mine ? "Descurtir" : "Curtir"}><Heart className={`size-5 ${like.mine ? "fill-primary text-primary" : ""}`} />{like.count}</button>

@@ -30,6 +30,7 @@ import { useRef, useState } from "react";
 import { BRL, computeResumo } from "@/lib/calc";
 import { ConfirmAction } from "@/components/ConfirmAction";
 import { Button } from "@/components/ui/button";
+import { escapeReportText } from "@/lib/report-html";
 
 export const Route = createFileRoute("/_authenticated/mais")({
   head: () => ({
@@ -106,7 +107,7 @@ function MaisPage() {
     const html = `<!doctype html><html><head><meta charset='utf-8'><title>Relatório</title>
 <style>body{font-family:system-ui,sans-serif;padding:24px}h1{margin:0 0 4px}table{width:100%;border-collapse:collapse;margin-top:8px}td{padding:6px 8px;border-bottom:1px solid #ddd;font-size:13px}.r{text-align:right}.pos{color:#0a7f3e;font-weight:600}.neg{color:#b00020;font-weight:600}</style></head><body>
 <h1>Entrega Pro — Relatório Mensal</h1>
-<div>${state.motorista.nome || "Motorista"}</div>
+<div>${escapeReportText(state.motorista.nome || "Motorista")}</div>
 <div>${inicio.toLocaleDateString("pt-BR")} a ${fim.toLocaleDateString("pt-BR")}</div>
 <table>
 <tr><td>Dias trabalhados</td><td class='r'>${r.dias_trabalhados}</td></tr>

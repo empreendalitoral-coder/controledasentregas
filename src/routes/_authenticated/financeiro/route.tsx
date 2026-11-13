@@ -4,6 +4,15 @@ import { usePremium } from "@/lib/premium";
 import { Crown, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/financeiro")({
+  head: () => ({ meta: [
+    { title: "Central Financeira Premium — Entrega Pro" },
+    { name: "description", content: "Contas, cartões, metas e Pix do motorista na Central Financeira Premium do Entrega Pro." },
+    { property: "og:title", content: "Central Financeira Premium — Entrega Pro" },
+    { property: "og:description", content: "Acompanhe contas, cartões, metas e Pix no Entrega Pro." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: FinanceiroLayout,
 });
 
