@@ -31,6 +31,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { compressImage } from "@/lib/compress-image";
 import { Ban, Camera, Crown, X, Flag, LoaderCircle, Lock, MessageCircle, MoreVertical, Reply, Send, ShieldCheck, ShieldX, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
+import { PrivatePhoto } from "@/components/PrivatePhoto";
 
 type Message = Database["public"]["Functions"]["get_community_messages"]["Returns"][number];
 type ReportReason = "spam" | "ofensa" | "golpe" | "dados_pessoais" | "outro";
@@ -94,7 +95,6 @@ function CommunityPage() {
   const [photo, setPhoto] = useState<Blob | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [preparingPhoto, setPreparingPhoto] = useState(false);
-  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [viewingPhoto, setViewingPhoto] = useState<string | null>(null);
   const [room, setRoom] = useState("BR");
   const roomRef = useRef("BR");
@@ -134,13 +134,6 @@ function CommunityPage() {
     setAnonymousEnabled(Boolean(member?.anonymous_enabled) && accessStatus.premium_valid);
     setRulesOpen(!member?.rules_accepted_at);
     setMessages(rows ?? []);
-    const paths = (rows ?? []).map((row) => row.image_path).filter((path): path is string => Boolean(path));
-    if (paths.length) {
-      const { data: signed } = await supabase.storage.from("community-photos").createSignedUrls(paths, 3600);
-      if (mountedRef.current && signed) {
-        setPhotoUrls(Object.fromEntries(signed.filter((item) => item.signedUrl && item.path).map((item) => [item.path as string, item.signedUrl as string])) as Record<string, string>);
-      }
-    }
     setLoading(false);
   }, []);
 
@@ -357,9 +350,7 @@ function CommunityPage() {
                     </div>
                   )}
                   {message.removed_at ? <p className={`mt-2 text-sm italic ${own ? "text-chat-own-foreground/80" : "text-muted-foreground"}`}>Mensagem removida pela moderação.</p> : <>
-                    {message.image_path && (photoUrls[message.image_path]
-                      ? <button type="button" className="mt-2 block overflow-hidden rounded-md" onClick={() => setViewingPhoto(photoUrls[message.image_path as string])} aria-label="Ampliar foto"><img src={photoUrls[message.image_path]} alt="Foto enviada na Comunidade" loading="lazy" className="max-h-72 w-full object-cover" /></button>
-                      : <div className="mt-2 grid h-40 place-items-center rounded-md bg-secondary"><LoaderCircle className="size-5 animate-spin text-muted-foreground" /></div>)}
+                    {message.image_path && <Button variant="ghost" className="mt-2 block h-auto overflow-hidden rounded-md p-0" onClick={() => setViewingPhoto(message.image_path)} aria-label="Ampliar foto"><PrivatePhoto bucket="community-photos" path={message.image_path} alt="Foto enviada na Comunidade" loading="lazy" className="max-h-72 w-full object-cover" /></Button>}
                     {!(message.image_path && message.content === "📷 Foto") && <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.content}</p>}
                   </>}
                 <div className="mt-1 text-right text-[10px] opacity-70"><time>{formatTime(message.created_at)}</time></div>
@@ -400,7 +391,7 @@ function CommunityPage() {
       <Dialog open={viewingPhoto !== null} onOpenChange={(open) => !open && setViewingPhoto(null)}>
         <DialogContent className="w-[calc(100%-1rem)] max-w-2xl rounded-lg bg-card p-2">
           <DialogHeader className="sr-only"><DialogTitle>Foto</DialogTitle><DialogDescription>Foto ampliada</DialogDescription></DialogHeader>
-          {viewingPhoto && <img src={viewingPhoto} alt="Foto ampliada" className="max-h-[80vh] w-full rounded-md object-contain" />}
+          {viewingPhoto && <PrivatePhoto bucket="community-photos" path={viewingPhoto} alt="Foto ampliada" className="max-h-[80vh] w-full rounded-md object-contain" />}
         </DialogContent>
       </Dialog>
       <RulesDialog open={rulesOpen} accepted={accepted} onOpenChange={setRulesOpen} onAccept={acceptRules} />

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Camera, Check, ChevronRight, Crown, X } from "lucide-react";
+import { PrivatePhoto } from "@/components/PrivatePhoto";
 
 const KEY = "ep-onboarding-dismissed";
 
@@ -59,7 +60,7 @@ export function TrialEndingBanner({ dias }: { dias: number }) {
 }
 
 export function FeedPreview() {
-  const [fotos, setFotos] = useState<{ id: string; url: string }[]>([]);
+  const [fotos, setFotos] = useState<{ id: string; image_path: string }[]>([]);
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -70,13 +71,7 @@ export function FeedPreview() {
         .order("created_at", { ascending: false })
         .limit(3);
       if (!rows?.length) return;
-      const { data: signed } = await supabase.storage
-        .from("feed-photos")
-        .createSignedUrls(rows.map((r) => r.image_path), 3600);
-      const list = rows
-        .map((r) => ({ id: r.id, url: signed?.find((s) => s.path === r.image_path)?.signedUrl ?? "" }))
-        .filter((f) => f.url);
-      if (alive) setFotos(list);
+      if (alive) setFotos(rows);
     })();
     return () => { alive = false; };
   }, []);
@@ -89,7 +84,7 @@ export function FeedPreview() {
       </div>
       <Link to="/feed" className="grid grid-cols-3 gap-1.5">
         {fotos.map((f) => (
-          <img key={f.id} src={f.url} alt="Foto do Feed" loading="lazy" className="aspect-square w-full object-cover rounded-lg" />
+          <PrivatePhoto key={f.id} bucket="feed-photos" path={f.image_path} alt="Foto do Feed" loading="lazy" className="aspect-square w-full object-cover rounded-lg" />
         ))}
       </Link>
       <Link to="/feed" className="mt-2 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">

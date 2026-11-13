@@ -26,3 +26,7 @@
 - Scheduled account purge deletes the Auth root and relies on existing cascading foreign keys; restricting dependencies fail without pre-deleting financial rows, preventing partial data loss.
 - Profile and notification parent routes render their own screen only at the exact parent URL and render Outlet for descendants; this prevents nested settings and tools from being hidden by the parent form.
 - Receipt expenses remain a separate owner-scoped register with explicit review before saving and CSV export; never merge them into profit or fiscal totals automatically, preventing duplicate expenses.
+- Social photos use authenticated Storage downloads and revocable browser-local object URLs, never signed bearer links, so each new download checks current access.
+- Device registration uses the caller's RLS client; a globally unique token cannot be reassigned from another account through an administrative upsert.
+- Financial workspace tables require both row ownership and a valid Premium subscription or trial through restrictive policies, matching the existing screen gate without deleting expired accounts' records.
+- Escape imported text before interpolating it into printable HTML; report data must never become executable markup.
