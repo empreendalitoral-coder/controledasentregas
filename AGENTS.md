@@ -30,3 +30,4 @@
 - Device registration uses the caller's RLS client; a globally unique token cannot be reassigned from another account through an administrative upsert.
 - Financial workspace tables require both row ownership and a valid Premium subscription or trial through restrictive policies, matching the existing screen gate without deleting expired accounts' records.
 - Escape imported text before interpolating it into printable HTML; report data must never become executable markup.
+- Scheduled hooks accept only the current private database credential; legacy environment fallbacks are rejected so database rotation invalidates old credentials for both jobs.

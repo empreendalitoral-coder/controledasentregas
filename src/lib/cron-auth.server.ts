@@ -3,16 +3,9 @@
  *
  * A chave publicável do Supabase NÃO serve como segredo: ela é embutida no
  * bundle do navegador. Aqui usamos um token exclusivo de servidor, guardado em
- * `private.cron_tokens` (sem acesso para anon/authenticated) e/ou na variável
- * de ambiente `CRON_SECRET`.
+ * `private.cron_tokens` (sem acesso para anon/authenticated). A variável antiga
+ * CRON_SECRET não é aceita: a rotação no banco deve invalidar toda credencial anterior.
  */
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
-
 export async function assertCronRequest(request: Request): Promise<Response | null> {
   const unauthorized = new Response(JSON.stringify({ error: "unauthorized" }), {
     status: 401,
@@ -21,9 +14,6 @@ export async function assertCronRequest(request: Request): Promise<Response | nu
 
   const provided = request.headers.get("x-cron-secret") ?? "";
   if (!provided) return unauthorized;
-
-  const envSecret = process.env.CRON_SECRET;
-  if (envSecret && timingSafeEqual(provided, envSecret)) return null;
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
