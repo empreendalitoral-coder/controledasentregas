@@ -1,11 +1,14 @@
 # Diagnóstico do aplicativo
 
 ## Correções da verificação completa de segurança
-- [ ] Corrigir execução de HTML no relatório e registro de dispositivos com o cliente do proprietário.
-- [ ] Invalidar a credencial antiga dos agendamentos sem executar envios ou exclusões.
-- [ ] Aplicar no banco as restrições Premium já existentes nas telas financeiras e na restauração.
-- [ ] Substituir links temporários de fotos por downloads autenticados e testar os fluxos.
-- [ ] Revisar os resultados de segurança e informar o que permanece pendente; não publicar sem autorização.
+- [x] Corrigir execução de HTML no relatório e registro de dispositivos com o cliente do proprietário; testes incluídos nos 68 aprovados.
+- [x] Invalidar a credencial antiga dos agendamentos sem executar envios ou exclusões; ambas as tarefas rejeitaram pedidos inválidos com 401.
+- [x] Aplicar no banco as restrições Premium já existentes nas telas financeiras e na restauração; sete políticas restritivas conferidas.
+- [x] Substituir links temporários de fotos por downloads autenticados; Feed conferido com fotos locais, telas autenticadas sem erros e sem transbordamento no celular.
+- [x] Remover somente a conta fixa fictícia da revisão anterior e executar os 68 testes de regressão; prévia compilada com sucesso.
+- [ ] Testar bloqueio com conta real sem Premium — aguarda escolha/autorização da conta pelo usuário; não alterar assinaturas existentes.
+- [ ] Concluir nova revisão aprofundada — análise iniciada em 14/11/2026; verificação rápida com apenas aviso do catálogo de notificações.
+- [ ] Publicar correções — aguarda autorização explícita de publicação.
 
 # Varredura de erros
 
@@ -105,4 +108,4 @@
 - [x] Tela de métricas de crescimento (admin)
 - [x] Envio de notas/recibos com leitura por IA, revisão antes de salvar, edição/exclusão e tabela exportável CSV; recibo fictício lido e fluxo autenticado validado. Somente dados extraídos são guardados, sem documento original e sem integrar ao lucro ou relatório fiscal. Não publicado.
 
-- [ ] Futuro: salas do bate-papo por estado (Brasil + UFs, escolha livre) — aguardando ~50 usuários no chat. Plano em .lovable/plan/salas-do-bate-papo-por-estado-para-o-futuro-2026-11-11.md
+- [x] Salas do bate-papo por estado (Brasil + UFs, escolha livre) — implementadas, testadas e publicadas conforme solicitação posterior.
