@@ -1,5 +1,9 @@
 # Diagnóstico do aplicativo
 
+## Feed com duração de 24 horas
+- [ ] Substituir limpeza que falha por exclusão autenticada de fotos e posts.
+- [ ] Informar a duração no Feed, testar a limpeza e publicar com autorização.
+
 ## Correções da verificação completa de segurança
 - [x] Corrigir execução de HTML no relatório e registro de dispositivos com o cliente do proprietário; testes incluídos nos 68 aprovados.
 - [x] Invalidar a credencial antiga dos agendamentos sem executar envios ou exclusões; ambas as tarefas rejeitaram pedidos inválidos com 401.
