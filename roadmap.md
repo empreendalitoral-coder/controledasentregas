@@ -1,5 +1,11 @@
 # Diagnóstico do aplicativo
 
+## Feed com duração de 24 horas
+- [x] Substituir limpeza que falha por exclusão autenticada de fotos e posts; tarefa SQL antiga pausada.
+- [x] Informar a duração no Feed e testar: limpeza autenticada excluiu 2 posts vencidos e fotos, chamada sem credencial retornou 401; telas desktop/celular verificadas.
+- [x] Configurar limpeza autenticada por hora com agendamento gerenciado; entrará em funcionamento no site após publicação.
+- [ ] Publicar com autorização específica do usuário; o novo endereço da limpeza ainda não está no site publicado.
+
 ## Correções da verificação completa de segurança
 - [x] Corrigir execução de HTML no relatório e registro de dispositivos com o cliente do proprietário; testes incluídos nos 68 aprovados.
 - [x] Invalidar a credencial antiga dos agendamentos sem executar envios ou exclusões; ambas as tarefas rejeitaram pedidos inválidos com 401.

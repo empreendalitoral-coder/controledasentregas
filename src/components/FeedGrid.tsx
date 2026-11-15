@@ -89,6 +89,7 @@ export function FeedGrid() {
 
   return (
     <section className="mb-6"><h3 className="mb-3 flex items-center gap-2 text-base font-bold"><Camera className="size-4 text-primary" />Feed da Estrada</h3>
+      <p className="mb-3 text-xs text-muted-foreground">As publicações duram 24 horas. A exclusão automática de fotos, curtidas e comentários ocorre na próxima limpeza, feita a cada hora.</p>
       <button type="button" onClick={() => (canPost ? setComposer(true) : setPremiumGate(true))} className="mb-4 flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3 text-left">
         <div className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground"><Plus className="size-5" /></div>
         <div className="min-w-0 flex-1"><div className="text-sm font-semibold">Publicar meu dia a dia</div><div className="text-xs text-muted-foreground">Uma foto e um relato rápido da rota</div></div>
@@ -222,7 +223,7 @@ function Composer({ open, onOpenChange, userId, onPosted }: { open: boolean; onO
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) reset(); onOpenChange(o); }}>
       <DialogContent>
-        <DialogHeader><DialogTitle>Publicar meu dia a dia</DialogTitle><DialogDescription>Nunca mostre etiquetas, nomes ou dados de clientes. Links não são permitidos.</DialogDescription></DialogHeader>
+        <DialogHeader><DialogTitle>Publicar meu dia a dia</DialogTitle><DialogDescription>A publicação dura 24 horas e é apagada na próxima limpeza por hora. Nunca mostre etiquetas, nomes ou dados de clientes. Links não são permitidos.</DialogDescription></DialogHeader>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => void pick(e.target.files?.[0])} />
         {preview ? (
           <div className="relative"><img src={preview} alt="Prévia da foto" className="max-h-72 w-full rounded-md object-cover" /><Button size="icon" variant="secondary" className="absolute right-2 top-2" aria-label="Remover foto" onClick={() => { if (preview) URL.revokeObjectURL(preview); setPhoto(null); setPreview(null); }}><X /></Button></div>

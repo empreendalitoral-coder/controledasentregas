@@ -57,6 +57,7 @@ import { Route as AuthenticatedPerfilNotificacoesRouteImport } from './routes/_a
 import { Route as AuthenticatedPerfilNotificacoesDiagnosticoRouteImport } from './routes/_authenticated/perfil/notificacoes.diagnostico'
 import { Route as AuthenticatedPerfilNotificacoesLogsRouteImport } from './routes/_authenticated/perfil/notificacoes.logs'
 import { Route as AuthenticatedPerfilNotificacoesTesteRouteImport } from './routes/_authenticated/perfil/notificacoes.teste'
+import { Route as ApiPublicHooksLimparFeedRouteImport } from './routes/api/public/hooks/limpar-feed'
 import { Route as ApiPublicHooksNotificacoesDiariasRouteImport } from './routes/api/public/hooks/notificacoes-diarias'
 import { Route as ApiPublicHooksPurgeContasRouteImport } from './routes/api/public/hooks/purge-contas'
 
@@ -325,6 +326,12 @@ const AuthenticatedPerfilNotificacoesTesteRoute =
     path: '/teste',
     getParentRoute: () => AuthenticatedPerfilNotificacoesRoute,
   } as any)
+const ApiPublicHooksLimparFeedRoute =
+  ApiPublicHooksLimparFeedRouteImport.update({
+    id: '/api/public/hooks/limpar-feed',
+    path: '/api/public/hooks/limpar-feed',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksNotificacoesDiariasRoute =
   ApiPublicHooksNotificacoesDiariasRouteImport.update({
     id: '/api/public/hooks/notificacoes-diarias',
@@ -386,6 +393,7 @@ export interface FileRoutesByFullPath {
   '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
   '/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
   '/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
+  '/api/public/hooks/limpar-feed': typeof ApiPublicHooksLimparFeedRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -437,6 +445,7 @@ export interface FileRoutesByTo {
   '/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
   '/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
   '/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
+  '/api/public/hooks/limpar-feed': typeof ApiPublicHooksLimparFeedRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -490,6 +499,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil/notificacoes/diagnostico': typeof AuthenticatedPerfilNotificacoesDiagnosticoRoute
   '/_authenticated/perfil/notificacoes/logs': typeof AuthenticatedPerfilNotificacoesLogsRoute
   '/_authenticated/perfil/notificacoes/teste': typeof AuthenticatedPerfilNotificacoesTesteRoute
+  '/api/public/hooks/limpar-feed': typeof ApiPublicHooksLimparFeedRoute
   '/api/public/hooks/notificacoes-diarias': typeof ApiPublicHooksNotificacoesDiariasRoute
   '/api/public/hooks/purge-contas': typeof ApiPublicHooksPurgeContasRoute
 }
@@ -543,6 +553,7 @@ export interface FileRouteTypes {
     | '/perfil/notificacoes/diagnostico'
     | '/perfil/notificacoes/logs'
     | '/perfil/notificacoes/teste'
+    | '/api/public/hooks/limpar-feed'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesByTo: FileRoutesByTo
@@ -594,6 +605,7 @@ export interface FileRouteTypes {
     | '/perfil/notificacoes/diagnostico'
     | '/perfil/notificacoes/logs'
     | '/perfil/notificacoes/teste'
+    | '/api/public/hooks/limpar-feed'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   id:
@@ -646,6 +658,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil/notificacoes/diagnostico'
     | '/_authenticated/perfil/notificacoes/logs'
     | '/_authenticated/perfil/notificacoes/teste'
+    | '/api/public/hooks/limpar-feed'
     | '/api/public/hooks/notificacoes-diarias'
     | '/api/public/hooks/purge-contas'
   fileRoutesById: FileRoutesById
@@ -659,6 +672,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
+  ApiPublicHooksLimparFeedRoute: typeof ApiPublicHooksLimparFeedRoute
   ApiPublicHooksNotificacoesDiariasRoute: typeof ApiPublicHooksNotificacoesDiariasRoute
   ApiPublicHooksPurgeContasRoute: typeof ApiPublicHooksPurgeContasRoute
 }
@@ -1001,6 +1015,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilNotificacoesTesteRouteImport
       parentRoute: typeof AuthenticatedPerfilNotificacoesRoute
     }
+    '/api/public/hooks/limpar-feed': {
+      id: '/api/public/hooks/limpar-feed'
+      path: '/api/public/hooks/limpar-feed'
+      fullPath: '/api/public/hooks/limpar-feed'
+      preLoaderRoute: typeof ApiPublicHooksLimparFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/notificacoes-diarias': {
       id: '/api/public/hooks/notificacoes-diarias'
       path: '/api/public/hooks/notificacoes-diarias'
@@ -1166,6 +1187,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
+  ApiPublicHooksLimparFeedRoute: ApiPublicHooksLimparFeedRoute,
   ApiPublicHooksNotificacoesDiariasRoute:
     ApiPublicHooksNotificacoesDiariasRoute,
   ApiPublicHooksPurgeContasRoute: ApiPublicHooksPurgeContasRoute,

@@ -31,3 +31,4 @@
 - Financial workspace tables require both row ownership and a valid Premium subscription or trial through restrictive policies, matching the existing screen gate without deleting expired accounts' records.
 - Escape imported text before interpolating it into printable HTML; report data must never become executable markup.
 - Scheduled hooks accept only the current private database credential; legacy environment fallbacks are rejected so database rotation invalidates old credentials for both jobs.
+- Feed expiry cleanup uses the managed cron authenticator, bounded batches and Storage API deletion before cascading post deletion; failed photo removals keep the post for retry instead of orphaning files.
