@@ -1,7 +1,7 @@
 # Diagnóstico do aplicativo
 
 ## Melhorias para atrair motoristas (plano aprovado)
-- [ ] Resumo mensal em imagem com entregas, taxa e lucro opcional, compartilhamento e link de indicação; testar com dados reais.
+- [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
 - [ ] Lembrete diário com horário escolhido e sequência de dias lançados.
 - [ ] Fortalecer página pública e destacar calculadora gratuita; depoimentos dependem de frases reais do usuário.
 - [ ] Selos de 100, 500 e 1.000 entregas no Feed.
