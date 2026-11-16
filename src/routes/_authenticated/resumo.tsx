@@ -4,6 +4,7 @@ import { useFullStore } from "@/lib/store";
 import { useMemo, useState } from "react";
 import { BRL, NUM, computeResumo, formatHoras } from "@/lib/calc";
 import { Button } from "@/components/ui/button";
+import { MonthlyShare } from "@/components/MonthlyShare";
 import { ArrowLeft, ArrowRight, CalendarDays, PackageCheck, Route as RouteIcon, Timer, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/resumo")({
@@ -82,6 +83,8 @@ function ResumoPage() {
         <Metric icon={Timer} label="Horas" value={formatHoras(r.horas)} />
         <Metric icon={TrendingUp} label="Lucro real" value={BRL(r.lucro_real)} positive />
       </div>
+
+      <MonthlyShare resumo={r} period={`${MESES[month]} de ${year}`} filename={`entrega-pro-${year}-${String(month + 1).padStart(2, "0")}.png`} ready={state.hydrated && !state.loadError} />
 
       <section className="ep-card mt-4 space-y-2">
         <h3 className="font-display font-semibold mb-3">Detalhes do período</h3>
