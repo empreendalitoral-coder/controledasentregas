@@ -14,7 +14,7 @@ export async function renderMonthlyImage(data: ImageData): Promise<Blob> {
   const color = (name: string) => theme.getPropertyValue(`--${name}`).trim();
   ctx.fillStyle = color("background");
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  function text(value: string, x: number, y: number, size: number, token = "foreground", weight = 600, maxWidth = 936) {
+  const text = (value: string, x: number, y: number, size: number, token = "foreground", weight = 600, maxWidth = 936) => {
     ctx.font = `${weight} ${size}px Outfit, sans-serif`;
     while (ctx.measureText(value).width > maxWidth && size > 20) {
       size -= 2;
@@ -22,7 +22,7 @@ export async function renderMonthlyImage(data: ImageData): Promise<Blob> {
     }
     ctx.fillStyle = color(token);
     ctx.fillText(value, x, y);
-  }
+  };
   ctx.fillStyle = color("primary");
   ctx.fillRect(72, 72, 12, 66);
   text("ENTREGA PRO", 108, 120, 42, "primary", 700);
