@@ -32,3 +32,4 @@
 - Escape imported text before interpolating it into printable HTML; report data must never become executable markup.
 - Scheduled hooks accept only the current private database credential; legacy environment fallbacks are rejected so database rotation invalidates old credentials for both jobs.
 - Feed expiry cleanup uses the managed cron authenticator, bounded batches and Storage API deletion before cascading post deletion; failed photo removals keep the post for retry instead of orphaning files.
+- Monthly share artwork is generated in browser handlers/effects from existing summary and success-rate helpers, with profit hidden by default and native file sharing plus a download fallback; this avoids new financial calculations and accidental income disclosure.

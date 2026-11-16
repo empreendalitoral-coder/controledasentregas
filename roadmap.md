@@ -1,5 +1,12 @@
 # Diagnóstico do aplicativo
 
+## Melhorias para atrair motoristas (plano aprovado)
+- [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
+- [ ] Lembrete diário com horário escolhido e sequência de dias lançados.
+- [ ] Fortalecer página pública e destacar calculadora gratuita; depoimentos dependem de frases reais do usuário.
+- [ ] Selos de 100, 500 e 1.000 entregas no Feed.
+- [ ] Destacar lucro do mês/comparação e confirmação de salvamento no Início.
+
 ## Feed com duração de 24 horas
 - [x] Substituir limpeza que falha por exclusão autenticada de fotos e posts; tarefa SQL antiga pausada.
 - [x] Informar a duração no Feed e testar: limpeza autenticada excluiu 2 posts vencidos e fotos, chamada sem credencial retornou 401; telas desktop/celular verificadas.
