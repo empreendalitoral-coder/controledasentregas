@@ -4,7 +4,7 @@
 - [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
 - [ ] Lembrete diário com horário escolhido e sequência de dias lançados.
 - [ ] Fortalecer página pública e destacar calculadora gratuita; depoimentos dependem de frases reais do usuário.
-- [ ] Selos de 100, 500 e 1.000 entregas no Feed.
+- [ ] Selos de 100, 500 e 1.000 entregas no Feed — desenvolvimento selecionado em 17/11/2026; conferir limites e visual com registros reais antes de concluir.
 - [ ] Destacar lucro do mês/comparação e confirmação de salvamento no Início.
 
 ## Feed com duração de 24 horas
