@@ -20,8 +20,8 @@
 - [x] Substituir links temporários de fotos por downloads autenticados; Feed conferido com fotos locais, telas autenticadas sem erros e sem transbordamento no celular.
 - [x] Remover somente a conta fixa fictícia da revisão anterior e executar os 68 testes de regressão; prévia compilada com sucesso.
 - [ ] Testar bloqueio com conta real sem Premium — aguarda escolha/autorização da conta pelo usuário; não alterar assinaturas existentes.
-- [ ] Concluir nova revisão aprofundada — análise iniciada em 14/11/2026; verificação rápida com apenas aviso do catálogo de notificações.
-- [ ] Publicar correções — aguarda autorização explícita de publicação.
+- [x] Concluir nova revisão aprofundada — resultado de 16/11 conferido em 17/11/2026: resta o alerta da credencial antiga, invalidada no banco de produção (comparação retornou false); quatro testes de autenticação aprovados. Catálogo de notificações mantém aviso leve por ser compartilhado.
+- [x] Publicar correções — publicação confirmada na conversa anterior; nenhuma nova alteração no aplicativo nesta revisão.
 
 # Varredura de erros
 
