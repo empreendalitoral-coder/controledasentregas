@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { usePremium } from "@/lib/premium";
+import { launchStreak } from "@/lib/streak";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -62,6 +63,7 @@ function Dashboard() {
   const premium = usePremium();
   const periodo = currentMonthRange();
   const r = computeResumo(state, periodo);
+  const streak = launchStreak(state.lancamentos);
   const nome = state.motorista.nome || "Motorista";
   const meta = state.meta_mensal || 0;
   const pct = meta > 0 ? Math.min(100, Math.round((r.lucro_liquido / meta) * 100)) : 0;
@@ -297,6 +299,17 @@ function Dashboard() {
           <Metric icon={Fuel} label="Combustível" value={BRL(r7.combustivel)} tone="neg" />
         </div>
       </section>
+
+      {state.hydrated && (
+        <Link to="/lancamento/$id" params={{ id: "novo" }} className="ep-card mt-3 flex items-center gap-3">
+          <span className="text-2xl" aria-hidden>🔥</span>
+          <div className="flex-1">
+            <div className="font-semibold">{streak.count > 0 ? `${streak.count} ${streak.count === 1 ? "dia seguido" : "dias seguidos"} lançados` : "Comece sua sequência"}</div>
+            <div className="text-xs text-muted-foreground">{streak.lancouHoje ? "Hoje já está lançado. Volte amanhã!" : streak.count > 0 ? "Lance hoje para não perder a sequência" : "Lance o dia de hoje (trabalho ou folga)"}</div>
+          </div>
+          {!streak.lancouHoje && <span className="text-muted-foreground">›</span>}
+        </Link>
+      )}
 
       <Link to="/indicacoes" className="ep-card mt-3 flex items-center gap-3 border-primary/40"><Gift className="size-6 text-primary" /><div className="flex-1"><div className="font-semibold">Indique um amigo</div><div className="text-xs text-muted-foreground">Ganhe 5% da primeira assinatura dele</div></div><span className="text-muted-foreground">›</span></Link>
 

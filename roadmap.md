@@ -2,7 +2,8 @@
 
 ## Melhorias para atrair motoristas (plano aprovado)
 - [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
-- [ ] Lembrete diário com horário escolhido e sequência de dias lançados.
+- [x] Sequência de dias lançados no Início (3 testes). Lembrete diário já existe às 8h para quem não lançou ontem.
+- [ ] Lembrete com horário escolhido — aguarda decisão do usuário.
 - [ ] Fortalecer página pública e destacar calculadora gratuita; depoimentos dependem de frases reais do usuário.
 - [x] Selos pessoais de 100, 500 e 1.000 entregas no Feed, derivados dos dias trabalhados e entregas bem-sucedidas; limites conferidos em cinco testes, mais oito testes de cálculo. Conta autenticada mostrou 14.313 entregas e três selos após recarregar; celular/computador sem erros ou transbordamento. Publicado em 17/11/2026 com 80 testes aprovados.
 - [ ] Destacar lucro do mês/comparação e confirmação de salvamento no Início.
