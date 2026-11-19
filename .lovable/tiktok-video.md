@@ -1,10 +1,10 @@
 # Entrega Pro — TikTok de cadastros
 
 ## Status
-Roteiro/storyboard anterior retomado por autorização de continuação em 19/11/2026. Referências e quatro imagens de cena conferidas; aguardam aprovação. Nenhum vídeo gerado.
+Roteiro e storyboard aprovados em 19/11/2026. Usuário pediu seu próprio rosto da foto enviada: substituir referências e quatro imagens de cena, depois pedir aprovação dessas novas imagens antes das falas. Nenhum vídeo gerado.
 
 ## Direção
-Vídeo UGC vertical 9:16, entregador brasileiro fictício gerado por IA, natural, boné e polo. Voz masculina média, natural, sotaque paulista. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.
+Vídeo UGC vertical 9:16, com rosto do usuário da foto enviada, preservando cabelo curto cacheado, barba cheia, tom de pele, camisa e blazer pretos. Voz masculina média, natural, sotaque paulista, gerada e não clonada da foto. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.
 
 ## Roteiro revisado
 | Duração | Cena | Fala | Ação e áudio |
