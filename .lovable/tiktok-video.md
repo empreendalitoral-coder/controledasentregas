@@ -1,0 +1,24 @@
+# Entrega Pro — TikTok de cadastros
+
+## Status
+Roteiro/storyboard anterior retomado por autorização de continuação em 19/11/2026. Referências e quatro imagens de cena conferidas; aguardam aprovação. Nenhum vídeo gerado.
+
+## Direção
+Vídeo UGC vertical 9:16, entregador brasileiro fictício gerado por IA, natural, boné e polo. Voz masculina média, natural, sotaque paulista. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.
+
+## Roteiro revisado
+| Duração | Cena | Fala | Ação e áudio |
+|---|---|---|---|
+| 4 s | No carro parado | Quanto sobra depois da rota? | Olhar à câmera, leve inclinação da cabeça. Voz próxima sem música. |
+| 8 s | Van com pacotes, depois telas reais | No Entrega Pro, registro pacotes e insucessos e acompanho meu lucro. | Gesto pequeno para pacotes; edição insere tela de lançamento e resumo nos últimos 5 s. Narração continua sob as telas. |
+| 4 s | No carro | E separo receitas do CNPJ e do CPF. | Pequeno aceno; voz próxima sem música. |
+| 6 s | Convite no carro | Cadastre-se no Entrega Pro e teste três dias grátis. Acesse meuentregapro.app. | Gesto aberto natural para a câmera; voz próxima sem música. |
+| 2 s | Quadro final após CTA | Sem fala | Nome Entrega Pro, Teste 3 dias grátis, meuentregapro.app. |
+
+Total planejado: 24 s. Quatro clipes gerados: 22 s; telas sobrepostas na edição, encerramento de 2 s. Somente recursos comprovados; nenhum testemunho pessoal ou promessa de ganho. Tempo final sujeito à duração retornada pelo modelo.
+
+## Arquivos
+Base Files: videos/entrega-pro/. Retrato: entregador-retrato.png. Poses: entregador-poses.png. Cenas: cena-01-no-carro.png, cena-02-pacotes.png, cena-05-mei.png, cena-06-convite.png. Galeria: previa-cenas.jpg. Storyboard anterior: storyboard.jpg; seus painéis de telas são indicação de inserção editorial, não conteúdo a gerar.
+
+## Próxima aprovação
+Mostrar galeria e explicar ajuste das falas, quatro clipes/22 s gerados, aproximadamente 8,8 créditos a 720p de saída, com referências cobradas à parte. Seedance não listado; usar Omni, explicar qualidade possivelmente inferior. Após aprovação, capturar telas sem expor dados pessoais, ler prompting-omni/stages/videogen/check/end-card e seguir geração e edição do video-ad-ugc.

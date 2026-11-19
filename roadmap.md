@@ -1,5 +1,11 @@
 # Diagnóstico do aplicativo
 
+## Vídeo vertical para TikTok (cadastros)
+- [x] Roteiro e storyboard apresentados; continuação autorizada em 19/11/2026.
+- [ ] Preparar e conferir referências do entregador e imagens das cenas; aguarda aprovação antes de gerar vídeo.
+- [ ] Capturar telas reais sem dados pessoais, gerar cenas com voz, montar legendas e encerramento; depende da aprovação das imagens.
+- [ ] Conferir e entregar o vídeo final; sem promessa de tempo de preenchimento ou depoimento fictício.
+
 ## Melhorias para atrair motoristas (plano aprovado)
 - [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
 - [x] Sequência de dias lançados no Início (3 testes). Lembrete diário já existe às 8h para quem não lançou ontem.
