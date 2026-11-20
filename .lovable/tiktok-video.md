@@ -1,7 +1,7 @@
 # Entrega Pro — TikTok de cadastros
 
 ## Status
-Roteiro e storyboard aprovados em 19/11/2026. Usuário pediu seu próprio rosto da foto enviada: substituir referências e quatro imagens de cena, depois pedir aprovação dessas novas imagens antes das falas. Nenhum vídeo gerado.
+Roteiro e storyboard aprovados em 19/11/2026. Quatro imagens com o rosto da foto enviada foram geradas e conferidas em 20/11/2026. Galeria: videos/entrega-pro/previa-seu-rosto-v2.jpg. Aguardar aprovação das novas imagens antes das falas. Nenhum vídeo gerado.
 
 ## Direção
 Vídeo UGC vertical 9:16, com rosto do usuário da foto enviada, preservando cabelo curto cacheado, barba cheia, tom de pele, camisa e blazer pretos. Voz masculina média, natural, sotaque paulista, gerada e não clonada da foto. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.
@@ -19,6 +19,8 @@ Total planejado: 24 s. Quatro clipes gerados: 22 s; telas sobrepostas na ediçã
 
 ## Arquivos
 Base Files: videos/entrega-pro/. Retrato: entregador-retrato.png. Poses: entregador-poses.png. Cenas: cena-01-no-carro.png, cena-02-pacotes.png, cena-05-mei.png, cena-06-convite.png. Galeria: previa-cenas.jpg. Storyboard anterior: storyboard.jpg; seus painéis de telas são indicação de inserção editorial, não conteúdo a gerar.
+
+Referências atuais: seu-rosto-referencias-v2.png e foto original enviada. Cenas atuais: cena-01-seu-rosto-v2.png, cena-02-seu-rosto-v2.png, cena-05-seu-rosto-v2.png, cena-06-seu-rosto-v2.png. Preservar as versões anteriores, sem usá-las na geração final.
 
 ## Próxima aprovação
 Mostrar galeria e explicar ajuste das falas, quatro clipes/22 s gerados, aproximadamente 8,8 créditos a 720p de saída, com referências cobradas à parte. Seedance não listado; usar Omni, explicar qualidade possivelmente inferior. Após aprovação, capturar telas sem expor dados pessoais, ler prompting-omni/stages/videogen/check/end-card e seguir geração e edição do video-ad-ugc.
