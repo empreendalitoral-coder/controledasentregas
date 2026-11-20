@@ -3,8 +3,8 @@
 ## Vídeo vertical para TikTok (cadastros)
 - [x] Roteiro e storyboard apresentados; continuação autorizada em 19/11/2026.
 - [x] Substituir o apresentador fictício pelo rosto da foto enviada em 19/11/2026; quatro cenas geradas e conferidas em 20/11, galeria v2 pronta.
-- [ ] Preparar e conferir referências do entregador e imagens das cenas; aguarda aprovação antes de gerar vídeo.
-- [ ] Capturar telas reais sem dados pessoais, gerar cenas com voz, montar legendas e encerramento; depende da aprovação das imagens.
+- [x] Preparar e conferir referências do entregador e imagens das cenas; geração com voz aprovada em 20/11/2026.
+- [ ] Capturar telas reais sem dados pessoais, gerar cenas com voz, montar legendas e encerramento; quatro chamadas recusadas por falta de créditos em 20/11/2026, sem vídeo ou job pendente.
 - [ ] Conferir e entregar o vídeo final; sem promessa de tempo de preenchimento ou depoimento fictício.
 
 ## Melhorias para atrair motoristas (plano aprovado)

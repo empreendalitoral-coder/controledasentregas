@@ -1,7 +1,7 @@
 # Entrega Pro — TikTok de cadastros
 
 ## Status
-Roteiro e storyboard aprovados em 19/11/2026. Quatro imagens com o rosto da foto enviada foram geradas e conferidas em 20/11/2026. Galeria: videos/entrega-pro/previa-seu-rosto-v2.jpg. Aguardar aprovação das novas imagens antes das falas. Nenhum vídeo gerado.
+Roteiro e storyboard aprovados em 19/11/2026. Quatro imagens com o rosto da foto enviada foram geradas e conferidas em 20/11/2026. Galeria: videos/entrega-pro/previa-seu-rosto-v2.jpg. Imagens e geração com voz aprovadas pelo usuário em 20/11/2026. As quatro chamadas foram recusadas por credits_exhausted antes da geração, sem job retornado. Nenhum vídeo gerado; aguarda créditos disponíveis.
 
 ## Direção
 Vídeo UGC vertical 9:16, com rosto do usuário da foto enviada, preservando cabelo curto cacheado, barba cheia, tom de pele, camisa e blazer pretos. Voz masculina média, natural, sotaque paulista, gerada e não clonada da foto. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.
@@ -22,5 +22,5 @@ Base Files: videos/entrega-pro/. Retrato: entregador-retrato.png. Poses: entrega
 
 Referências atuais: seu-rosto-referencias-v2.png e foto original enviada. Cenas atuais: cena-01-seu-rosto-v2.png, cena-02-seu-rosto-v2.png, cena-05-seu-rosto-v2.png, cena-06-seu-rosto-v2.png. Preservar as versões anteriores, sem usá-las na geração final.
 
-## Próxima aprovação
-Mostrar galeria e explicar ajuste das falas, quatro clipes/22 s gerados, aproximadamente 8,8 créditos a 720p de saída, com referências cobradas à parte. Seedance não listado; usar Omni, explicar qualidade possivelmente inferior. Após aprovação, capturar telas sem expor dados pessoais, ler prompting-omni/stages/videogen/check/end-card e seguir geração e edição do video-ad-ugc.
+## Continuação autorizada
+Sem nova aprovação das imagens. Gerar quatro clipes/22 s, aproximadamente 8,8 créditos a 720p de saída, com referências cobradas à parte. Seedance não listado; usar Omni, qualidade possivelmente inferior já comunicada. Capturar telas sem expor dados pessoais e seguir geração e edição do video-ad-ugc. Leituras prompting-omni/stages/videogen/check/end-card concluídas em 20/11/2026. Custos informados nas recusas: 1,63 + 3,25 + 1,63 + 2,44 créditos. Não há jobs pendentes para retomar.
