@@ -1,7 +1,7 @@
 # Entrega Pro — TikTok de cadastros
 
 ## Status
-Roteiro e storyboard aprovados em 19/11/2026. Quatro imagens com o rosto da foto enviada foram geradas e conferidas em 20/11/2026. Galeria: videos/entrega-pro/previa-seu-rosto-v2.jpg. Imagens e geração com voz aprovadas pelo usuário em 20/11/2026. Três clipes com voz disponíveis: cenas 01 e 05 geradas em 21/11 e cena 02 em 22/11. A cena 06 foi recusada por credits_exhausted em 22/11, sem job retornado; custo estimado de 2,44 créditos. Capturas, legendas e montagem final ainda pendentes.
+Vídeo concluído em 23/11/2026: videos/entrega-pro/entrega-pro-tiktok-seu-rosto-v1.mp4, 24,164 s, 720x1280, Omni, voz gerada e legendas. Cena 06 concluída (job video_7xhzq3kbcx80w8k1x2ff7zrxj3, 2,447 créditos). Cenas anteriores preservadas. Telas reais capturadas em formulário não salvo com dados fictícios, sem registros financeiros novos ou dados pessoais. Grades de todos os segundos e encerramento conferidos; áudio presente, média -22,7 dB e pico -2,3 dB. Coleção atualizada com arquivo final ready. Sincronização labial, pronúncia e consistência da voz dependem de escuta humana antes da divulgação paga.
 
 ## Direção
 Vídeo UGC vertical 9:16, com rosto do usuário da foto enviada, preservando cabelo curto cacheado, barba cheia, tom de pele, camisa e blazer pretos. Voz masculina média, natural, sotaque paulista, gerada e não clonada da foto. Sem música solicitada. Telas reais legíveis sem dados pessoais; sem interfaces inventadas. Remover o depoimento fictício e a promessa não comprovada de preenchimento em 30 segundos do roteiro anterior.

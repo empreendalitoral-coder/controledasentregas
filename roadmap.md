@@ -5,9 +5,9 @@
 - [x] Substituir o apresentador fictício pelo rosto da foto enviada em 19/11/2026; quatro cenas geradas e conferidas em 20/11, galeria v2 pronta.
 - [x] Preparar e conferir referências do entregador e imagens das cenas; geração com voz aprovada em 20/11/2026.
 - [x] Gerar três cenas com voz (01, 02 e 05); 720x1280, quadros e presença de áudio conferidos em 22/11/2026.
-- [ ] Gerar a última cena com voz (06) — recusada por falta de créditos em 22/11/2026, custo estimado de 2,44 créditos, sem job pendente.
-- [ ] Capturar telas reais sem dados pessoais e montar legendas e encerramento após a última cena.
-- [ ] Conferir e entregar o vídeo final; sem promessa de tempo de preenchimento ou depoimento fictício.
+- [x] Gerar a última cena com voz (06) — concluída em 23/11/2026, 2,447 créditos.
+- [x] Capturar telas reais sem dados pessoais e montar legendas e encerramento; exemplos não salvos, sem alterar dados da conta.
+- [x] Conferir e entregar o vídeo final: 24,164 s, 720x1280, Omni; imagens e presença/níveis de áudio conferidos. Escuta humana necessária para voz e sincronização labial antes de anúncio pago; sem promessa de tempo de preenchimento ou depoimento fictício.
 
 ## Melhorias para atrair motoristas (plano aprovado)
 - [x] Resumo mensal em imagem com entregas, taxa e lucro opcional (oculto inicialmente), compartilhamento e link de indicação; download e abertura do WhatsApp conferidos com dados reais, celular/desktop sem erros, 75 testes aprovados. Compartilhamento nativo no WhatsApp depende de aparelho compatível e não foi exercitado; não publicado.
