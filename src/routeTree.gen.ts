@@ -13,6 +13,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalculadoraRouteImport } from './routes/calculadora'
 import { Route as CalculadoraLucroEntregadorRouteImport } from './routes/calculadora-lucro-entregador'
+import { Route as ConhecaRouteImport } from './routes/conheca'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SobreRouteImport } from './routes/sobre'
@@ -82,6 +83,11 @@ const CalculadoraLucroEntregadorRoute =
     path: '/calculadora-lucro-entregador',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ConhecaRoute = ConhecaRouteImport.update({
+  id: '/conheca',
+  path: '/conheca',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
@@ -356,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/calculadora': typeof CalculadoraRoute
   '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
+  '/conheca': typeof ConhecaRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -408,6 +415,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/calculadora': typeof CalculadoraRoute
   '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
+  '/conheca': typeof ConhecaRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -463,6 +471,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/calculadora': typeof CalculadoraRoute
   '/calculadora-lucro-entregador': typeof CalculadoraLucroEntregadorRoute
+  '/conheca': typeof ConhecaRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sobre': typeof SobreRoute
@@ -519,6 +528,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calculadora'
     | '/calculadora-lucro-entregador'
+    | '/conheca'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calculadora'
     | '/calculadora-lucro-entregador'
+    | '/conheca'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calculadora'
     | '/calculadora-lucro-entregador'
+    | '/conheca'
     | '/privacidade'
     | '/reset-password'
     | '/sobre'
@@ -680,6 +692,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CalculadoraRoute: typeof CalculadoraRoute
   CalculadoraLucroEntregadorRoute: typeof CalculadoraLucroEntregadorRoute
+  ConhecaRoute: typeof ConhecaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SobreRoute: typeof SobreRoute
@@ -718,6 +731,13 @@ declare module '@tanstack/react-router' {
       path: '/calculadora-lucro-entregador'
       fullPath: '/calculadora-lucro-entregador'
       preLoaderRoute: typeof CalculadoraLucroEntregadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conheca': {
+      id: '/conheca'
+      path: '/conheca'
+      fullPath: '/conheca'
+      preLoaderRoute: typeof ConhecaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -1203,6 +1223,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CalculadoraRoute: CalculadoraRoute,
   CalculadoraLucroEntregadorRoute: CalculadoraLucroEntregadorRoute,
+  ConhecaRoute: ConhecaRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SobreRoute: SobreRoute,
