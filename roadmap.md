@@ -132,3 +132,6 @@
 - [x] Envio de notas/recibos com leitura por IA, revisão antes de salvar, edição/exclusão e tabela exportável CSV; recibo fictício lido e fluxo autenticado validado. Somente dados extraídos são guardados, sem documento original e sem integrar ao lucro ou relatório fiscal. Não publicado.
 
 - [x] Salas do bate-papo por estado (Brasil + UFs, escolha livre) — implementadas, testadas e publicadas conforme solicitação posterior.
+
+# Landing page de captação
+- [x] Página /calculadora com calculadora rápida e recursos reais do app
