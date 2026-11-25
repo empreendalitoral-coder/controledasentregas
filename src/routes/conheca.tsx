@@ -26,6 +26,24 @@ export const Route = createFileRoute("/conheca")({
   component: Conheca,
 });
 
+import inicioImg from "@/assets/conheca/inicio.webp.asset.json";
+import historicoImg from "@/assets/conheca/historico.webp.asset.json";
+import recebImg from "@/assets/conheca/receb.webp.asset.json";
+import resumoImg from "@/assets/conheca/resumo.webp.asset.json";
+import abastImg from "@/assets/conheca/abast.webp.asset.json";
+import feedImg from "@/assets/conheca/feed.webp.asset.json";
+import finImg from "@/assets/conheca/fin.webp.asset.json";
+
+const TELAS = [
+  { img: inicioImg.url, tag: "Tela inicial", t: "Seu lucro do mês logo de cara", d: "Ao abrir o app você vê quanto já ganhou no mês e quanto falta para sua meta. Se ainda não lançou o dia, o botão amarelo avisa.", pts: ["Lucro líquido do mês", "Barra da meta mensal", "Lançar o dia com um toque"] },
+  { img: historicoImg.url, tag: "Histórico", t: "Cada dia de rota anotado", d: "Todo dia trabalhado fica salvo com cidade, pacotes, KM e valor. A porcentagem de entrega mostra como foi sua rota.", pts: ["Taxa de entrega de cada dia", "Filtro por hoje, semana e mês", "Valor líquido por dia"] },
+  { img: recebImg.url, tag: "Recebimentos", t: "Confira se a quinzena caiu certa", d: "O app soma as diárias do período e mostra quanto você tem a receber. Quando o pagamento cair, é só marcar como recebido.", pts: ["Quanto falta receber", "Quanto já caiu na conta", "Data prevista de pagamento"] },
+  { img: resumoImg.url, tag: "Resumo do mês", t: "O mês inteiro em uma tela", d: "Pacotes entregues, KM rodados, horas trabalhadas e lucro real depois do combustível e da manutenção.", pts: ["Lucro real do mês", "Pacotes e KM rodados", "Compartilhar o mês no WhatsApp"] },
+  { img: abastImg.url, tag: "Combustível", t: "Quanto a gasolina leva do seu ganho", d: "Registre cada abastecimento e veja litros, preço por litro e o total gasto no mês.", pts: ["Total gasto no mês", "Preço por litro", "Posto e KM de cada tanque"] },
+  { img: finImg.url, tag: "Central financeira", t: "Contas, cartões, Pix e MEI", d: "Organize contas fixas, cartões, Pix e metas. O relatório separa o que é do CNPJ (MEI) e o que é pessoal no CPF.", pts: ["Contas fixas e cartões", "Fechamento por quinzena em PDF", "Separação CNPJ e CPF"] },
+  { img: feedImg.url, tag: "Feed e bate-papo", t: "Comunidade de entregadores", d: "Ganhe selos de 100, 500 e 1.000 entregas, poste fotos do seu dia e converse com motoristas da sua região.", pts: ["Selos de conquista", "Fotos do dia a dia", "Bate-papo por estado"] },
+];
+
 const num = (v: string) => Math.max(0, Number(v.replace(",", ".")) || 0);
 
 const RECURSOS = [
@@ -86,11 +104,34 @@ function Conheca() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-4xl px-5 pb-12">
+        <p className="text-center text-xs font-semibold uppercase tracking-widest text-primary">Por dentro do app</p>
+        <h2 className="mt-2 text-center text-2xl font-bold sm:text-3xl">Veja as telas reais do Meu Entrega Pro</h2>
+        <p className="mt-2 text-center text-sm text-muted-foreground">Fotos do aplicativo com valores de exemplo.</p>
+        <div className="mt-10 space-y-14">
+          {TELAS.map((x, i) => (
+            <article key={x.tag} className={`flex flex-col items-center gap-6 sm:gap-10 ${i % 2 ? "sm:flex-row-reverse" : "sm:flex-row"}`}>
+              <div className="w-[230px] shrink-0 rounded-[2.2rem] border-[6px] border-secondary bg-secondary p-1 shadow-2xl shadow-primary/10">
+                <img src={x.img} alt={`Tela ${x.tag} do Meu Entrega Pro`} loading="lazy" width={585} height={1266} className="block w-full rounded-[1.8rem]" />
+              </div>
+              <div className="max-w-md">
+                <span className="inline-block rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">{i + 1}. {x.tag}</span>
+                <h3 className="mt-3 text-xl font-bold">{x.t}</h3>
+                <p className="mt-2 text-muted-foreground">{x.d}</p>
+                <ul className="mt-4 space-y-2 text-sm">
+                  {x.pts.map((pt) => <li key={pt} className="flex gap-2"><Check className="size-4 shrink-0 text-primary" />{pt}</li>)}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-12 text-center"><Cta>Quero testar 3 dias grátis</Cta></div>
+      </section>
+
       <section className="mx-auto max-w-3xl px-5 pb-12">
-        <h2 className="text-center text-2xl font-bold">Tudo o que você encontra no app</h2>
-        <p className="mt-2 text-center text-muted-foreground">Recursos que já funcionam hoje.</p>
+        <h2 className="text-center text-2xl font-bold">E ainda tem mais</h2>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {RECURSOS.map(({ icon: I, t, d }) => (
+          {RECURSOS.filter((r) => ["Manutenção e multas", "Leitor de notas e recibos", "Indique e ganhe", "Backup dos seus dados"].includes(r.t)).map(({ icon: I, t, d }) => (
             <div key={t} className="flex gap-3 rounded-xl border border-border bg-card p-4">
               <I className="mt-0.5 size-5 shrink-0 text-primary" />
               <div><p className="font-semibold">{t}</p><p className="text-sm text-muted-foreground">{d}</p></div>
