@@ -9,7 +9,7 @@ import {
 
 const URL = "https://meuentregapro.app/conheca";
 const TITLE = "Meu Entrega Pro — controle financeiro para entregadores";
-const DESC = "Conheça tudo o que o Meu Entrega Pro faz pelo entregador de Mercado Livre e Shopee: lançamentos, quinzenas, combustível, MEI, recibos, Feed e chat. 3 dias grátis.";
+const DESC = "Conheça tudo o que o Meu Entrega Pro faz pelo entregador de porta a porta: lançamentos, quinzenas, combustível, MEI, recibos, Feed e chat. 3 dias grátis.";
 
 export const Route = createFileRoute("/conheca")({
   validateSearch: referralSearch,
@@ -81,7 +81,7 @@ function Conheca() {
       </header>
 
       <section className="mx-auto max-w-xl px-5 pb-12 pt-6 text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">Para entregadores de Mercado Livre e Shopee</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">Para entregadores de porta a porta</p>
         <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">Seu dinheiro das entregas organizado em um só app</h1>
         <p className="mt-4 text-muted-foreground">Lance o dia em segundos e saiba quanto realmente sobra depois do combustível, manutenção e despesas.</p>
         <div className="mt-6"><Cta>Testar 3 dias grátis</Cta></div>

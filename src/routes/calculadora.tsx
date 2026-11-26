@@ -8,7 +8,7 @@ import {
 
 const URL = "https://meuentregapro.app/calculadora";
 const TITLE = "Quanto sobra das suas entregas? Calculadora grátis — Entrega Pro";
-const DESC = "Entregador de Mercado Livre e Shopee: descubra em segundos quanto sobra do dia depois do combustível e dos gastos. Sem cadastro.";
+const DESC = "Entregador de porta a porta: descubra em segundos quanto sobra do dia depois do combustível e dos gastos. Sem cadastro.";
 
 export const Route = createFileRoute("/calculadora")({
   head: () => ({
@@ -64,7 +64,7 @@ function Landing() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <section className="mx-auto max-w-xl px-5 pb-10 pt-12 text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">Para entregadores de Mercado Livre e Shopee</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">Para entregadores de porta a porta</p>
         <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">Você trabalha o dia inteiro. Mas sabe quanto realmente sobra?</h1>
         <p className="mt-4 text-muted-foreground">Descubra quanto fica no seu bolso depois do combustível e dos gastos do trabalho.</p>
         <Button asChild size="lg" className="mt-6 w-full sm:w-auto"><a href="#calc">Calcular meu lucro grátis</a></Button>
