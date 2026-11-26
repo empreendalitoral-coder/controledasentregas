@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { referralQuery } from "@/lib/referrals";
+import { referralQuery, referralLandingLink } from "@/lib/referrals";
 import type { Resumo } from "@/lib/calc";
 import { monthlyShareCaption, monthlyShareMetrics } from "@/lib/monthly-share";
 import { downloadMonthlyImage, renderMonthlyImage } from "@/lib/monthly-image";
@@ -19,7 +19,7 @@ export function MonthlyShare({ resumo, period, filename, ready }: { resumo: Resu
   const [busy, setBusy] = useState(false);
   const referral = useQuery({ ...referralQuery, enabled: open });
   const code = referral.data?.wallet.code;
-  const link = code ? `https://meuentregapro.app/auth?ref=${code}` : "https://meuentregapro.app";
+  const link = referralLandingLink(code);
   const metrics = monthlyShareMetrics(resumo);
   const waitingForReferral = referral.isFetching;
 

@@ -135,3 +135,5 @@
 
 # Landing page de captação
 - [x] Página /calculadora com calculadora rápida e recursos reais do app
+- [x] Conectar convites e resumo compartilhado a /conheca, preservar indicação até o cadastro e oferecer prévia e retorno pela tela de login.
+- [x] Conferir navegação de convite no celular e computador e testes de indicação: oito testes aprovados; conta temporária confirmou convite e prévia, cadastro simulado confirmou código enviado sem criar outra conta ou enviar e-mail. Sem alterar comissões nem publicar.

@@ -1,13 +1,13 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Mail, Phone, Lock, User, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { referralCode } from "@/lib/referrals";
+import { referralCode, referralSearch } from "@/lib/referrals";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { ref?: string } => ({ ref: referralCode(search.ref) }),
+  validateSearch: referralSearch,
   head: () => ({
     meta: [
       { title: "Entrar — Entrega Pro" },
@@ -263,6 +263,12 @@ function AuthPage() {
                 Esqueci a senha
               </button>
             )}
+          </div>
+
+          <div className="mt-4 text-center">
+            <Button asChild variant="link" className="h-auto whitespace-normal text-sm text-muted-foreground">
+              <Link to="/conheca" search={ref ? { ref } : {}}>Conheça o app por dentro</Link>
+            </Button>
           </div>
 
           {channel === "telefone" && (

@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useSuspenseQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Copy, Gift, Share2, Wallet, Clock, RefreshCw } from 'lucide-react';
+import { Copy, Gift, Share2, Wallet, Clock, RefreshCw, Eye } from 'lucide-react';
 import { AppShell } from '@/components/AppShell';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { referralQuery } from '@/lib/referrals';
+import { referralQuery, referralLandingLink, referralSearch } from '@/lib/referrals';
 import { supabase } from '@/integrations/supabase/client';
 import { BRL } from '@/lib/calc';
 import { toast } from 'sonner';
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_authenticated/indicacoes')({
 function Referrals(){
   const {data}=useSuspenseQuery(referralQuery); const qc=useQueryClient();
   const [kind,setKind]=useState<'pix'|'discount'|null>(null); const [amount,setAmount]=useState('10'); const [key,setKey]=useState(''); const [plan,setPlan]=useState<'mensal'|'anual'>('mensal'); const [busy,setBusy]=useState(false);
-  const link=`https://meuentregapro.app/auth?ref=${data.wallet.code}`;
+  const link=referralLandingLink(data.wallet.code);
   async function copy(){try{await navigator.clipboard.writeText(link);toast.success('Link copiado');}catch{toast.error('Não foi possível copiar');}}
   async function share(){try{if(navigator.share)await navigator.share({title:'Entrega Pro',url:link});else await copy();}catch{/* cancelado */}}
   async function request(e:React.FormEvent){e.preventDefault();if(!kind||busy)return;setBusy(true);try{
@@ -28,7 +28,7 @@ function Referrals(){
   }catch(e){toast.error(e instanceof Error?e.message:'Não foi possível solicitar');}finally{setBusy(false);}}
   return <AppShell title="Indique e ganhe" back="/mais">
     <section className="border-b border-border pb-5"><Gift className="size-8 text-primary"/><h1 className="text-2xl font-bold mt-3">Suas indicações valem recompensas</h1><p className="text-sm text-muted-foreground mt-2">5% na primeira assinatura paga de cada indicado. Liberação após 7 dias, sem cancelamento ou reembolso.</p>
-    <label className="block text-xs text-muted-foreground mt-4">Seu link<input readOnly value={link} className="ep-input mt-1 text-xs" aria-label="Seu link de indicação"/></label><div className="flex gap-2 mt-2"><Button onClick={()=>void copy()}><Copy/>Copiar link</Button><Button variant="secondary" onClick={()=>void share()}><Share2/>Compartilhar</Button></div></section>
+    <label className="block text-xs text-muted-foreground mt-4">Seu link<input readOnly value={link} className="ep-input mt-1 text-xs" aria-label="Seu link de indicação"/></label><div className="flex flex-wrap gap-2 mt-2"><Button onClick={()=>void copy()}><Copy/>Copiar link</Button><Button variant="secondary" onClick={()=>void share()}><Share2/>Compartilhar</Button></div><Button asChild variant="outline" className="mt-3 w-full"><Link to="/conheca" search={referralSearch({ref:data.wallet.code})} target="_blank" rel="noopener noreferrer"><Eye/>Ver a página do convite</Link></Button></section>
     <section className="py-5"><div className="flex items-center justify-between"><h2 className="font-semibold flex gap-2 items-center"><Wallet className="size-4 text-primary"/>Saldo disponível</h2><Button variant="ghost" size="icon" aria-label="Atualizar saldo" onClick={()=>void qc.invalidateQueries({queryKey:['referrals']})}><RefreshCw className="size-4"/></Button></div><p className="text-3xl font-bold mt-1" data-testid="referral-balance">{BRL(Math.max(0,data.wallet.available))}</p>{data.wallet.available<0&&<p className="text-sm text-destructive mt-2">Saldo em ajuste por reembolso: {BRL(data.wallet.available)}</p>}<dl className="grid grid-cols-2 gap-3 mt-4 text-sm"><div><dt className="text-muted-foreground">Aguardando 7 dias</dt><dd>{BRL(data.wallet.pending)}</dd></div><div><dt className="text-muted-foreground">Reservado</dt><dd>{BRL(data.wallet.reserved)}</dd></div></dl><div className="flex flex-wrap gap-2 mt-4"><Button disabled={data.wallet.available<10} onClick={()=>setKind('pix')}>Solicitar Pix</Button><Button variant="secondary" disabled={data.wallet.available<10} onClick={()=>setKind('discount')}>Desconto no Premium</Button></div><p className="text-xs text-muted-foreground mt-2">Mínimo de R$ 10 disponíveis para solicitar. Aprovação manual; a sobra do desconto permanece no saldo.</p></section>
     <section className="border-t border-border py-4"><h2 className="font-semibold mb-3">Solicitações</h2>{data.redemptions.length===0?<p className="text-sm text-muted-foreground">Nenhuma solicitação ainda.</p>:<ul className="divide-y divide-border">{data.redemptions.map(r=><li key={r.id} className="py-3"><div className="flex justify-between gap-2 text-sm"><strong>{r.kind==='pix'?'Pix':`Desconto ${r.plan}`} · {BRL(Number(r.amount))}</strong><span className="text-muted-foreground">{r.status==='pending'?'Em análise':r.status==='approved'?'Aprovado':'Recusado'}</span></div><p className="text-xs text-muted-foreground mt-1">{new Date(r.created_at).toLocaleDateString('pt-BR')}{r.reason?` · ${r.reason}`:''}</p>{r.kind==='discount'&&r.status==='approved'&&<p className="text-xs text-muted-foreground mt-1">Confira o plano e eventual valor restante na tela Premium.</p>}</li>)}</ul>}</section>
     <section className="border-t border-border py-4"><h2 className="font-semibold mb-3">Comissões</h2>{data.commissions.length===0?<div className="py-5 text-muted-foreground text-sm flex items-center gap-2"><Clock className="size-5"/>Nenhuma assinatura indicada confirmada ainda.</div>:<ul className="divide-y divide-border">{data.commissions.map(c=><li key={c.id} className="py-3 flex justify-between gap-3 text-sm"><span>{BRL(Number(c.amount))}<span className="block text-xs text-muted-foreground">{new Date(c.created_at).toLocaleDateString('pt-BR')}</span></span><span className="text-muted-foreground">{c.cancelled?'Cancelada':new Date(c.available_at)>new Date()?`Libera em ${new Date(c.available_at).toLocaleDateString('pt-BR')}`:'Liberada'}</span></li>)}</ul>}</section>

@@ -17,3 +17,11 @@ export const referralQuery = queryOptions({ queryKey: ['referrals'], queryFn: as
 export function referralCommission(value: number) { return Math.round((value * 0.05 + Number.EPSILON) * 100) / 100; }
 export function discountAmount(balance: number, price: number) { return balance >= 10 ? Math.min(balance,price) : 0; }
 export function referralCode(value: unknown): string | undefined { return typeof value === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value) ? value.toLowerCase() : undefined; }
+export function referralSearch(search: Record<string, unknown>): { ref?: string } {
+  const ref = referralCode(search['ref']);
+  return ref ? { ref } : {};
+}
+export function referralLandingLink(value: unknown): string {
+  const ref = referralCode(value);
+  return `https://meuentregapro.app/conheca${ref ? `?ref=${ref}` : ''}`;
+}

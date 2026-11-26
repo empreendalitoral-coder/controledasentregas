@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BRL } from "@/lib/calc";
+import { referralSearch } from "@/lib/referrals";
 import { Button } from "@/components/ui/button";
 import {
   CalendarCheck, Fuel, Wrench, Building2, ScanLine, Camera, MessagesSquare, Target, ShieldCheck, Gift, FileText, Check,
@@ -11,6 +12,7 @@ const TITLE = "Meu Entrega Pro — controle financeiro para entregadores";
 const DESC = "Conheça tudo o que o Meu Entrega Pro faz pelo entregador de Mercado Livre e Shopee: lançamentos, quinzenas, combustível, MEI, recibos, Feed e chat. 3 dias grátis.";
 
 export const Route = createFileRoute("/conheca")({
+  validateSearch: referralSearch,
   head: () => ({
     meta: [
       { title: TITLE },
@@ -61,20 +63,21 @@ const RECURSOS = [
 ];
 
 function Conheca() {
+  const search = Route.useSearch();
   const [rec, setRec] = useState("300");
   const [gas, setGas] = useState("90");
   const r = num(rec), sobra = r - num(gas);
   const pct = r > 0 ? (sobra / r) * 100 : 0;
 
   const Cta = ({ children }: { children: string }) => (
-    <Button asChild size="lg" className="w-full sm:w-auto"><Link to="/auth" search={{}}>{children}</Link></Button>
+    <Button asChild size="lg" className="w-full sm:w-auto"><Link to="/auth" search={search}>{children}</Link></Button>
   );
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4">
         <span className="font-extrabold">Meu <span className="text-primary">Entrega Pro</span></span>
-        <Link to="/auth" search={{}} className="text-sm text-muted-foreground underline">Já tenho conta</Link>
+        <Link to="/auth" search={search} className="text-sm text-muted-foreground underline">Já tenho conta</Link>
       </header>
 
       <section className="mx-auto max-w-xl px-5 pb-12 pt-6 text-center">
