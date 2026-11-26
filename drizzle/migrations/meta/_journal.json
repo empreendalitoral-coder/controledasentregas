@@ -141,6 +141,13 @@
       "when": 1794540442715,
       "tag": "0019_enforce_financial_premium_access",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795658293393,
+      "tag": "0020_migration",
+      "breakpoints": true
     }
   ]
 }
